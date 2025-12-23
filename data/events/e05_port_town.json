@@ -1,0 +1,11 @@
+[
+  {"area": "賑わいの港町", "tier": "newcomer", "outcome": "success", "text": "荷運びの手伝いをして賃金を得る。", "changes": {"money": 3, "fame": 1}},
+  {"area": "賑わいの港町", "tier": "newcomer", "outcome": "failure", "text": "スリに遭い、財布が軽くなった。", "changes": {"money": -3, "mind": -1}},
+  {"area": "賑わいの港町", "tier": "newcomer", "outcome": "great", "text": "掘り出し物を安く買い叩くことに成功した。", "changes": {"money": 6, "fame": 2}},
+  {"area": "賑わいの港町", "tier": "mid", "outcome": "success", "text": "遠方の商人との交易を仲介し、巨利を得る。", "changes": {"money": 6, "fame": 3}},
+  {"area": "賑わいの港町", "tier": "mid", "outcome": "failure", "text": "投資した商船が嵐で沈没した知らせを聞く。", "changes": {"money": -8, "mind": -3}},
+  {"area": "賑わいの港町", "tier": "mid", "outcome": "great", "text": "伝説の貿易船のオーナーに抜擢された。", "changes": {"money": 12, "fame": 5}},
+  {"area": "賑わいの港町", "tier": "veteran", "outcome": "success", "text": "港の関税制度を整え、街全体の景気を底上げする。", "changes": {"money": 10, "fame": 5}},
+  {"area": "賑わいの港町", "tier": "veteran", "outcome": "failure", "text": "大規模な密輸事件に巻き込まれ、全財産を差し押さえられる。", "changes": {"money": -20, "fame": -5}},
+  {"area": "賑わいの港町", "tier": "veteran", "outcome": "great", "text": "マグリバル全域の経済を支配する「黄金の主」となる。", "changes": {"money": 30, "fame": 10}}
+]

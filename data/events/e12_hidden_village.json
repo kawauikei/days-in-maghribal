@@ -1,0 +1,11 @@
+[
+  {"area": "緑の隠れ里", "tier": "newcomer", "outcome": "success", "text": "森の薬草を摘み、里の調合を手伝う。", "changes": {"health": 3, "money": 1}},
+  {"area": "緑の隠れ里", "tier": "newcomer", "outcome": "failure", "text": "猛毒のキノコを誤食し、数日苦しんだ。", "changes": {"health": -5, "body": -1}},
+  {"area": "緑の隠れ里", "tier": "newcomer", "outcome": "great", "text": "百年一度の霊草を偶然見つけ、里が活気付く。", "changes": {"health": 6, "money": 3}},
+  {"area": "緑の隠れ里", "tier": "mid", "outcome": "success", "text": "里の古文書を読み解き、自然との共存法を学ぶ。", "changes": {"health": 5, "mind": 2}},
+  {"area": "緑の隠れ里", "tier": "mid", "outcome": "failure", "text": "里の禁忌を破り、しばらくの間追放される。", "changes": {"fame": -5, "mind": -3}},
+  {"area": "緑の隠れ里", "tier": "mid", "outcome": "great", "text": "里の守護精霊から永遠の加護を与えられる。", "changes": {"health": 10, "money": 5}},
+  {"area": "緑の隠れ里", "tier": "veteran", "outcome": "success", "text": "里の医術の長となり、不治の病を克服する。", "changes": {"health": 8, "fame": 5}},
+  {"area": "緑の隠れ里", "tier": "veteran", "outcome": "failure", "text": "原因不明の枯死が里を襲い、対応に奔走し疲弊する。", "changes": {"health": -10, "body": -5}},
+  {"area": "緑の隠れ里", "tier": "veteran", "outcome": "great", "text": "森そのものと融合し、生きる森の神体となる。", "changes": {"health": 20, "money": 10}}
+]

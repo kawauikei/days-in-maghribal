@@ -1,0 +1,11 @@
+[
+  {"area": "辺境の村", "tier": "newcomer", "outcome": "success", "text": "畑仕事を手伝い、健康的な汗を流す。", "changes": {"health": 3, "body": 1}},
+  {"area": "辺境の村", "tier": "newcomer", "outcome": "failure", "text": "不慣れな野良仕事で腰を痛めた。", "changes": {"health": -2, "body": -1}},
+  {"area": "辺境の村", "tier": "newcomer", "outcome": "great", "text": "大豊作に貢献し、最高の食事を振る舞われる。", "changes": {"health": 6, "body": 2}},
+  {"area": "辺境の村", "tier": "mid", "outcome": "success", "text": "村を襲う害獣を退治し、体が鍛えられる。", "changes": {"body": 4, "health": 2}},
+  {"area": "辺境の村", "tier": "mid", "outcome": "failure", "text": "流行り風邪にかかり、数日寝込む。", "changes": {"health": -5, "mind": -2}},
+  {"area": "辺境の村", "tier": "mid", "outcome": "great", "text": "村の秘伝の健康法を授けられる。", "changes": {"health": 10, "body": 5}},
+  {"area": "辺境の村", "tier": "veteran", "outcome": "success", "text": "村の長老から大地の守護者として認められる。", "changes": {"health": 8, "fame": 3}},
+  {"area": "辺境の村", "tier": "veteran", "outcome": "failure", "text": "自然の脅威の前に、無力さを痛感する。", "changes": {"mind": -5, "health": -2}},
+  {"area": "辺境の村", "tier": "veteran", "outcome": "great", "text": "不老長寿の霊薬の材料を偶然手に入れた。", "changes": {"health": 20, "body": 10}}
+]
