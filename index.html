@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Days in Maghribal - Polish Ver</title>
+    <link rel="icon" href="data:,">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -38,7 +40,6 @@
             position: absolute; width: 150px; height: 150px;
             cursor: pointer; z-index: 50;
             display: flex; justify-content: center; align-items: center;
-            /* ★演出時に残らないよう、transitionを0.2sに短縮 */
             transition: opacity 0.2s ease; transform: translate(-50%, -50%);
             opacity: 0; pointer-events: none; 
         }
@@ -182,14 +183,24 @@
         .ed-stat-box { border: 1px solid #444; padding: 10px 20px; text-align: center; }
         .ed-stat-val { display: block; font-size: 24px; color: #fff; margin-top: 5px; font-family: 'Cinzel', serif; }
 
+        /* --- デバッグ用パネル --- */
         #debug-panel { 
-            position: fixed; top: 10px; left: 10px; 
+            position: fixed; top: 10px; left: 50px; 
             background: rgba(0, 0, 0, 0.85); color: #0f0; padding: 12px; 
             border: 1px solid #0f0; font-family: monospace; font-size: 11px; 
             z-index: 9999; display: none; pointer-events: auto;
             border-radius: 4px; box-shadow: 0 0 10px #00ff00; width: 180px;
         }
-        #debug-toggle { position: fixed; top: 0; left: 0; width: 20px; height: 20px; background: rgba(0,255,0,0.1); cursor: pointer; z-index: 10000; }
+        /* --- デバッグボタン（歯車アイコン） --- */
+        #debug-toggle-btn { 
+            position: fixed; top: 10px; left: 10px; width: 32px; height: 32px; 
+            background: rgba(50, 50, 50, 0.5); border: 1px solid var(--theme-color); 
+            color: var(--theme-color); cursor: pointer; z-index: 10000; 
+            display: flex; align-items: center; justify-content: center; 
+            border-radius: 4px; transition: 0.3s;
+        }
+        #debug-toggle-btn:hover { background: var(--theme-color); color: #000; box-shadow: 0 0 10px var(--theme-color); }
+
         .debug-btn { 
             background: #1a1a1a; color: #0f0; border: 1px solid #0f0; 
             padding: 4px 8px; cursor: pointer; margin-bottom: 6px; 
@@ -211,7 +222,8 @@
         </filter>
     </svg>
 
-    <div id="debug-toggle" onclick="document.getElementById('debug-panel').style.display = document.getElementById('debug-panel').style.display==='block'?'none':'block'"></div>
+    <div id="debug-toggle-btn" onclick="toggleDebugPanel()"><i class="fa-solid fa-gear"></i></div>
+    
     <div id="debug-panel">
         <button class="debug-btn" onclick="debugMaxStats()">★ All Max</button>
         <button class="debug-btn" onclick="debugResetStats()">↺ Reset Stats</button>
@@ -278,26 +290,35 @@
         let turn = 1, maxTurn = 20, isEventActive = false, isGameStarted = false;
         let messageQueue = [], currentMsgIndex = 0, pendingResultHtml = "", typeInterval, isTyping = false, targetText = "";
         let consecutiveNormalEvents = 0, lastEventWasHeroine = false, isForcedHeroine = false, isResultDisplayed = false;
+        let masterEvents = [];
 
-        /* --- 座標データ --- */
-        const spotAssignments = [
-            {l:56, t:42, main:'fame',  sub:'money'},
-            {l:87, t:19, main:'magic', sub:'mind'},
-            {l:79, t:88, main:'health',sub:'body'},
-            {l:88, t:70, main:'mind',  sub:'magic'},
-            {l:8, t:64, main:'money', sub:'fame'},
-            {l:10, t:10, main:'body',  sub:'health'},
-            {l:72, t:55, main:'mind',  sub:'health'},
-            {l:61.5, t:10.5, main:'magic', sub:'body'},
-            {l:62, t:85, main:'money', sub:'mind'},
-            {l:38, t:23, main:'fame',  sub:'magic'},
-            {l:34, t:80, main:'body',  sub:'fame'},
-            {l:22, t:20, main:'health',sub:'money'}
-        ];
-
-        window.onload = () => {
-            if (typeof statKeys === 'undefined') { console.error("game_data.jsが読み込まれていません"); return; }
+        window.onload = async () => {
+            if (typeof statKeys === 'undefined' || typeof scenarios === 'undefined' || typeof spotAssignments === 'undefined') {
+                console.error("Critical: game_data.js is not loaded correctly.");
+                return;
+            }
             
+            try {
+                // 通常イベントの読み込み
+                const resNormal = await fetch('data/events.json');
+                masterEvents = await resNormal.json();
+
+                // ヒロインイベントの読み込み
+                const resHeroine = await fetch('data/heroine_events.json');
+                const heroineData = await resHeroine.json();
+                
+                // 読み込んだデータを反映
+                heroineData.forEach(hd => {
+                    const target = heroines.find(h => h.name === hd.name);
+                    if (target) target.events = hd.events;
+                });
+
+                console.log("JSON Load Success (Normal: " + masterEvents.length + ")");
+            } catch(e) {
+                console.warn("JSON Load Failed.");
+            }
+
+            // UI生成
             const statContainer = document.getElementById("stat-list");
             statKeys.forEach(k => {
                 statContainer.innerHTML += `
@@ -356,10 +377,7 @@
             if (!isGameStarted || isEventActive || turn > maxTurn) return;
             isEventActive = true; isResultDisplayed = false;
             
-            // 選択されたヒントテキストを強調
             el.querySelector('.hint-text').classList.add('selected-yellow');
-
-            // ★【修正ポイント】背景が動く前に、即座に全スポットを非表示にする
             document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
 
             setTimeout(() => {
@@ -382,9 +400,15 @@
                     if (tier === 'newcomer') outcome = rand < 1/3 ? 'failure' : 'success';
                     else if (tier === 'mid') outcome = rand < 0.2 ? 'failure' : (rand < 0.8 ? 'success' : 'great');
                     else outcome = rand < 0.6 ? 'success' : 'great';
-                    const list = s.events[tier][outcome]; displayMsg = list[Math.floor(Math.random() * list.length)];
-                    let mult = outcome === 'failure' ? 0.2 : (outcome === 'great' ? 2.0 : 1.0);
-                    for (let k in s.baseChanges) actualChanges[k] = s.baseChanges[k] > 0 ? Math.floor(s.baseChanges[k] * mult) : s.baseChanges[k];
+                    
+                    const pool = masterEvents.filter(e => e.area === s.name && e.tier === tier && e.outcome === outcome);
+                    if (pool.length > 0) {
+                        const ev = pool[Math.floor(Math.random() * pool.length)];
+                        displayMsg = ev.text;
+                        actualChanges = ev.changes || {};
+                    } else {
+                        displayMsg = "静かな時が流れた。";
+                    }
                 }
 
                 for (let k in actualChanges) { stats[k] = Math.max(0, Math.min(stats[k] + actualChanges[k], 50)); updateUI(k); }
@@ -392,11 +416,9 @@
 
                 let changeLog = "";
                 for (let k in actualChanges) if (actualChanges[k] !== 0) changeLog += ` <span style="color:${statColors[k]}; font-size:0.8em;">${statConfig[k].name}${actualChanges[k] > 0 ? '⇑' : '⇓'}</span>`;
-                const heroLabel = isHeroine ? `(<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name})` : "";
-                const logLabel = isHeroine ? heroLabel : (outcome === 'great' ? " <span style='color:#ffcc00;'>[大成功!]</span>" : (outcome === 'failure' ? " <span style='color:#888;'>[失敗]</span>" : ""));
+                const logLabel = isHeroine ? `(<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name})` : (outcome === 'great' ? " <span style='color:#ffcc00;'>[大成功!]</span>" : (outcome === 'failure' ? " <span style='color:#888;'>[失敗]</span>" : ""));
                 addToLog(`Turn ${turn} : <i class="fa-solid ${s.icon}"></i> ${s.name} ${logLabel}${changeLog}`, displayMsg);
 
-                // 背景の移動・拡大
                 const bg = document.getElementById("background-layer");
                 bg.classList.add("blur-bg");
                 bg.style.transformOrigin = `${spotAssignments[idx].l}% ${spotAssignments[idx].t}%`;
@@ -407,14 +429,17 @@
 
                 document.getElementById("loc-icon").innerHTML = `<i class="fa-solid ${s.icon}"></i>`;
                 document.getElementById("loc-name").innerText = s.name;
-                document.getElementById("loc-stats").innerHTML = `<i class="fa-solid fa-gavel"></i> ${"★".repeat(s.security)} / <i class="fa-solid fa-scale-unbalanced"></i> ${"★".repeat(s.economy)}`;
+                
+                const getStars = (count) => "★".repeat(count) + "☆".repeat(5 - count);
+                document.getElementById("loc-stats").innerHTML = `<i class="fa-solid fa-gavel"></i> ${getStars(s.security)} / <i class="fa-solid fa-scale-unbalanced"></i> ${getStars(s.economy)}`;
+
                 const cb = document.getElementById("char-name-badge");
                 if (isHeroine) { cb.innerHTML = `<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name}`; cb.style.display = "flex"; } else cb.style.display = "none";
 
                 document.getElementById("message-text").innerHTML = ""; document.getElementById("result-display").innerHTML = "";
                 document.getElementById("message-window").classList.add("active"); document.getElementById("click-overlay").classList.add("active");
                 setTimeout(advanceMessage, 400); 
-            }, 100); // 100msで地点を消してから背景を動かす
+            }, 100);
         }
 
         function advanceMessage() {
@@ -478,6 +503,11 @@
         }
         function addToLog(h, t) { const entry = `<div class="log-entry">${h ? `<div class="log-header">${h}</div>` : ""}<div>${t ? t.replace(/\n/g, '<br>') : ""}</div></div>`; document.getElementById("log-content").innerHTML += entry; }
 
+        /* --- デバッグ機能の関数 --- */
+        function toggleDebugPanel() {
+            const panel = document.getElementById("debug-panel");
+            panel.style.display = panel.style.display === "block" ? "none" : "block";
+        }
         function debugMaxStats() { statKeys.forEach(k => { stats[k] = 50; updateUI(k); }); checkRankUpdate(); }
         function debugResetStats() { statKeys.forEach(k => { stats[k] = 0; updateUI(k); }); checkRankUpdate(); }
         function debugNextTurn() { if (turn < maxTurn) { turn++; document.getElementById("turn-count").innerText = turn; } else showEnding(); }

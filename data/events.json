@@ -1,0 +1,674 @@
+[
+  {
+    "area": "王都",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "王都の広場でパレードを見学した。活気に溢れている。",
+    "changes": { "fame": 3, "money": 1, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "王都の喧騒に酔ってしまった。少し休息が必要だ。",
+    "changes": { "fame": 0, "money": 0, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "貴族の依頼を完遂し、社交界で名が売れ始めた。",
+    "changes": { "fame": 3, "money": 1, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "宮廷の不敬罪に触れそうになった。冷や汗をかいた。",
+    "changes": { "fame": 0, "money": 0, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "国王から直々に賞賛を受けた！名声が一気に高まる。",
+    "changes": { "fame": 6, "money": 2, "mind": -2 }
+  },
+  {
+    "area": "王都",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "もはや王都であなたの名を知らぬ者はいない。",
+    "changes": { "fame": 3, "money": 1, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "権力闘争の渦中に巻き込まれ、精神をすり減らした。",
+    "changes": { "fame": 0, "money": 0, "mind": -1 }
+  },
+  {
+    "area": "王都",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "王都の守護者として、歴史にその名を刻んだ。",
+    "changes": { "fame": 6, "money": 2, "mind": -2 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "塔の図書室で基礎魔術の理論を学んだ。",
+    "changes": { "magic": 3, "mind": 1, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "高度な術式に頭がパンクしそうだ。",
+    "changes": { "magic": 0, "mind": 0, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "古代の魔導具の修復に成功した。",
+    "changes": { "magic": 3, "mind": 1, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "実験中に小規模な魔力暴発を引き起こした。",
+    "changes": { "magic": 0, "mind": 0, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "失われた禁呪の一節を解読することに成功した！",
+    "changes": { "magic": 6, "mind": 2, "body": -2 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "大賢者と対等に魔術理論を戦わせるまでになった。",
+    "changes": { "magic": 3, "mind": 1, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "深淵の知識に触れ、一時的に正気を失いかけた。",
+    "changes": { "magic": 0, "mind": 0, "body": -1 }
+  },
+  {
+    "area": "賢者の塔",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "魔術の真理に到達した。世界の見え方が変わった。",
+    "changes": { "magic": 6, "mind": 2, "body": -2 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "村の収穫を手伝った。新鮮な空気が心地よい。",
+    "changes": { "health": 3, "body": 1, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "不慣れな農作業で腰を痛めてしまった。",
+    "changes": { "health": 0, "body": 0, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "村を襲う野獣を退け、村人から感謝された。",
+    "changes": { "health": 3, "body": 1, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "作物の不作により、村全体に重苦しい空気が漂っている。",
+    "changes": { "health": 0, "body": 0, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "村の伝統行事で英雄的な活躍を見せた！",
+    "changes": { "health": 6, "body": 2, "fame": -2 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "辺境の厳しい環境こそが、最高の鍛錬場となった。",
+    "changes": { "health": 3, "body": 1, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "孤独な生活が続き、世間から忘れられそうだ。",
+    "changes": { "health": 0, "body": 0, "fame": -1 }
+  },
+  {
+    "area": "辺境の村",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "辺境の村は、あなたという伝説の守り神を得た。",
+    "changes": { "health": 6, "body": 2, "fame": -2 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "静寂に包まれた古城で、瞑想に耽った。",
+    "changes": { "mind": 3, "magic": 1, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "古城の不気味な気配に、夜も眠れなかった。",
+    "changes": { "mind": 0, "magic": 0, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "城の書斎で隠された歴史の断片を見つけた。",
+    "changes": { "mind": 3, "magic": 1, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "仕掛けられた罠にかかり、体力を消耗した。",
+    "changes": { "mind": 0, "magic": 0, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "城の意志と共鳴し、強大な精神力を得た！",
+    "changes": { "mind": 6, "magic": 2, "health": -2 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "古城の主として、その静寂を支配した。",
+    "changes": { "mind": 3, "magic": 1, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "城の呪いに蝕まれ、身体が重く感じる。",
+    "changes": { "mind": 0, "magic": 0, "health": -1 }
+  },
+  {
+    "area": "忘れられた古城",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "城はもはやあなたの体の一部となった。",
+    "changes": { "mind": 6, "magic": 2, "health": -2 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "市場の活気に触れた。掘り出し物を見つけた。",
+    "changes": { "money": 3, "fame": 1, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "スリに遭い、小銭を失ってしまった。",
+    "changes": { "money": 0, "fame": 0, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "交易船の投資が成功し、多額の利益を得た。",
+    "changes": { "money": 3, "fame": 1, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "海賊の噂により、港の経済が停滞している。",
+    "changes": { "money": 0, "fame": 0, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "伝説の交易所を開設し、莫大な富を築いた！",
+    "changes": { "money": 6, "fame": 2, "magic": -2 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "海の覇者として、全海域の流通を掌握した。",
+    "changes": { "money": 3, "fame": 1, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "相場の暴落により、一時的に資産が目減りした。",
+    "changes": { "money": 0, "fame": 0, "magic": -1 }
+  },
+  {
+    "area": "賑わいの港町",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "あなたの署名一つで、国の予算が動く。",
+    "changes": { "money": 6, "fame": 2, "magic": -2 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "兵士たちと共に基礎訓練に励んだ。",
+    "changes": { "body": 3, "health": 1, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "訓練の厳しさについていけず、打ちのめされた。",
+    "changes": { "body": 0, "health": 0, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "要塞の防衛戦で前線を支え、信頼を得た。",
+    "changes": { "body": 3, "health": 1, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "装備の整備不良を指摘され、再教育を受けた。",
+    "changes": { "body": 0, "health": 0, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "千人の兵を相手に、たった一人で勝ち抜いた！",
+    "changes": { "body": 6, "health": 2, "money": -2 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "もはや要塞そのもののような頑強な肉体を得た。",
+    "changes": { "body": 3, "health": 1, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "長年の酷使により、古傷が痛み出した。",
+    "changes": { "body": 0, "health": 0, "money": -1 }
+  },
+  {
+    "area": "巨岩の要塞",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "要塞の総督として、不落の伝説を完成させた。",
+    "changes": { "body": 6, "health": 2, "money": -2 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "清らかな祈りの時間を持った。心が洗われる。",
+    "changes": { "mind": 3, "health": 1, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "懺悔の時間が長引き、足がしびれた。",
+    "changes": { "mind": 0, "health": 0, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "人々の悩みを聴き、精神的な指導者となった。",
+    "changes": { "mind": 3, "health": 1, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "自身の信仰に疑念を抱き、心が揺らいだ。",
+    "changes": { "mind": 0, "health": 0, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "奇跡を目の当たりにし、悟りの境地に達した！",
+    "changes": { "mind": 6, "health": 2, "body": -2 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "聖者として崇められ、多くの巡礼者が訪れる。",
+    "changes": { "mind": 3, "health": 1, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "過度な禁欲により、体調を崩してしまった。",
+    "changes": { "mind": 0, "health": 0, "body": -1 }
+  },
+  {
+    "area": "静謐な修道院",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "あなたの存在そのものが、生ける奇跡となった。",
+    "changes": { "mind": 6, "health": 2, "body": -2 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "迷宮の浅層を探索した。魔力が刺激される。",
+    "changes": { "magic": 3, "body": 1, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "迷宮の毒気に当てられ、気分が悪くなった。",
+    "changes": { "magic": 0, "body": 0, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "強力な魔物を討伐し、魔石を手に入れた。",
+    "changes": { "magic": 3, "body": 1, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "迷路で迷い、脱出するのに苦労した。",
+    "changes": { "magic": 0, "body": 0, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "迷宮の奥底に眠る秘宝の一部を発見した！",
+    "changes": { "magic": 6, "body": 2, "health": -2 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "迷宮の法則を理解し、魔法を自在に操った。",
+    "changes": { "magic": 3, "body": 1, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "迷宮の深層で強大な呪縛を受け、消耗した。",
+    "changes": { "magic": 0, "body": 0, "health": -1 }
+  },
+  {
+    "area": "迷宮の入り口",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "迷宮を完全に攻略し、その魔力を我が物とした。",
+    "changes": { "magic": 6, "body": 2, "health": -2 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "古代遺跡の柱から、剥き出しの真鍮板を回収した。",
+    "changes": { "money": 3, "mind": 1, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "崩落した遺跡の瓦礫で足を負傷してしまった。",
+    "changes": { "money": 0, "mind": 0, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "黄金時代を象徴する巨大なレリーフを解読した。",
+    "changes": { "money": 3, "mind": 1, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "遺跡に充満していた古い瘴気に精神を削られた。",
+    "changes": { "money": 0, "mind": 0, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "遺跡群の奥底に眠る王族の黄金律を発見した！",
+    "changes": { "money": 6, "mind": 2, "health": -2 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "遺跡の声を聞き、失われた古代の資産運用法を極めた。",
+    "changes": { "money": 3, "mind": 1, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "遺跡の歴史の重みに呑まれ、一時期虚無感に襲われた。",
+    "changes": { "money": 0, "mind": 0, "health": -1 }
+  },
+  {
+    "area": "真鍮の荒野",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "真鍮の荒野を「黄金の聖域」として再興し、莫大な富を得た。",
+    "changes": { "money": 6, "mind": 2, "health": -2 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "墓碑の文字を書き写した。歴史を感じる。",
+    "changes": { "fame": 3, "magic": 1, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "冷たい風が吹き抜け、背筋が凍った。",
+    "changes": { "fame": 0, "magic": 0, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "伝説の英雄の墓を特定し、その遺志を継いだ。",
+    "changes": { "fame": 3, "magic": 1, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "不浄な霊に憑かれ、一時的に魔力が不安定に。",
+    "changes": { "fame": 0, "magic": 0, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "死者たちの魂を鎮め、絶大な名声を得た！",
+    "changes": { "fame": 6, "magic": 2, "mind": -2 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "生と死の境界を理解し、魂の声を聞いた。",
+    "changes": { "fame": 3, "magic": 1, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "過去の亡霊たちの悲しみに囚われそうになった。",
+    "changes": { "fame": 0, "magic": 0, "mind": -1 }
+  },
+  {
+    "area": "太古の墓地",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "永遠に語り継がれる、魂の導き手となった。",
+    "changes": { "fame": 6, "magic": 2, "mind": -2 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "下位ランクの試合で初勝利を挙げた。",
+    "changes": { "body": 3, "fame": 1, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "手痛い敗北を喫し、観客の嘲笑を浴びた。",
+    "changes": { "body": 0, "fame": 0, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "連勝記録を伸ばし、闘技場の有名人となった。",
+    "changes": { "body": 3, "fame": 1, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "強引な試合運びで、身体に負担がかかった。",
+    "changes": { "body": 0, "fame": 0, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "格上のチャンピオンを下し、場内が熱狂に包まれた！",
+    "changes": { "body": 6, "fame": 2, "money": -2 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "伝説の闘士として、無敗の神話を築き上げた。",
+    "changes": { "body": 3, "fame": 1, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "常に狙われる立場となり、心が休まらない。",
+    "changes": { "body": 0, "fame": 0, "money": -1 }
+  },
+  {
+    "area": "喧騒の闘技場",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "闘技場の歴史上、最強の男として君臨した。",
+    "changes": { "body": 6, "fame": 2, "money": -2 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "newcomer",
+    "outcome": "success",
+    "text": "里の薬草園で手伝いをした。自然の恵み。",
+    "changes": { "health": 3, "money": 1, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "newcomer",
+    "outcome": "failure",
+    "text": "毒草を誤って触ってしまい、手が腫れた。",
+    "changes": { "health": 0, "money": 0, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "mid",
+    "outcome": "success",
+    "text": "秘伝の薬の調合を教わった。健康体となった。",
+    "changes": { "health": 3, "money": 1, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "mid",
+    "outcome": "failure",
+    "text": "里の掟を破りそうになり、厳しい叱責を受けた。",
+    "changes": { "health": 0, "money": 0, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "mid",
+    "outcome": "great",
+    "text": "里の守り手として、精霊の加護を受けた！",
+    "changes": { "health": 6, "money": 2, "fame": -2 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "veteran",
+    "outcome": "success",
+    "text": "不老不死の妙薬に近い、究極の薬学を極めた。",
+    "changes": { "health": 3, "money": 1, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "veteran",
+    "outcome": "failure",
+    "text": "俗世から離れすぎて、名声を失いつつある。",
+    "changes": { "health": 0, "money": 0, "fame": -1 }
+  },
+  {
+    "area": "緑の隠れ里",
+    "tier": "veteran",
+    "outcome": "great",
+    "text": "自然と調和し、あらゆる病から解放された。",
+    "changes": { "health": 6, "money": 2, "fame": -2 }
+  }
+]

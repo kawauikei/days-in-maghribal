@@ -9,154 +9,50 @@ const statConfig = {
 };
 const statKeys = Object.keys(statConfig);
 
-/* --- ヒロインデータ（ザフィラを「舞巫女」へ刷新） --- */
+/* --- ヒロイン設定（テキストは heroine_events.json へ） --- */
 const heroines = [
-    { name: "シェラ", title: "王女", icon: "fa-crown", progress: 0, affection: 0, events: [
-        "王都の路地裏。変装した彼女が助けを求めてきた。\n「貴方、お願い！ この追っ手を撒いてちょうだい！」\n彼女の凛とした瞳が、彼の心に名声の種を植え付けた。",
-        "「ふふ、私の騎士になってくれるかしら？」\nシェラとの信頼関係が深まり、彼の立ち居振る舞いに気品が備わっていく。",
-        "密かに王城へ招かれ、彼女から特別な勲章を授かる。\n彼女の期待に応えるべく、彼の名声は揺るぎないものとなった。",
-        "「貴方との出会いが、私の運命を変えたの」\n彼女の愛を受け、彼の心には国を背負う名誉と責任が宿った。",
-        "「共にこの国を守りましょう、永遠に」\n彼女と歩む未来のために、彼の伝説は王都の歴史そのものとなった。"
-    ]},
-    { name: "ルルリス", title: "魔女", icon: "fa-moon", progress: 0, affection: 0, events: [
-        "塔の図書室で、本に埋もれた少女を見つける。\n「ん……。新しい助手？ なら、その本を運んで」\nルルリスの気まぐれな魔力が、彼の中に新たな力を目覚めさせる。",
-        "「私の魔力、少し分けてあげる。熱いけど、我慢してね」\n彼女との魔力共有は、彼の意識を魔道の高みへと引き上げた。",
-        "彼女と一緒に、古代の禁呪を完成させることに成功する。\n魔女の愛弟子として、彼の魔力はもはや比類なきものとなった。",
-        "「貴方の魔力、私の色に染まってきたわね。……嫌じゃないでしょ？」\nルルリスの独占欲が、彼の魔力をより濃密で強大なものへと変える。",
-        "「世界を、二人で書き換えちゃいましょうか」\n彼女と共に歩む魔術の道は、もはや理さえも超越していた。"
-    ]},
-    { name: "エイラ", title: "狩人", icon: "fa-paw", progress: 0, affection: 0, events: [
-        "森で獲物を追う少女と出会う。\n「危ない！ そこに罠があるわ！ ……ふうん、反応は悪くないわね」\n彼女の野生的な生命力が、彼の健康を促進していく。",
-        "「これ、私が仕留めた肉。しっかり食べなさいよ、ひょろひょろなんだから」\nエイラとの野生的な生活は、彼の身体を内側から作り直した。",
-        "森の王を二人で協力して仕留め、その血で契約を交わす。\n彼女の相棒として、彼の生命力は野生の獣をも凌駕した。",
-        "「貴方といると、不思議と落ち着くの。……これからも、隣にいていい？」\n彼女の純粋な愛が、彼の身体に尽きることのない活力を与えた。",
-        "「この森と、貴方と。私はずっと、ここで生きていく」\n彼女と共に守る辺境の地で、彼の生命は永遠の輝きを放った。"
-    ]},
-    { name: "シルフィエット", title: "令嬢", icon: "fa-book", progress: 0, affection: 0, events: [
-        "古城の窓際、月の光を浴びて佇む少女を見つける。\n「……静かですね。貴方も、この孤独を愛する方なのですか？」\nシルフィエットの儚い美しさが、彼の精神を研ぎ澄ませていく。",
-        "「私の心、少しだけ覗いてみますか？ ……ふふ、驚かないでくださいね」\n彼女との精神的な交流は、彼の迷いを消し去っていった。",
-        "古城に封印されていた負の感情を、彼女と共に浄化する。\n揺るぎない絆は、彼の精神をダイヤモンドよりも強固にした。",
-        "「貴方がいれば、もう孤独ではありません。……私の光でいてください」\n彼女の献身的な愛が、彼の心を最高の平穏で満たした。",
-        "「この城で、貴方と永遠を刻みたい。……約束ですよ？」\n彼女と共に過ごす静寂の時間は、彼の精神を神の領域へと導いた。"
-    ]},
-    { name: "マニ", title: "商人", icon: "fa-scale-balanced", progress: 0, affection: 0, events: [
-        "港の雑踏で、巧みな話術で商品を売る少女に惹かれる。\n「お兄さん、見る目あるね！ この掘り出し物、安くしとくよ？」\nマニの商魂が、彼の中に資産を築く才能を芽生えさせる。",
-        "「儲け話があるんだけど……。貴方なら、相棒にしてあげてもいいよ」\n彼女とのビジネスパートナーシップは、彼の財力を着実に増やした。",
-        "港最大の商談を二人で成功させ、巨万の富を手に入れる。\n彼女の右腕として、彼の経済力はマグリバル一となった。",
-        "「お金より大切なもの？ ……そんなの、目の前にいるじゃない」\nマニの素直な告白が、彼の資産をより価値のあるものに変えた。",
-        "「世界中の富を集めて、二人で贅沢三昧しよ！ ……いいよね、旦那様？」\n彼女と共に築く黄金の帝国は、永遠に崩れることはなかった。"
-    ]},
-    { name: "カタリナ", title: "騎士", icon: "fa-chess-knight", progress: 0, affection: 0, events: [
-        "要塞の練兵場。部下を厳しく指導する女騎士がいた。\n「軟弱な！ ……貴様、私の稽古をつけてやる。構えろ！」\nカタリナの苛烈な一撃が、彼の肉体を根底から叩き直す。",
-        "「……悪くない。貴様の筋肉、少しずつ仕上がってきたな。もっと追い込め」\n彼女との過酷な訓練は、彼の肉体を鋼鉄の鎧へと変えていった。",
-        "要塞を包囲する敵軍を、二人だけで正面から突破する。\n最強の戦友として、彼の武勇と肉体は伝説の域に達した。",
-        "「貴様の背中は、私が守る。……だから、貴様も私を支えろ」\nカタリナの不器用な信頼が、彼の肉体に無敵の力を宿らせた。",
-        "「この命、貴様に捧げよう。……私の唯一の主よ」\n彼女と共に歩む戦士の道は、最強という名の神話となった。"
-    ]},
-    { name: "セシリア", title: "聖女", icon: "fa-hands-praying", progress: 0, affection: 0, events: [
-        "修道院の礼拝堂。祈りを捧げる少女の横顔は神々しかった。\n「迷える旅人さん、私と一緒に祈りましょう。心が軽くなりますよ」\nセシリアの慈愛が、彼の精神を深く癒やしていく。",
-        "「貴方の心の傷、私が癒やしてあげたい。……どうか、隠さないで」\n彼女の献身的な祈りは、彼の精神を不壊の盾へと変えた。",
-        "絶望的な疫病に襲われた街を、彼女と共に救い出す。\n聖女の伴侶として、彼の精神と名声はマグリバルの光となった。",
-        "「神様よりも、貴方を信じたい。……それは、罪なことでしょうか？」\nセシリアの切ない愛が、彼の心に究極の平穏をもたらした。",
-        "「貴方と歩む道こそが、私の天国です。……永遠に一緒ですよ」\n彼女と結ばれた彼の精神は、あらゆる苦難を超越した。"
-    ]},
-    { name: "ナディア", title: "盗賊", icon: "fa-mask", progress: 0, affection: 0, events: [
-        "迷宮の入り口で、獲物を物色する少女に声をかけられる。\n「おじさん、迷宮に行くの？ 命が惜しければ、私を雇いなよ」\nナディアのトリッキーな動きが、彼の魔力と肉体を刺激する。",
-        "「迷宮のお宝は、早い者勝ち！ ……ほら、遅れないでついてきて！」\n彼女との迷宮探索は、彼の反射神経と魔力感覚を研ぎ澄ませた。",
-        "迷宮最深部の秘宝を、彼女と協力して盗み出すことに成功する。\n最高の相棒として、彼の力は世界の法則さえも出し抜いた。",
-        "「私、お宝より貴方のほうが欲しくなっちゃった。……いいよね、私のモノ？」\nナディアの大胆な告白が、彼の力に新たな可能性を吹き込んだ。",
-        "「世界中の迷宮を、二人で荒らし回っちゃおう！ ……楽しみだね！」\n彼女と共に駆ける冒険の旅は、誰にも捕まえられない風となった。"
-    ]},
-    { name: "ザフィラ", title: "舞巫女", icon: "fa-wand-magic-sparkles", progress: 0, affection: 0, events: [
-        "静まり返る古代遺跡。月光を浴び、黄金の装飾を揺らして踊る少女がいた。\n「……この遺跡が、貴方を歓迎しているわ。一緒に祈りを捧げましょう」\nザフィラの神秘的な舞が、彼の精神と資産を不思議な充足感で満たしていく。",
-        "「遺跡の石一つ一つが、遠い時代の記憶を持っているの。……聞こえるかしら？」\n彼女との対話を通じて、彼の精神は古い英知に触れ、深みを増していった。",
-        "遺跡の最深部で暴走した古い魔力を、彼女の奉納舞と彼の力で鎮める。\n真の巫女として覚醒した彼女の光は、彼に莫大な加護と富を授けた。",
-        "「この地を、貴方と一緒に見守り続けたい。……それが、私の新しい祈り」\nザフィラの情熱的な献身が、彼の資産に永遠の価値を吹き込んだ。",
-        "「遺跡の眠りが覚めても、私は貴方だけの巫女でい続けるわ」\n彼女と共に黄金の夜明けを迎えた真鍮の荒野で、彼の物語は神話へと昇華した。"
-    ]},
-    { name: "ヘルマ", title: "亡霊", icon: "fa-skull", progress: 0, affection: 0, events: [
-        "太古の墓地。透き通るような肌をした少女が、花を供えていた。\n「……まだ、終わっていない。貴方の物語、私が繋いであげる」\nヘルマの不思議な魔力が、彼の名声を死の境界から引き上げた。",
-        "「冷たい？ ……ごめんなさい。でも、貴方の体温、とても心地いいわ」\n彼女との交流は、彼の存在を現世と冥界の狭間で確立させた。",
-        "世界の崩壊を食い止めるため、彼女の命（魂）と自分の力を合わせる。\n唯一無二の存在として、彼の名は永遠の名声を得た。",
-        "「死ぬのが怖くなくなった。……だって、貴方が待っていてくれるから」\nヘルマの静かな愛が、彼の力に終わりなき力を与えた。",
-        "「世界の終わりまで、貴方の隣で。……私を見守っていて」\n彼女と歩む黄昏の道で、彼の存在は神話の終わりを書き換えた。"
-    ]},
-    { name: "ヴァルキ", title: "闘士", icon: "fa-hand-fist", progress: 0, affection: 0, events: [
-        "闘技場の裏で、一心不乱に拳を振るう少女がいた。\n「もっと強く、もっと……。……貴様、私の相手をしろ！ 全力で来い！」\nヴァルキの愚直なまでの強さが、彼の肉体を極限まで高める。",
-        "「……はぁ、はぁ。貴様、見込みがあるな。……また明日も、ここで会おう」\n彼女との血の滲むような特訓は、彼の肉体を最高の芸術品にした。",
-        "闘技場最大のトーナメント決勝で、彼女と死闘を繰り広げる。\n互いを認め合った宿敵として、二人の武名は全世界に轟いた。",
-        "「私は戦うことしか知らない。……でも、貴方となら、それ以外も……」\nヴァルキの不器用な愛が、彼の肉体に爆発的な闘気を与えた。",
-        "「世界最強は、私たち二人だ！ ……誰にも負けない、絶対に！」\n彼女と共に君臨する武の頂で、彼の伝説は完成した。"
-    ]},
-    { name: "リヴィア", title: "薬師", icon: "fa-flask-vial", progress: 0, affection: 0, events: [
-        "隠れ里の薬草園で、珍しい草花の手入れをする少女と出会う。\n「あ、新入りの助手さん？ ちょうどよかった、この薬を飲んでみて！」\nリヴィアの独創的な薬学が、彼の健康状態を劇的に改善していく。",
-        "「この里の薬草は、心も治せるのよ。……貴方の不安、私が取り除いてあげる」\n彼女の優しい手当は、彼の身体と資産を潤していった。",
-        "里に伝わる「万能薬」を、彼女と共に完成させることに成功する。\n最高の薬師の伴侶として、彼の生命力は神域に達した。",
-        "「貴方の心臓の音、とても健康。……ずっと、聴いていたいな」\nリヴィアの温かな愛が、彼の身体に衰えることのない若さを与えた。",
-        "「里の人も、貴方も、私がずっと守ってみせる。……大好きだよ」\n彼女と過ごす緑豊かな隠れ里で、彼の生命は永遠に守られた。"
-    ]}
+    { name: "シェラ", title: "王女", icon: "fa-crown", progress: 0, affection: 0, events: [] },
+    { name: "ルルリス", title: "魔女", icon: "fa-moon", progress: 0, affection: 0, events: [] },
+    { name: "エイラ", title: "狩人", icon: "fa-paw", progress: 0, affection: 0, events: [] },
+    { name: "シルフィエット", title: "令嬢", icon: "fa-book", progress: 0, affection: 0, events: [] },
+    { name: "マニ", title: "商人", icon: "fa-scale-balanced", progress: 0, affection: 0, events: [] },
+    { name: "カタリナ", title: "騎士", icon: "fa-chess-knight", progress: 0, affection: 0, events: [] },
+    { name: "セシリア", title: "聖女", icon: "fa-hands-praying", progress: 0, affection: 0, events: [] },
+    { name: "ナディア", title: "盗賊", icon: "fa-mask", progress: 0, affection: 0, events: [] },
+    { name: "ザフィラ", title: "舞巫女", icon: "fa-wand-magic-sparkles", progress: 0, affection: 0, events: [] },
+    { name: "ヘルマ", title: "亡霊", icon: "fa-skull", progress: 0, affection: 0, events: [] },
+    { name: "ヴァルキ", title: "闘士", icon: "fa-hand-fist", progress: 0, affection: 0, events: [] },
+    { name: "リヴィア", title: "薬師", icon: "fa-flask-vial", progress: 0, affection: 0, events: [] }
 ];
 
-/* --- シナリオデータ（「真鍮の荒野」遺跡化・刷新版） --- */
+/* --- シナリオ設定 --- */
 const scenarios = [
-    { name: "王都", icon: "fa-city", zoom: 2.2, security: 5, economy: 5, baseChanges: { fame: 3, money: 1, mind: -1 }, events: {
-        newcomer: { success: ["王都の広場でパレードを見学した。活気に溢れている。"], failure: ["王都の喧騒に酔ってしまった。少し休息が必要だ。"] },
-        mid: { success: ["貴族の依頼を完遂し、社交界で名が売れ始めた。"], failure: ["宮廷の不敬罪に触れそうになった。冷や汗をかいた。"], great: ["国王から直々に賞賛を受けた！名声が一気に高まる。"] },
-        veteran: { success: ["もはや王都であなたの名を知らぬ者はいない。"], failure: ["権力闘争の渦中に巻き込まれ、精神をすり減らした。"], great: ["王都の守護者として、歴史にその名を刻んだ。"] }
-    }},
-    { name: "賢者の塔", icon: "fa-tower-observation", zoom: 2.8, security: 4, economy: 2, baseChanges: { magic: 3, mind: 1, body: -1 }, events: {
-        newcomer: { success: ["塔の図書室で基礎魔術の理論を学んだ。"], failure: ["高度な術式に頭がパンクしそうだ。"] },
-        mid: { success: ["古代の魔導具の修復に成功した。"], failure: ["実験中に小規模な魔力暴発を引き起こした。"], great: ["失われた禁呪の一節を解読することに成功した！"] },
-        veteran: { success: ["大賢者と対等に魔術理論を戦わせるまでになった。"], failure: ["深淵の知識に触れ、一時的に正気を失いかけた。"], great: ["魔術의 真理に到達した。世界の見え方が変わった。"] }
-    }},
-    { name: "辺境の村", icon: "fa-house-chimney", zoom: 2.5, security: 2, economy: 1, baseChanges: { health: 3, body: 1, fame: -1 }, events: {
-        newcomer: { success: ["村の収穫を手伝った。新鮮な空気が心地よい。"], failure: ["不慣れな農作業で腰を痛めてしまった。"] },
-        mid: { success: ["村を襲う野獣を退け、村人から感謝された。"], failure: ["作物の不作により、村全体に重苦しい空気が漂っている。"], great: ["村の伝統行事で英雄的な活躍を見せた！"] },
-        veteran: { success: ["辺境の厳しい環境こそが、最高の鍛錬場となった。"], failure: ["孤独な生活が続き、世間から忘れられそうだ。"], great: ["辺境の村は、あなたという伝説の守り神を得た。"] }
-    }},
-    { name: "忘れられた古城", icon: "fa-landmark", zoom: 2.5, security: 1, economy: 1, baseChanges: { mind: 3, magic: 1, health: -1 }, events: {
-        newcomer: { success: ["静寂に包まれた古城で、瞑想に耽った。"], failure: ["古城の不気味な気配に、夜も眠れなかった。"] },
-        mid: { success: ["城の書斎で隠された歴史の断片を見つけた。"], failure: ["仕掛けられた罠にかかり、体力を消耗した。"], great: ["城の意志と共鳴し、強大な精神力を得た！"] },
-        veteran: { success: ["古城の主として、その静寂を支配した。"], failure: ["城の呪いに蝕まれ、身体が重く感じる。"], great: ["古城はもはやあなたの体の一部となった。"] }
-    }},
-    { name: "賑わいの港町", icon: "fa-ship", zoom: 2.2, security: 3, economy: 5, baseChanges: { money: 3, fame: 1, magic: -1 }, events: {
-        newcomer: { success: ["市場の活気に触れた。掘り出し物を見つけた。"], failure: ["スリに遭い、小銭を失ってしまった。"] },
-        mid: { success: ["交易船の投資が成功し、多額の利益を得た。"], failure: ["海賊の噂により、港の経済が停滞している。"], great: ["伝説の交易所を開設し、莫大な富を築いた！"] },
-        veteran: { success: ["海の覇者として、全海域の流通を掌握した。"], failure: ["相場の暴落により、一時的に資産が目減りした。"], great: ["あなたの署名一つで、国の予算が動く。"] }
-    }},
-    { name: "巨岩の要塞", icon: "fa-chess-rook", zoom: 2.3, security: 5, economy: 2, baseChanges: { body: 3, health: 1, money: -1 }, events: {
-        newcomer: { success: ["兵士たちと共に基礎訓練に励んだ。"], failure: ["訓練の厳しさについていけず、打ちのめされた。"] },
-        mid: { success: ["要塞の防衛戦で前線を支え、信頼を得た。"], failure: ["装備の整備不良を指摘され、再教育を受けた。"], great: ["千人の兵を相手に、たった一人で勝ち抜いた！"] },
-        veteran: { success: ["もはや要塞そのもののような頑強な肉体を得た。"], failure: ["長年の酷使により、古傷が痛み出した。"], great: ["要塞の総督として、不落の伝説を完成させた。"] }
-    }},
-    { name: "静謐な修道院", icon: "fa-church", zoom: 2.5, security: 4, economy: 2, baseChanges: { mind: 3, health: 1, body: -1 }, events: {
-        newcomer: { success: ["清らかな祈りの時間を持った。心が洗われる。"], failure: ["懺悔の時間が長引き、足がしびれた。"] },
-        mid: { success: ["人々の悩みを聴き、精神的な指導者となった。"], failure: ["自身の信仰に疑念を抱き、心が揺らいだ。"], great: ["奇跡を目の当たりにし、悟りの境地に達した！"] },
-        veteran: { success: ["聖者として崇められ、多くの巡礼者が訪れる。"], failure: ["過度な禁欲により、体調を崩してしまった。"], great: ["あなたの存在そのものが、生ける奇跡となった。"] }
-    }},
-    { name: "迷宮の入り口", icon: "fa-dungeon", zoom: 2.6, security: 2, economy: 1, baseChanges: { magic: 3, body: 1, health: -1 }, events: {
-        newcomer: { success: ["迷宮の浅層を探索した。魔力が刺激される。"], failure: ["迷宮の毒気に当てられ、気分が悪くなった。"] },
-        mid: { success: ["強力な魔物を討伐し、魔石を手に入れた。"], failure: ["迷路で迷い、脱出するのに苦労した。"], great: ["迷宮の奥底に眠る秘宝の一部を発見した！"] },
-        veteran: { success: ["迷宮の法則を理解し、魔法を自在に操った。"], failure: ["迷宮の深層で強大な呪縛を受け、消耗した. "], great: ["迷宮を完全に攻略し、その魔力を我が物とした。"] }
-    }},
-    { name: "真鍮の荒野", icon: "fa-mountain-sun", zoom: 2.3, security: 2, economy: 4, baseChanges: { money: 3, mind: 1, health: -1 }, events: {
-        newcomer: { success: ["古代遺跡の柱から、剥き出しの真鍮板を回収した。"], failure: ["崩落した遺跡の瓦礫で足を負傷してしまった。"] },
-        mid: { success: ["黄金時代を象徴する巨大なレリーフを解読した。"], failure: ["遺跡に充満していた古い瘴気に精神を削られた。"], great: ["遺跡群の奥底に眠る王族の黄金律を発見した！"] },
-        veteran: { success: ["遺跡の声を聞き、失われた古代の資産運用法を極めた。"], failure: ["遺跡の歴史の重みに呑まれ、一時期虚無感に襲われた。"], great: ["真鍮の荒野を「黄金の聖域」として再興し、莫大な富を得た。"] }
-    }},
-    { name: "太古の墓地", icon: "fa-monument", zoom: 2.5, security: 1, economy: 1, baseChanges: { fame: 3, magic: 1, mind: -1 }, events: {
-        newcomer: { success: ["墓碑の文字を書き写した。歴史を感じる。"], failure: ["冷たい風が吹き抜け、背筋が凍った。"] },
-        mid: { success: ["伝説の英雄の墓を特定し、その遺志を継いだ。"], failure: ["不浄な霊に憑かれ、一時的に魔力が不安定に。"], great: ["死者たちの魂を鎮め、絶大な名声を得た！"] },
-        veteran: { success: ["生と死の境界を理解し、魂の声を聞いた。"], failure: ["過去の亡霊たちの悲しみに囚われそうになった。"], great: ["永遠に語り継がれる、魂の導き手となった。"] }
-    }},
-    { name: "喧騒の闘技場", icon: "fa-khanda", zoom: 2.4, security: 3, economy: 3, baseChanges: { body: 3, fame: 1, money: -1 }, events: {
-        newcomer: { success: ["下位ランクの試合で初勝利を挙げた。"], failure: ["手痛い敗北を喫し、観客の嘲笑を浴びた。"] },
-        mid: { success: ["連勝記録を伸ばし、闘技場の有名人となった。"], failure: ["強引な試合運びで、身体に負担がかかった。"], great: ["格上のチャンピオンを下し、場内が熱狂に包まれた！"] },
-        veteran: { success: ["伝説の闘士として、無敗の神話を築き上げた。"], failure: ["常に狙われる立場となり、心が休まらない。"], great: ["闘技場の歴史上、最強の男として君臨した。"] }
-    }},
-    { name: "緑の隠れ里", icon: "fa-leaf", zoom: 2.6, security: 4, economy: 2, baseChanges: { health: 3, money: 1, fame: -1 }, events: {
-        newcomer: { success: ["里の薬草園で手伝いをした。自然の恵み。"], failure: ["毒草を誤って触ってしまい、手が腫れた。"] },
-        mid: { success: ["秘伝の薬の調合を教わった。健康体となった。"], failure: ["里の掟を破りそうになり、厳しい叱責を受けた。"], great: ["里の守り手として、精霊の加護を受けた！"] },
-        veteran: { success: ["不老不死の妙薬に近い、究極の薬学を極めた。"], failure: ["俗世から離れすぎて、名声を失いつつある。"], great: ["自然と調和し、あらゆる病から解放された。"] }
-    }}
+    { name: "王都", icon: "fa-city", zoom: 2.2, security: 5, economy: 5, baseChanges: { fame: 3, money: 1, mind: -1 }, events: {} },
+    { name: "賢者の塔", icon: "fa-tower-observation", zoom: 2.8, security: 4, economy: 2, baseChanges: { magic: 3, mind: 1, body: -1 }, events: {} },
+    { name: "辺境の村", icon: "fa-house-chimney", zoom: 2.5, security: 2, economy: 1, baseChanges: { health: 3, body: 1, fame: -1 }, events: {} },
+    { name: "忘れられた古城", icon: "fa-landmark", zoom: 2.5, security: 1, economy: 1, baseChanges: { mind: 3, magic: 1, health: -1 }, events: {} },
+    { name: "賑わいの港町", icon: "fa-ship", zoom: 2.2, security: 3, economy: 5, baseChanges: { money: 3, fame: 1, magic: -1 }, events: {} },
+    { name: "巨岩の要塞", icon: "fa-chess-rook", zoom: 2.3, security: 5, economy: 2, baseChanges: { body: 3, health: 1, money: -1 }, events: {} },
+    { name: "静謐な修道院", icon: "fa-church", zoom: 2.5, security: 4, economy: 2, baseChanges: { mind: 3, health: 1, body: -1 }, events: {} },
+    { name: "迷宮の入り口", icon: "fa-dungeon", zoom: 2.6, security: 2, economy: 1, baseChanges: { magic: 3, body: 1, health: -1 }, events: {} },
+    { name: "真鍮の荒野", icon: "fa-mountain-sun", zoom: 2.3, security: 2, economy: 4, baseChanges: { money: 3, mind: 1, health: -1 }, events: {} },
+    { name: "太古の墓地", icon: "fa-monument", zoom: 2.5, security: 1, economy: 1, baseChanges: { fame: 3, magic: 1, mind: -1 }, events: {} },
+    { name: "喧騒の闘技場", icon: "fa-khanda", zoom: 2.4, security: 3, economy: 3, baseChanges: { body: 3, fame: 1, money: -1 }, events: {} },
+    { name: "緑の隠れ里", icon: "fa-leaf", zoom: 2.6, security: 4, economy: 2, baseChanges: { health: 3, money: 1, fame: -1 }, events: {} }
+];
+
+/* --- 座標データ --- */
+const spotAssignments = [
+    {l:56, t:42, main:'fame',  sub:'money'},
+    {l:87, t:19, main:'magic', sub:'mind'},
+    {l:79, t:88, main:'health',sub:'body'},
+    {l:88, t:70, main:'mind',  sub:'magic'},
+    {l:8, t:64, main:'money', sub:'fame'},
+    {l:10, t:10, main:'body',  sub:'health'},
+    {l:72, t:55, main:'mind',  sub:'health'},
+    {l:61.5, t:10.5, main:'magic', sub:'body'},
+    {l:62, t:85, main:'money', sub:'mind'},
+    {l:38, t:23, main:'fame',  sub:'magic'},
+    {l:34, t:80, main:'body',  sub:'fame'},
+    {l:22, t:20, main:'health',sub:'money'}
 ];
