@@ -113,26 +113,140 @@
         .ed-stat-val { font-size: 18px; font-weight: bold; }
         .max-label { position: absolute; bottom: 2px; right: 4px; font-size: 9px; font-weight: bold; text-shadow: 0 0 3px #000; }
         
-        #boost-container { display: flex; flex-direction: column; align-items: center; margin: 25px 0; width: 1050px; z-index: 110; position: relative; }
-        .boost-section { width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 10px; }
-        .boost-divider { width: 100%; height: 1px; background: rgba(176,141,85,0.3); margin: 5px 0 10px; }
-        .boost-section-title { width: 100%; font-size: 10px; color: #888; text-align: center; margin-bottom: 5px; letter-spacing: 2px; }
-        .boost-btn { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; color: #444; width: 150px; height: 32px; padding: 0 10px; font-size: 10px; cursor: default; font-family: 'Cinzel', serif; transition: 0.3s; border-radius: 4px; opacity: 0.3; pointer-events: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        /* タイトル画面レイアウト修正 */
+        #title-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 0; }
+        
+        /* タイトルロゴエリア */
+        .title-logo-wrapper { position: relative; display: inline-block; margin-bottom: 20px; text-align: center; }
+        .title-logo-container h1 { margin: 0; line-height: 1; }
+        .jp-title {
+            position: absolute;
+            bottom: -22px;
+            right: 0px;
+            font-size: 15px;
+            color: #ffffff !important;
+            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            font-weight: bold;
+            font-family: "Yu Mincho", serif;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        /* ボタンエリア */
+        .title-btn-container {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 10px;
+            justify-content: center;
+            width: 100%;
+            min-height: 50px; 
+        }
+
+        #start-btn, #continue-btn {
+            width: 260px;
+            padding: 12px 0;
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        #continue-btn { 
+            display: none; 
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid #8db055; 
+            color: #8db055; 
+            font-family: 'Cinzel', serif; 
+            cursor: pointer; transition: 0.3s; 
+            z-index: 1000;
+        }
+        #continue-btn:hover { background: #8db055; color: #000; box-shadow: 0 0 15px #8db055; border-color: #fff; }
+
+        /* ブーストエリア */
+        #boost-container { display: flex; flex-direction: column; align-items: center; margin: 5px 0; width: 1000px; z-index: 110; position: relative; }
+        
+        .boost-section-title { 
+            width: 100%; 
+            font-size: 14px; 
+            color: #d4af37; 
+            text-align: center; 
+            margin-bottom: 8px; 
+            letter-spacing: 3px; 
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8), transparent);
+            padding: 4px 0;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .boost-section { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 5px; }
+        .boost-divider { width: 90%; height: 1px; background: rgba(176,141,85,0.3); margin: 6px auto; }
+        
+        .boost-btn { 
+            background: rgba(20, 20, 20, 0.9); 
+            border: 1px solid #333; 
+            color: #444; 
+            width: 140px; 
+            height: 28px; 
+            padding: 0 5px; 
+            font-size: 10px; 
+            cursor: default; 
+            font-family: 'Cinzel', serif; 
+            transition: 0.3s; 
+            border-radius: 4px; 
+            opacity: 0.3; 
+            pointer-events: none; 
+            display: flex; align-items: center; justify-content: center; gap: 6px; 
+        }
         .boost-btn.unlocked { border: 1px solid #b08d55; color: #b08d55; cursor: pointer; pointer-events: auto; opacity: 1; }
         .boost-btn.active { background: #b08d55 !important; color: #000 !important; box-shadow: 0 0 10px #b08d55; font-weight: bold; border-color: #fff; opacity: 1; }
         
+        /* ログエリア */
+        #past-records-container { 
+            margin-top: 5px; 
+            width: 460px; 
+            background: rgba(0, 0, 0, 0.8); 
+            border: 1px solid #b08d55; 
+            padding: 0; 
+            font-family: 'Cinzel', serif; 
+            text-align: left; 
+            z-index: 105; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .record-title {
+            padding: 8px 10px;
+            background: rgba(176, 141, 85, 0.1);
+            border-bottom: 1px solid rgba(176, 141, 85, 0.3);
+            font-weight: bold;
+            color: #b08d55;
+            flex-shrink: 0; 
+            font-size: 13px;
+        }
+
+        #past-records-list {
+            max-height: 130px; 
+            overflow-y: auto;
+            padding: 5px 10px 10px;
+        }
+        
+        /* スクロールバー装飾 (Webkit) */
+        #past-records-list::-webkit-scrollbar { width: 6px; }
+        #past-records-list::-webkit-scrollbar-track { background: #111; }
+        #past-records-list::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        #past-records-list::-webkit-scrollbar-thumb:hover { background: #b08d55; }
+
         /* その他 */
         #fade-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; pointer-events: none; opacity: 0; transition: opacity 1.5s ease-in-out; }
         #fade-overlay.active { opacity: 1; pointer-events: auto; }
         #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #b08d55; font-family: 'Cinzel', serif; text-align: center; }
         #load-bar-container { width: 300px; height: 4px; background: #222; margin-top: 20px; border-radius: 2px; overflow: hidden; }
         #load-bar-fill { width: 0%; height: 100%; background: #b08d55; transition: width 0.2s; box-shadow: 0 0 10px #b08d55; }
-        #past-records-container { margin-top: 10px; width: 440px; background: rgba(0, 0, 0, 0.8); border: 1px solid #b08d55; padding: 12px; font-family: 'Cinzel', serif; max-height: 140px; overflow-y: auto; text-align: left; z-index: 105; position: relative; }
         .record-item { font-size: 11px; color: #ccc; padding: 8px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; display: grid; grid-template-columns: 75px 1fr auto; align-items: center; gap: 10px; }
         .record-item:hover { background: rgba(176, 141, 85, 0.2); }
         .record-rank { text-align: left; font-weight: bold; } .record-partner { text-align: left; display: flex; align-items: center; gap: 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; } .record-date { text-align: right; opacity: 0.8; font-size: 0.9em; }
         .affinity-leaf { color: #8db055 !important; } .affinity-seedling { color: #ffb7c5 !important; } .bouquet-icon { color: #ff69b4 !important; filter: drop-shadow(0 0 3px #ff69b4); animation: bouquetPulse 1.5s infinite alternate; }
-        #debug-panel { max-height: 90vh; overflow-y: auto; width: 220px; padding: 10px; font-size: 10px; z-index: 2000; }
+        #debug-panel { max-height: 90vh; overflow-y: auto; width: 220px; padding: 10px; font-size: 10px; z-index: 2000; display: none; }
         .debug-row { display: flex; gap: 5px; margin-bottom: 5px; }
         input[type=range] { width: 100%; -webkit-appearance: none; background: #444; height: 4px; border-radius: 2px; margin: 5px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: #ffcc00; width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
@@ -216,12 +330,20 @@
         <div id="title-screen" class="overlay-screen">
             <div id="title-img-bg" style="background-image: url('images/title.png');"></div>
             <button id="title-fullscreen-btn" class="fullscreen-btn" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-            <div class="title-logo-container">
-                <h1 class="size-days">DAYS</h1><h1 class="size-in">IN</h1><h1 class="size-magh">MAGHRIBAL</h1>
+            
+            <div class="title-logo-wrapper">
+                <div class="title-logo-container">
+                    <h1 class="size-days">DAYS</h1><h1 class="size-in">IN</h1><h1 class="size-magh">MAGHRIBAL</h1>
+                </div>
+                <div class="title-underline"></div>
+                <h2 class="jp-title">- マグリバルにて -</h2>
             </div>
-            <div class="title-underline"></div>
-            <h2>- マグリバルにて -</h2>
-            <button id="start-btn" onclick="startOP()">GAME START</button>
+
+            <div class="title-btn-container">
+                <button id="start-btn" onclick="startOP()">GAME START</button>
+                <button id="continue-btn" onclick="continueGame()">CONTINUE</button>
+            </div>
+
             <div id="boost-container"></div>
             <div id="past-records-container">
                 <div class="record-title"><i class="fa-solid fa-clock-rotate-left"></i> PAST RECORDS</div>
@@ -261,7 +383,6 @@
         const rankColors = { LEGEND: '#ffcc00', GOLD: '#e6b422', SILVER: '#c0c0c0', BRONZE: '#cd7f32' };
         const soloTitles = { health: "不滅の冒険者", body: "孤高の拳王", mind: "深淵の求道者", magic: "無窮の魔術師", fame: "名もなき伝説", money: "豪腕の大富豪" };
         
-        // 【修正】整合性に合わせてターゲット先とテキストキーを修正
         const impactConfig = {
             "オルテンシア": { targetName: "辺境の村", sec: 1, eco: 1, name: "王家の配給" },
             "エルナ": { targetName: "静謐な修道院", sec: 1, eco: 0, name: "収穫の祈り" },
@@ -287,20 +408,19 @@
         let heroineReactions = {}; 
         let clearedHeroines = [];
 
-        // 【修正】special.jsonの並び順と一致させました
         const heroineOPLines = [
-            ["王都の威光が辺境を照らす。", "王女の命により、貧しき村に物資が届けられた。", "希望の光が、人々の瞳に宿り始める。"], // H01 オルテンシア -> 辺境
-            ["賢者の叡智が、迷宮の深淵を照らす。", "封印が解かれ、冒険者たちが深層へと挑む。", "危険と隣り合わせの、富への扉が開かれた。"], // H02 ルナリス -> 迷宮
-            ["辺境の実りが、修道院の食卓を満たす。", "村人たちが届けた新鮮な糧が、祈りの場を支える。", "ささやかな幸福が、静かに満ちていく。"], // H03 エルナ -> 修道院
-            ["禁忌の知識が、塔の夜を怪しく照らす。", "古城から持ち込まれた古文書が、賢者たちを熱狂させる。", "知の交流が、新たな発見を生む。"], // H04 シルフィエット -> 塔
-            ["港の熱気が、王都の夜を彩る。", "海からの珍品が闇市場に溢れ、貴族たちを魅了する。", "欲望と金貨が、街の影で渦巻いている。"], // H05 マリーナ -> 王都
-            ["巨岩の盾が、港の波濤を鎮める。", "要塞の騎士たちが海賊を追い払い、交易路が開かれた。", "港町はかつてない賑わいを見せている。"], // H06 カタリナ -> 港
-            ["修道院の祈りが、太古の魂を慰める。", "聖女の浄化により、墓地は安らぎの地へと変わった。", "今宵、死者を偲ぶ静かな祭りが始まる。"], // H07 エリスフェリア -> 墓地
-            ["古城の闇が、闘技場の鮮血を求める。", "吸血鬼の戯れで、夜な夜な過激な殺し合いが行われる。", "観客の熱狂は、恐怖と共に最高潮へ達する。"], // H08 レグリナ -> 闘技場
-            ["荒野の情熱が、隠れ里の扉を開く。", "踊り子たちの情熱が、閉ざされたエルフの心を溶かす。", "森の奥深くで、種族を超えた宴が始まる。"], // H09 ゼファー -> 里
-            ["迷宮の探求者が、忘れられた城に挑む。", "亡霊の呼び声に応え、廃墟に幻の灯りがともる。", "かつての栄華が、一夜の夢として蘇る。"], // H10 ネクロア -> 古城
-            ["闘技場の狂騒が、要塞の静寂を破る。", "猛者たちが守備隊に加わり、鉄壁の守りが築かれた。", "しかし、その荒々しさに住民は怯えている。"], // H11 メルル -> 要塞
-            ["深緑の息吹が、荒野に潤いをもたらす。", "エルフの秘術により、砂漠の只中に泉が湧き出した。", "不毛の大地に、奇跡の花が咲き乱れる。"] // H12 エルヴィーラ -> 荒野
+            ["王都の威光が辺境を照らす。", "王女の命により、貧しき村に物資が届けられた。", "希望の光が、人々の瞳に宿り始める。"], 
+            ["賢者の叡智が、迷宮の深淵を照らす。", "封印が解かれ、冒険者たちが深層へと挑む。", "危険と隣り合わせの、富への扉が開かれた。"],
+            ["辺境の実りが、修道院の食卓を満たす。", "村人たちが届けた新鮮な糧が、祈りの場を支える。", "ささやかな幸福が、静かに満ちていく。"],
+            ["禁忌の知識が、塔の夜を怪しく照らす。", "古城から持ち込まれた古文書が、賢者たちを熱狂させる。", "知の交流が、新たな発見を生む。"],
+            ["港の熱気が、王都の夜を彩る。", "海からの珍品が闇市場に溢れ、貴族たちを魅了する。", "欲望と金貨が、街の影で渦巻いている。"],
+            ["巨岩の盾が、港の波濤を鎮める。", "要塞の騎士たちが海賊を追い払い、交易路が開かれた。", "港町はかつてない賑わいを見せている。"],
+            ["修道院の祈りが、太古の魂を慰める。", "聖女の浄化により、墓地は安らぎの地へと変わった。", "今宵、死者を偲ぶ静かな祭りが始まる。"],
+            ["古城の闇が、闘技場の鮮血を求める。", "吸血鬼の戯れで、夜な夜な過激な殺し合いが行われる。", "観客の熱狂は、恐怖と共に最高潮へ達する。"],
+            ["荒野の情熱が、隠れ里の扉を開く。", "踊り子たちの情熱が、閉ざされたエルフの心を溶かす。", "森の奥深くで、種族を超えた宴が始まる。"],
+            ["迷宮の探求者が、忘れられた城に挑む。", "亡霊の呼び声に応え、廃墟に幻の灯りがともる。", "かつての栄華が、一夜の夢として蘇る。"],
+            ["闘技場の狂騒が、要塞の静寂を破る。", "猛者たちが守備隊に加わり、鉄壁の守りが築かれた。", "しかし、その荒々しさに住民は怯えている。"],
+            ["深緑の息吹が、荒野に潤いをもたらす。", "エルフの秘術により、砂漠の只中に泉が湧き出した。", "不毛の大地に、奇跡の花が咲き乱れる。"]
         ];
 
         const defaultRegionStats = [ { sec: 4, eco: 4 }, { sec: 5, eco: 2 }, { sec: 3, eco: 2 }, { sec: 1, eco: 1 }, { sec: 2, eco: 5 }, { sec: 2, eco: 4 }, { sec: 4, eco: 2 }, { sec: 1, eco: 2 }, { sec: 1, eco: 1 }, { sec: 3, eco: 1 }, { sec: 3, eco: 3 }, { sec: 1, eco: 3 } ];
@@ -330,10 +450,8 @@
             try {
                 const monoRes = await fetch('data/events/monologues.json');
                 const monoJson = await monoRes.json();
-                monologueData = monoJson.common;
+                monologueData = monoJson;
                 heroineReactions = monoJson.heroines;
-
-                // 【修正】外部ファイルを読み込む形に戻しました
                 const specRes = await fetch('data/events/special.json');
                 specialData = await specRes.json();
             } catch (e) { console.error("Data load failed", e); }
@@ -355,16 +473,92 @@
             const savedA = localStorage.getItem('maghribal_active_boosts'); if(savedA) activeBoosts = JSON.parse(savedA);
             const savedI = localStorage.getItem('maghribal_active_impacts'); if(savedI) activeImpacts = JSON.parse(savedI);
             const savedC = localStorage.getItem('maghribal_cleared_heroines'); if(savedC) clearedHeroines = JSON.parse(savedC);
-
-            loadHeroineProgress();
-
+            
             initUI(); displayPastRecords(); renderBoostButtons();
             resizeGameContainer(); window.addEventListener('resize', resizeGameContainer);
+            
+            checkResumeData(); 
+            
             setTimeout(() => { document.getElementById("loading-screen").style.display = "none"; }, 800);
         };
+        
+        function checkResumeData() {
+            try {
+                const savedSession = localStorage.getItem('maghribal_resume_data');
+                if(savedSession) {
+                    const btn = document.getElementById('continue-btn');
+                    if(btn) {
+                        btn.style.display = 'block'; 
+                    }
+                }
+            } catch(e) { console.error("Error checking resume data:", e); }
+        }
 
-        function saveHeroineProgress() { const progressData = heroines.map(h => h.progress); localStorage.setItem('maghribal_heroine_progress', JSON.stringify(progressData)); }
-        function loadHeroineProgress() { const saved = localStorage.getItem('maghribal_heroine_progress'); if (saved) { const progressData = JSON.parse(saved); heroines.forEach((h, i) => { if (progressData[i] !== undefined) h.progress = progressData[i]; }); } }
+        function saveSessionData() {
+            if (turn > maxTurn && activeImpacts.findIndex(Boolean) === -1) return; 
+            try {
+                const sessionData = {
+                    turn: turn,
+                    stats: stats,
+                    activeImpacts: activeImpacts,
+                    consecutiveNormalEvents: consecutiveNormalEvents,
+                    lastEventWasHeroine: lastEventWasHeroine,
+                    heroineProgress: heroines.map(h => ({p: h.progress || 0, a: h.affection || 0})),
+                    gameLog: currentGameLog
+                };
+                localStorage.setItem('maghribal_resume_data', JSON.stringify(sessionData));
+                
+                const contBtn = document.getElementById("continue-btn");
+                if(contBtn) contBtn.style.display = "block";
+            } catch(e) {
+                console.error("Save failed:", e);
+            }
+        }
+
+        function continueGame() {
+            const saved = localStorage.getItem('maghribal_resume_data');
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+
+                turn = data.turn;
+                stats = data.stats;
+                activeImpacts = data.activeImpacts || Array(12).fill(false);
+                consecutiveNormalEvents = data.consecutiveNormalEvents;
+                lastEventWasHeroine = data.lastEventWasHeroine;
+                currentGameLog = data.gameLog || [];
+
+                if (data.heroineProgress) {
+                    heroines.forEach((h, i) => {
+                        if (data.heroineProgress[i]) {
+                            h.progress = data.heroineProgress[i].p;
+                            h.affection = data.heroineProgress[i].a;
+                        }
+                    });
+                }
+
+                document.getElementById("title-screen").classList.add("hidden-screen");
+                document.getElementById("top-ui-container").style.display = "flex";
+                document.getElementById("background-layer").classList.add("visible");
+                document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible'));
+
+                statKeys.forEach(k => updateUI(k));
+                document.getElementById("turn-count").innerText = turn;
+                document.getElementById("log-content").innerHTML = currentGameLog.join('');
+                updateMapState();
+
+                bgmOp.pause();
+                bgmMap.currentTime = 0;
+                bgmMap.play();
+                isGameStarted = true;
+                
+                updateMonologue('resume', false); 
+            } catch(e) {
+                console.error("Load failed:", e);
+                alert("セーブデータの読み込みに失敗しました。");
+            }
+        }
+
         function resizeGameContainer() { const container = document.getElementById('game-container'); const targetW = 1280; const targetH = 720; const windowW = window.innerWidth; const windowH = window.innerHeight; const scaleW = windowW / targetW; const scaleH = windowH / targetH; const scale = Math.min(scaleW, scaleH); container.style.transform = `scale(${scale})`; }
         function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(err); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
         
@@ -379,7 +573,7 @@
             updateRecommend();
         }
 
-        function updateMonologue(type = 'random') {
+        const updateMonologue = (type = 'random', saveToLog = true) => { 
             const container = document.getElementById('monologue-container');
             const textEl = container.querySelector('.monologue-text');
             
@@ -388,22 +582,27 @@
             let text = "";
             let pool = [];
 
-            if (type === 'start') {
-                pool = monologueData.start;
+            if (type === 'resume') { 
+                text = "……さて、旅の続きを始めよう。"; 
+            } else if (type === 'start') {
+                pool = monologueData.common.start;
             } else if (lastEventContext) { 
                 const { name, progress } = lastEventContext;
                 const stage = Math.min(progress - 1, 5); 
                 if (heroineReactions[name] && heroineReactions[name][stage]) {
                     text = heroineReactions[name][stage];
                 } else {
-                    pool = monologueData.success; 
+                    pool = monologueData.common.success; 
                 }
                 lastEventContext = null;
             } else {
                 const maxStats = statKeys.filter(k => stats[k] >= 50);
-                if (maxStats.length > 0 && Math.random() < 0.3) { pool = monologueData.stat_max; } 
+                if (maxStats.length > 0 && Math.random() < 0.3) { 
+                    pool = monologueData.common.stat_max; 
+                } 
                 else if (lastEventResult && Math.random() < 0.7) {
-                    pool = (lastEventResult === 'success' || lastEventResult === 'great_success') ? monologueData.success : monologueData.failure;
+                    const resKey = lastEventResult.includes('great') ? 'great' : lastEventResult;
+                    pool = monologueData.common[resKey] || monologueData.common.failure;
                     lastEventResult = null;
                 }
                 else if (Math.random() < 0.4) { 
@@ -415,24 +614,27 @@
                             text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
                         }
                     } else {
-                        pool = monologueData.hint_weak;
+                        pool = monologueData.common.hint_weak;
                     }
                 }
                 else {
-                    if (turn < 5) pool = monologueData.progress_low;
-                    else if (turn < 15) pool = monologueData.progress_mid;
-                    else pool = monologueData.progress_high;
+                    if (turn < 5) pool = monologueData.common.progress_low;
+                    else if (turn < 15) pool = monologueData.common.progress_mid;
+                    else pool = monologueData.common.progress_high;
                 }
             }
+
             if (!text) {
-                if (!pool || pool.length === 0) pool = monologueData.progress_mid;
+                if (!pool || pool.length === 0) pool = monologueData.common.progress_mid;
                 text = pool[Math.floor(Math.random() * pool.length)];
             }
 
-            currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
-            const logContent = document.getElementById("log-content");
-            if (logContent) {
-                logContent.innerHTML = currentGameLog.join('');
+            if (saveToLog) {
+                currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
+                const logContent = document.getElementById("log-content");
+                if (logContent) {
+                    logContent.innerHTML = currentGameLog.join('');
+                }
             }
 
             textEl.innerHTML = "";
@@ -448,7 +650,7 @@
                 i++;
                 if (i >= text.length) clearInterval(monologueInterval);
             }, 50);
-        }
+        };
 
         function updateMapState() {
             const activeIdx = activeImpacts.findIndex(Boolean);
@@ -534,7 +736,6 @@
                         if (h.progress >= 3) isResultHidden = true; 
                         bCh[assign.main] = 5; bCh[assign.sub] = 2; out = 'heroine'; 
                         lastEventContext = { name: h.name, progress: h.progress };
-                        saveHeroineProgress(); 
 
                         if (h.progress >= 5) {
                             if (!clearedHeroines.includes(h.name)) {
@@ -593,37 +794,53 @@
                 document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 1500); 
                 return; 
             }
-
-            setTimeout(() => { 
-                if (turn >= maxTurn) { 
-                    updateMonologue(); 
-                    setTimeout(() => { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 3000); }, 3000);
-                } 
-                else { 
-                    turn++; document.getElementById("turn-count").innerText = turn; isEventActive = false; 
-                    updateMonologue(); 
-                    document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
-                } 
-            }, 250); 
+            
+            if (turn < maxTurn) { 
+                turn++; 
+                document.getElementById("turn-count").innerText = turn; 
+                isEventActive = false; 
+                updateMonologue(); 
+                saveSessionData(); 
+                
+                setTimeout(() => { 
+                     document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
+                }, 250);
+            } 
+            else { 
+                updateMonologue(); 
+                saveSessionData(); 
+                setTimeout(() => { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 3000); }, 3000);
+            }
         }
         function formatGameText(text) { return text.replace(/@(\w+)@/g, (m, k) => `<span style="color:${statColors[k]}">${statConfig[k].name}</span>`); }
         function toggleStats() { playSE(sePi); const p = document.getElementById("stats-panel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
         function toggleLog() { playSE(sePi); const l = document.getElementById("log-overlay"); l.style.display = l.style.display === "flex" ? "none" : "flex"; if(l.style.display === "flex") { document.getElementById("log-window").scrollTop = document.getElementById("log-window").scrollHeight; } }
         function checkRankUpdate() { const total = Object.values(stats).reduce((sum, v) => sum + v, 0), btn = document.getElementById("status-toggle-btn"); let rank = total >= 150 ? "legend" : (total >= 100 ? "gold" : (total >= 50 ? "silver" : "bronze")); [btn, document.getElementById("stats-panel")].forEach(el => { if(el) { el.classList.remove("rank-silver", "rank-gold", "rank-legend"); if (rank !== "bronze") el.classList.add("rank-" + rank); } }); }
         
-        // 【復元】以下、欠落していた関数群です
         function renderBoostButtons() { 
             const container = document.getElementById("boost-container"); if(!container) return; container.innerHTML = ""; 
-            const statSection = document.createElement("div"); statSection.className = "boost-section"; statSection.innerHTML = `<div class="boost-section-title">- START BONUS -</div>`; container.appendChild(statSection);
-            statKeys.forEach(k => { const btn = document.createElement("button"); btn.className = `boost-btn ${unlockedBoosts[k] ? 'unlocked' : ''} ${activeBoosts[k] ? 'active' : ''}`; btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +10`; btn.onclick = (e) => { e.stopPropagation(); if(!unlockedBoosts[k]) return; activeBoosts[k] = !activeBoosts[k]; localStorage.setItem('maghribal_active_boosts', JSON.stringify(activeBoosts)); playSE(sePi); renderBoostButtons(); }; statSection.appendChild(btn); });
-            const impactSection = document.createElement("div"); impactSection.className = "boost-section"; impactSection.innerHTML = `<div class="boost-divider"></div><div class="boost-section-title">- WORLD INFLUENCE -</div>`; container.appendChild(impactSection);
-            heroines.forEach((h, i) => { const impact = heroineImpacts[i]; const targetScene = scenarios[impact.target]; const isActive = activeImpacts[i]; 
             
-            const isUnlocked = clearedHeroines.includes(h.name); 
+            const title = document.createElement("div");
+            title.className = "boost-section-title";
+            title.innerText = "- START BONUS / WORLD INFLUENCE -";
+            container.appendChild(title);
 
+            const content = document.createElement("div");
+            content.className = "boost-section";
+            
+            statKeys.forEach(k => { const btn = document.createElement("button"); btn.className = `boost-btn ${unlockedBoosts[k] ? 'unlocked' : ''} ${activeBoosts[k] ? 'active' : ''}`; btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +10`; btn.onclick = (e) => { e.stopPropagation(); if(!unlockedBoosts[k]) return; activeBoosts[k] = !activeBoosts[k]; localStorage.setItem('maghribal_active_boosts', JSON.stringify(activeBoosts)); playSE(sePi); renderBoostButtons(); }; content.appendChild(btn); });
+            
+            const divider = document.createElement("div");
+            divider.className = "boost-divider";
+            content.appendChild(divider);
+
+            heroines.forEach((h, i) => { const impact = heroineImpacts[i]; const targetScene = scenarios[impact.target]; const isActive = activeImpacts[i]; 
+            const isUnlocked = clearedHeroines.includes(h.name); 
             const btn = document.createElement("button"); btn.className = `boost-btn ${isUnlocked ? 'unlocked' : ''} ${isActive ? 'active' : ''}`; 
             btn.innerHTML = `<i class="fa-solid ${targetScene.icon}"></i> ${impact.btnLabel}`; 
-            btn.onclick = (e) => { e.stopPropagation(); if (!isUnlocked) return; const wasActive = activeImpacts[i]; activeImpacts.fill(false); if (!wasActive) activeImpacts[i] = true; localStorage.setItem('maghribal_active_impacts', JSON.stringify(activeImpacts)); playSE(sePi); renderBoostButtons(); }; impactSection.appendChild(btn); });
+            btn.onclick = (e) => { e.stopPropagation(); if (!isUnlocked) return; const wasActive = activeImpacts[i]; activeImpacts.fill(false); if (!wasActive) activeImpacts[i] = true; localStorage.setItem('maghribal_active_impacts', JSON.stringify(activeImpacts)); playSE(sePi); renderBoostButtons(); }; content.appendChild(btn); });
+
+            container.appendChild(content);
         }
         
         function saveCurrentGameLog() { 
@@ -634,7 +851,7 @@
             processBoostUnlock(); 
             if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
             
-            localStorage.removeItem('maghribal_heroine_progress'); 
+            localStorage.removeItem('maghribal_resume_data'); 
 
             document.getElementById("ed-screen").classList.remove("hidden-screen"); 
             bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
