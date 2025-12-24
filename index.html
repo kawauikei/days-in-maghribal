@@ -8,257 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* 全体設定 */
-        * { -webkit-tap-highlight-color: transparent; outline: none; touch-action: manipulation; }
-        body { margin: 0; padding: 0; background-color: #000; width: 100vw; height: 100dvh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: fixed; }
-        
-        /* ゲームコンテナ */
-        #game-container { position: relative; width: 1280px; height: 720px; background: #000; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8); transform-origin: center center; flex-shrink: 0; user-select: none; -webkit-user-select: none; }
-
-        /* 背景 */
-        #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/all_map.PNG'); background-size: cover; background-position: center; opacity: 0; transition: opacity 1s, transform 0.5s ease-out, filter 0.5s; z-index: 1; pointer-events: none; }
-        #background-layer.visible { opacity: 1; }
-        #background-layer.blur-bg { filter: blur(5px); }
-        #title-img-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/title.png'); background-size: cover; background-position: center; filter: url(#water-filter); z-index: 0; }
-
-        /* マップ要素 */
-        .map-spot { position: absolute; width: 80px; height: 80px; transform: translate(-50%, -50%); cursor: pointer; z-index: 100; opacity: 0; visibility: hidden; transition: 0.5s; }
-        .map-spot.spot-visible { opacity: 1; visibility: visible; }
-        .map-spot.spot-disabled { opacity: 0.3 !important; pointer-events: none !important; filter: grayscale(100%); }
-        
-        .spot-core { position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; top: 34px; left: 34px; box-shadow: 0 0 15px #fff, 0 0 30px #fff; z-index: 10; }
-        .orb { position: absolute; border-radius: 50%; opacity: 0.85; z-index: 5; filter: blur(6px); transition: 0.3s; }
-        .orb-main { width: 34px; height: 34px; top: 23px; left: 23px; animation: rotateMain 4.5s linear infinite; box-shadow: 0 0 25px currentColor, 0 0 50px currentColor, 0 0 70px currentColor; }
-        .orb-sub { width: 22px; height: 22px; top: 29px; left: 29px; animation: rotateSub 4.5s linear infinite; box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-        @keyframes rotateMain { 0% { transform: rotate(0deg) translateX(30px); } 100% { transform: rotate(360deg) translateX(30px); } }
-        @keyframes rotateSub { 0% { transform: rotate(180deg) translateX(30px); } 100% { transform: rotate(540deg) translateX(30px); } }
-
-        /* 地名テキスト */
-        .hint-container { position: absolute; top: 32px; left: 50%; transform: translateX(-50%); width: 240px; text-align: center; pointer-events: none; z-index: 20; }
-        .hint-text { 
-            color: #fff; font-size: 16px; white-space: nowrap; font-family: 'Cinzel', serif; 
-            will-change: transform; backface-visibility: hidden; transition: 0.2s ease-out; 
-            font-weight: bold; letter-spacing: 1px; display: inline-block; 
-            background: rgba(0, 0, 0, 0.3); padding: 4px 12px; border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 15px; position: relative;
-        }
-        .map-spot:hover .hint-text { transform: scale(1.1); background: rgba(0, 0, 0, 0.85); border-color: rgba(176, 141, 85, 0.6); z-index: 30; }
-        .selected-yellow { color: #ffcc00 !important; background: rgba(0, 0, 0, 0.9) !important; border-color: #ffcc00 !important; transform: scale(1.1); }
-        .recommend-icon { position: absolute; top: -8px; right: -8px; color: #00ffff; font-size: 16px; text-shadow: 0 0 5px #000, 0 0 10px #00ffff; animation: floatRecommend 1s infinite alternate ease-in-out; display: none; z-index: 25; }
-        .recommend-icon.visible { display: block; }
-        @keyframes floatRecommend { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-5px); opacity: 1; } }
-
-        /* モノローグ（独り言）エリア */
-        #monologue-container {
-            position: absolute; bottom: 20px; left: 20px; 
-            width: 600px; min-height: 34px; 
-            background: rgba(250, 250, 250, 0.9); /* 白背景 */
-            border: 1px solid rgba(0, 0, 0, 0.3);
-            border-left: 4px solid #b08d55;
-            border-radius: 4px;
-            padding: 4px 14px;
-            z-index: 150;
-            display: none; 
-            flex-direction: column; justify-content: center;
-            opacity: 0; transform: translateY(5px);
-            transition: opacity 0.5s, transform 0.5s;
-            pointer-events: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        #monologue-container.visible { opacity: 1; transform: translateY(0); }
-        .monologue-text { 
-            color: #222; font-size: 15px; line-height: 1.2; 
-            font-family: "Yu Mincho", serif; font-weight: bold;
-            text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        #monologue-container::after {
-            content: ''; position: absolute; bottom: -6px; left: 15px;
-            width: 0; height: 0;
-            border-left: 6px solid transparent; border-right: 6px solid transparent;
-            border-top: 6px solid rgba(250, 250, 250, 0.9);
-        }
-
-        /* 右上UI */
-        #top-ui-container { position: absolute; top: 15px; right: 15px; display: none; align-items: center; gap: 10px; z-index: 1000; transform: scale(0.9); transform-origin: top right; }
-        .fullscreen-btn { background: rgba(0,0,0,0.6); border: 1px solid #b08d55; color: #b08d55; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; transition: 0.3s; }
-        .fullscreen-btn:hover { background: #b08d55; color: #000; }
-        #title-fullscreen-btn { position: absolute; top: 20px; right: 20px; z-index: 200; font-size: 18px; width: 40px; height: 40px; }
-
-        /* カーソル・バッジ */
-        #page-cursor { position: absolute !important; bottom: 15px !important; right: 25px !important; color: #b08d55 !important; font-size: 24px !important; z-index: 1000 !important; display: none; pointer-events: none; }
-        #page-cursor.active { display: block !important; animation: cursorBlink 0.8s infinite alternate ease-in-out !important; }
-        @keyframes cursorBlink { 0% { opacity: 0.2; transform: translateY(0); } 100% { opacity: 1; transform: translateY(6px); } }
-        .outcome-badge { margin-right: 8px; font-weight: bold; font-family: 'Cinzel', serif; font-size: 1.0em; display: inline-block; }
-        .outcome-badge.success { color: #8db055; text-shadow: 0 0 5px #8db055; }
-        .outcome-badge.great { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; animation: pulse 1s infinite alternate; }
-        .outcome-badge.failure { color: #aaa; }
-        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1.2; transform: scale(1.05); } }
-
-        /* ウィンドウ・ログ */
-        #message-window { position: absolute !important; bottom: 10px !important; left: 50% !important; width: 90%; max-width: 900px; z-index: 200; padding-bottom: 45px !important; transform: translateX(-50%) translateY(30px); opacity: 0; visibility: hidden; transition: transform 0.25s ease-out, opacity 0.25s ease-out, visibility 0.25s; }
-        #message-window.active { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
-        #result-display { position: absolute; bottom: 12px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; pointer-events: none; z-index: 205; opacity: 0; transition: opacity 0.5s; }
-        #loc-stats { margin-left: 15px; font-size: 12px; border-left: 1px solid rgba(176, 141, 85, 0.4); padding-left: 15px; display: flex; align-items: center; gap: 12px; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000; }
-        #log-window { padding: 20px; line-height: 1.6; }
-        .log-entry { margin-bottom: 25px; border-bottom: 1px solid rgba(176, 141, 85, 0.3); padding-bottom: 15px; }
-        .log-header { font-size: 13px; color: #b08d55; margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .log-body { user-select: text; -webkit-user-select: text; }
-        .monologue-log { font-style: italic; color: #aaa; font-size: 0.9em; margin-top: 5px; border-left: 2px solid #555; padding-left: 8px; font-family: "Yu Mincho", serif; }
-
-        /* エンディング・ブースト */
-        #ed-stats { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
-        .ed-stat-box { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 70px; height: 70px; background: rgba(0,0,0,0.8); border: 1px solid #444; border-radius: 4px; color: #fff; }
-        .ed-stat-box i { font-size: 20px; margin-bottom: 5px; color: #888; }
-        .ed-stat-val { font-size: 18px; font-weight: bold; }
-        .max-label { position: absolute; bottom: 2px; right: 4px; font-size: 9px; font-weight: bold; text-shadow: 0 0 3px #000; }
-        
-        /* タイトル画面レイアウト修正：全体を上に引き上げ */
-        #title-screen { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            padding-top: 0; 
-        }
-        /* タイトルロゴエリア */
-        .title-logo-wrapper { position: relative; display: inline-block; margin-bottom: 20px; text-align: center; }
-        .title-logo-container h1 { margin: 0; line-height: 1; }
-        .jp-title {
-            position: absolute;
-            bottom: -36px;   /* 枠内の下端に配置 */
-            right: 10px;   /* 右端に寄せる */
-            font-size: 17px;
-            color: #ffffff !important;
-            text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            font-weight: bold;
-            font-family: "Yu Mincho", serif;
-            letter-spacing: 1px;
-            white-space: nowrap;
-            z-index: 10;
-        }
-
-        /* ボタンエリア（横並び） */
-        .title-btn-container {
-            display: flex;
-            gap: 40px;
-            margin-bottom: 15px; 
-            justify-content: center;
-            width: 100%;
-            min-height: 50px; 
-        }
-
-        #start-btn, #continue-btn {
-            width: 260px;
-            padding: 12px 0;
-            font-size: 18px;
-            letter-spacing: 3px;
-            margin: 0;
-        }
-
-        #continue-btn { 
-            display: none; 
-            background: rgba(0, 0, 0, 0.6); 
-            border: 1px solid #8db055; 
-            color: #8db055; 
-            font-family: 'Cinzel', serif; 
-            cursor: pointer; transition: 0.3s; 
-            z-index: 1000;
-        }
-        #continue-btn:hover { background: #8db055; color: #000; box-shadow: 0 0 15px #8db055; border-color: #fff; }
-
-        /* ブーストエリア（コンパクト化） */
-        #boost-container { display: flex; flex-direction: column; align-items: center; margin: 10px 0; width: 1000px; z-index: 110; position: relative; }
-        
-        .boost-section-title { 
-            width: 100%; 
-            font-size: 14px; 
-            color: #d4af37; 
-            text-align: center; 
-            margin-bottom: 8px; 
-            letter-spacing: 3px; 
-            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8), transparent);
-            padding: 4px 0;
-            text-shadow: 0 0 5px #000;
-        }
-
-        .boost-section { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 5px; }
-        .boost-divider { width: 90%; height: 1px; background: rgba(176,141,85,0.3); margin: 6px auto; }
-        
-        .boost-btn { 
-            background: rgba(20, 20, 20, 0.9); 
-            border: 1px solid #333; 
-            color: #444; 
-            width: 140px; 
-            height: 28px; 
-            padding: 0 5px; 
-            font-size: 10px; 
-            cursor: default; 
-            font-family: 'Cinzel', serif; 
-            transition: 0.3s; 
-            border-radius: 4px; 
-            opacity: 0.3; 
-            pointer-events: none; 
-            display: flex; align-items: center; justify-content: center; gap: 6px; 
-        }
-        .boost-btn.unlocked { border: 1px solid #b08d55; color: #b08d55; cursor: pointer; pointer-events: auto; opacity: 1; }
-        .boost-btn.active { background: #b08d55 !important; color: #000 !important; box-shadow: 0 0 10px #b08d55; font-weight: bold; border-color: #fff; opacity: 1; }
-        
-        /* ログエリア：スクロール修正 */
-        #past-records-container { 
-            margin-top: 5px; 
-            width: 460px; 
-            background: rgba(0, 0, 0, 0.8); 
-            border: 1px solid #b08d55; 
-            padding: 0; 
-            font-family: 'Cinzel', serif; 
-            text-align: left; 
-            z-index: 105; 
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .record-title {
-            padding: 8px 10px;
-            background: rgba(176, 141, 85, 0.1);
-            border-bottom: 1px solid rgba(176, 141, 85, 0.3);
-            font-weight: bold;
-            color: #b08d55;
-            flex-shrink: 0; 
-            font-size: 13px;
-        }
-
-        #past-records-list {
-            max-height: 130px; 
-            overflow-y: auto;
-            padding: 5px 10px 10px;
-        }
-        
-        #past-records-list::-webkit-scrollbar { width: 6px; }
-        #past-records-list::-webkit-scrollbar-track { background: #111; }
-        #past-records-list::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-        #past-records-list::-webkit-scrollbar-thumb:hover { background: #b08d55; }
-
-        /* その他 */
-        #fade-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; pointer-events: none; opacity: 0; transition: opacity 1.5s ease-in-out; }
-        #fade-overlay.active { opacity: 1; pointer-events: auto; }
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #b08d55; font-family: 'Cinzel', serif; text-align: center; }
-        #load-bar-container { width: 300px; height: 4px; background: #222; margin-top: 20px; border-radius: 2px; overflow: hidden; }
-        #load-bar-fill { width: 0%; height: 100%; background: #b08d55; transition: width 0.2s; box-shadow: 0 0 10px #b08d55; }
-        .record-item { font-size: 11px; color: #ccc; padding: 8px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; display: grid; grid-template-columns: 75px 1fr auto; align-items: center; gap: 10px; }
-        .record-item:hover { background: rgba(176, 141, 85, 0.2); }
-        .record-rank { text-align: left; font-weight: bold; } .record-partner { text-align: left; display: flex; align-items: center; gap: 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; } .record-date { text-align: right; opacity: 0.8; font-size: 0.9em; }
-        .affinity-leaf { color: #8db055 !important; } .affinity-seedling { color: #ffb7c5 !important; } .bouquet-icon { color: #ff69b4 !important; filter: drop-shadow(0 0 3px #ff69b4); animation: bouquetPulse 1.5s infinite alternate; }
-        #debug-panel { max-height: 90vh; overflow-y: auto; width: 220px; padding: 10px; font-size: 10px; z-index: 2000; display: none; }
-        .debug-row { display: flex; gap: 5px; margin-bottom: 5px; }
-        input[type=range] { width: 100%; -webkit-appearance: none; background: #444; height: 4px; border-radius: 2px; margin: 5px 0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: #ffcc00; width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-    </style>
     <script src="js/game_data.js"></script>
 </head>
 <body>
-
     <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0;">
         <filter id="water-filter">
             <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="3" seed="1" result="noise">
@@ -308,6 +60,7 @@
         <div id="monologue-container"><div class="monologue-text"></div></div>
 
         <div id="map-spots-container"></div>
+        
         
         <div id="top-ui-container">
             <div id="turn-display"><span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">1</span>/20</div>
@@ -884,6 +637,15 @@ function handleSpotClick(el, idx) {
             targetText = text; 
             typeInterval = setInterval(() => { 
                 if (i < text.length) { 
+                    // 【修正】タグ(@xxx@)の開始を検知したら、閉じタグまで一気にインデックスを進める
+                    // これにより、"@fame@" のような途中経過が表示されず、即座に "名声" と変換されて表示されます
+                    if (text[i] === '@') {
+                        const match = text.substring(i).match(/^@(\w+)@/);
+                        if (match) {
+                            i += match[0].length - 1; // タグの末尾までスキップ
+                        }
+                    }
+
                     el.innerHTML = formatGameText(text.substring(0, i + 1)); 
                     i++; 
                 } else { 
