@@ -695,7 +695,7 @@
         }
         function updateUI(k) { const v = stats[k]; const bar = document.getElementById(`bar-${k}`); if(bar) bar.style.width = (v * 2) + "%"; const label = document.getElementById(`stat-${k}`); if(label) { const labs = ["Low", "Normal", "High", "Expert", "Master", "Legend"]; label.innerText = labs[Math.min(Math.floor(v/10),5)]; } updateRecommend(); }
         
-function handleSpotClick(el, idx) {
+        function handleSpotClick(el, idx) {
             document.getElementById('monologue-container').classList.remove('visible');
 
             const activeIdx = activeImpacts.findIndex(Boolean);
@@ -707,27 +707,16 @@ function handleSpotClick(el, idx) {
             
             let stopBgm = false;
 
-            el.querySelector('.hint-text').classList.add('selected-yellow'); 
-            document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
+            el.querySelector('.hint-text').classList.add('selected-yellow'); document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
             
-            const s = scenarios[idx];
-            const h = heroines[idx]; 
-            h.events = gameAssets.heroines[h.file].events; 
+            const s = scenarios[idx], h = heroines[idx]; h.events = gameAssets.heroines[h.file].events; const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6, assign = spotAssignments[idx], anyM = heroines.some(hero => hero.progress >= 5);
+            const minVal = Math.min(...Object.values(stats)); const weakStats = statKeys.filter(k => stats[k] === minVal); const isRecommended = weakStats.includes(assign.main) || weakStats.includes(assign.sub);
             
-            const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6;
-            const assign = spotAssignments[idx];
-            const anyM = heroines.some(hero => hero.progress >= 5);
-            
-            const minVal = Math.min(...Object.values(stats)); 
-            const weakStats = statKeys.filter(k => stats[k] === minVal); 
-            const isRecommended = weakStats.includes(assign.main) || weakStats.includes(assign.sub);
-            
-            let tierNum, tierKey; 
-            const progressRatio = turn / maxTurn;
+            // 修正：ターン進行度からTier判定とファイル名の特定
+            let tierNum, tierKey; const progressRatio = turn / maxTurn;
             if (progressRatio <= 1/6) { tierNum = 1; tierKey = 'newcomer'; }
             else if (progressRatio <= 5/6) { tierNum = 2; tierKey = 'mid'; }
             else { tierNum = 3; tierKey = 'veteran'; }
-            
             const eventFile = gameAssets.events[`${s.file}_${tierNum}`];
 
             let isH = false, dMsg = "", bCh = {}, out = 'success';
@@ -743,16 +732,13 @@ function handleSpotClick(el, idx) {
                 }
                 out = 'exclusive'; 
             } else {
-                let chance = isForcedHeroine ? 1.0 : (stats[assign.main] / 50) + (consecutiveNormalEvents * 0.1); 
-                if (chance < 0.05) chance = 0.05; 
-                if (lastEventWasHeroine && !isForcedHeroine) chance = 0;
+                let chance = isForcedHeroine ? 1.0 : (stats[assign.main] / 50) + (consecutiveNormalEvents * 0.1); if (chance < 0.05) chance = 0.05; if (lastEventWasHeroine && !isForcedHeroine) chance = 0;
                 
                 if (h.progress >= 5) { 
                     isH = true; lastEventWasHeroine = true; isResultHidden = true; stopBgm = true;
-                    dMsg = "【後日談】\n" + (h.afterMsg || "穏やかな時間が流れた。"); 
-                    bCh[assign.main] = 5; bCh[assign.sub] = 2; 
-                    out = 'heroine'; 
+                    dMsg = "【後日談】\n" + (h.afterMsg || "穏やかな時間が流れた。"); bCh[assign.main] = 5; bCh[assign.sub] = 2; out = 'heroine'; 
                     lastEventContext = { name: h.name, progress: 6 }; 
+                    
                     if (!clearedHeroines.includes(h.name)) {
                         clearedHeroines.push(h.name);
                         localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
@@ -760,35 +746,20 @@ function handleSpotClick(el, idx) {
                 } 
                 else if (anyM && h.progress >= 1) { 
                     isH = true; lastEventWasHeroine = true; stopBgm = true;
-                    dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); 
-                    bCh[assign.main] = 2; bCh[assign.sub] = 1; 
-                    out = 'heroine'; 
+                    dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); bCh[assign.main] = 2; bCh[assign.sub] = 1; out = 'heroine'; 
                 } 
                 else if (Math.random() < chance) { 
-                    const reqA = h.minAvg[Math.min(h.progress, 4)] || 0;
-                    const reqS = (h.progress + 1) * 8;
-                    const mIdx = h.progress < 2 ? 0 : 1; 
-                    
-                    if (avgStat < reqA) { 
-                        isH = false; lastEventWasHeroine = false; 
-                        dMsg = h.lockAvgMsgs[mIdx]; 
-                        bCh[assign.main] = 1; bCh[assign.sub] = 1; 
-                        out = 'hint'; 
-                    } 
-                    else if (stats[assign.main] < reqS) { 
-                        isH = false; lastEventWasHeroine = false; 
-                        dMsg = h.lockStatMsgs[mIdx]; 
-                        bCh[assign.main] = 1; bCh[assign.sub] = 1; 
-                        out = 'hint'; 
-                    } 
+                    const reqA = h.minAvg[Math.min(h.progress, 4)] || 0, reqS = (h.progress + 1) * 8, mIdx = h.progress < 2 ? 0 : 1; 
+                    if (avgStat < reqA) { isH = false; lastEventWasHeroine = false; dMsg = h.lockAvgMsgs[mIdx]; bCh[assign.main] = 1; bCh[assign.sub] = 1; out = 'hint'; } 
+                    else if (stats[assign.main] < reqS) { isH = false; lastEventWasHeroine = false; dMsg = h.lockStatMsgs[mIdx]; bCh[assign.main] = 1; bCh[assign.sub] = 1; out = 'hint'; } 
                     else { 
                         isH = true; lastEventWasHeroine = true; consecutiveNormalEvents = 0; stopBgm = true;
                         dMsg = h.events[Math.min(h.progress, 4)]; 
                         h.progress++; h.affection++; 
                         if (h.progress >= 3) isResultHidden = true; 
-                        bCh[assign.main] = 5; bCh[assign.sub] = 2; 
-                        out = 'heroine'; 
+                        bCh[assign.main] = 5; bCh[assign.sub] = 2; out = 'heroine'; 
                         lastEventContext = { name: h.name, progress: h.progress };
+
                         if (h.progress >= 5) {
                             if (!clearedHeroines.includes(h.name)) {
                                 clearedHeroines.push(h.name);
@@ -798,56 +769,22 @@ function handleSpotClick(el, idx) {
                     } 
                 } 
                 else { 
-                    // 通常イベントの抽選
+                    // 修正：通常イベントの抽選ロジックを分割ファイル構造に対応
                     isH = false; lastEventWasHeroine = false; consecutiveNormalEvents++; 
-                    
-                    let pool = [];
-                    // データ形式（配列orオブジェクト）の自動判別は維持
-                    if (Array.isArray(eventFile)) {
-                        pool = eventFile;
-                    } else if (eventFile && typeof eventFile === 'object') {
-                        const tierData = eventFile[tierKey] || Object.values(eventFile)[0];
-                        if (Array.isArray(tierData)) {
-                            pool = tierData; 
-                        } else if (tierData) {
-                            pool = [].concat(tierData.success || [], tierData.failure || [], tierData.great || []);
-                        }
-                    }
-                    
+                    const pool = eventFile[tierKey]; 
                     let targetPool = pool;
-                    if (isRecommended) { 
-                        const successPool = pool.filter(e => e.outcome !== 'failure'); 
-                        if (successPool.length > 0) targetPool = successPool; 
-                    } 
-                    
-                    // 【修正】「静かな時が流れた」のフォールバックを削除
-                    const ev = targetPool[Math.floor(Math.random() * targetPool.length)];
-                    
-                    // evが取得できた場合のみ処理を実行（なければエラー等で止まる）
-                    if (ev) {
-                        dMsg = ev.text; 
-                        bCh = {...(ev.changes || {})}; 
-                        out = ev.outcome; 
-                        lastEventResult = out;
-                        
-                        // 【確認用ログ】正しいテキストが引けているか確認用
-                        console.log(`[EventCheck] File:${s.file}_${tierNum}, Key:${tierKey}, Text:${dMsg}`);
-                    } else {
-                        console.error(`[EventError] No event found for ${s.file}_${tierNum} (${tierKey})`);
-                    }
+                    if (isRecommended) { const successPool = pool.filter(e => e.outcome !== 'failure'); if (successPool.length > 0) targetPool = successPool; } 
+                    const ev = targetPool[Math.floor(Math.random() * targetPool.length)] || {text:"静かな時が流れた。", changes:{}}; 
+                    dMsg = ev.text; bCh = {...(ev.changes || {})}; out = ev.outcome; 
+                    lastEventResult = out;
                 }
-                
-                if (isRecommended) { 
-                    for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
-                }
+                if (isRecommended) { for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } }
             }
             
             if (stopBgm) bgmMap.pause();
-            
-            // evが取得できずdMsgが空の場合、ウィンドウ表示でおかしくなる可能性がありますが、
-            // 「ロジックを入れない」方針に従いそのまま渡します。
             applyEventView(dMsg, bCh, isH, h, s, out, idx);
-        }        
+        }
+
         function getLocStatusHtml(idx) {
             let sec = defaultRegionStats[idx].sec; let eco = defaultRegionStats[idx].eco; activeImpacts.forEach((isActive, hId) => { if (isActive && heroineImpacts[hId].target === idx) { sec += heroineImpacts[hId].sec; eco += heroineImpacts[hId].eco; } }); sec = Math.max(1, Math.min(5, sec)); eco = Math.max(1, Math.min(5, eco)); const stars = (n) => '★'.repeat(n) + '<span style=\"opacity:0.3\">★</span>'.repeat(5-n); return `<span style=\"display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;\"><i class=\"fa-solid fa-shield-halved\" style=\"color:#aaa; margin-right:4px;\"></i> ${stars(sec)}</span><span style=\"display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;\"><i class=\"fa-solid fa-scale-balanced\" style=\"color:#d4af37; margin-right:4px;\"></i> ${stars(eco)}</span>`;
         }
@@ -1014,47 +951,23 @@ function handleSpotClick(el, idx) {
         function debugModTurn(amount) { turn = Math.max(1, Math.min(maxTurn, turn + amount)); updateMapState(); }
         function initDebugEventTester() { const m = document.getElementById("debug-map-select"); if (m.options.length > 0) return; scenarios.forEach((s, i) => { const o = document.createElement("option"); o.value = i; o.innerText = s.name; m.appendChild(o); }); updateDebugEventList(); }
         
-function updateDebugEventList() { 
-            const mIdx = document.getElementById("debug-map-select").value; 
-            const eS = document.getElementById("debug-event-select"); 
-            
-            const progress = turn / maxTurn; 
-            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3); 
+        function updateDebugEventList() { 
+            const mIdx = document.getElementById("debug-map-select").value; const eS = document.getElementById("debug-event-select"); 
+            // 修正：現在のターン進行度に基づいてTierキーとロード済みファイルを特定
+            const progress = turn / maxTurn;
+            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3);
             const tKey = progress <= 1/6 ? 'newcomer' : (progress <= 5/6 ? 'mid' : 'veteran');
-            
-            const poolObj = gameAssets.events[`${scenarios[mIdx].file}_${tNum}`][tKey]; 
-            eS.innerHTML = ""; 
-            
-            // 【修正箇所】ここでも配列結合を行います
-            const pool = [].concat(poolObj.success || [], poolObj.failure || [], poolObj.great || []);
-            
-            pool.forEach((ev, i) => { 
-                const o = document.createElement("option"); 
-                o.value = i; 
-                o.innerText = `[${tKey}] ${ev.text.substring(0, 30)}...`; 
-                eS.appendChild(o); 
-            }); 
+            const pool = gameAssets.events[`${scenarios[mIdx].file}_${tNum}`][tKey];
+            eS.innerHTML = ""; pool.forEach((ev, i) => { const o = document.createElement("option"); o.value = i; o.innerText = `[${tKey}] ${ev.text.substring(0, 30)}...`; eS.appendChild(o); }); 
         }
-function launchDebugTestEvent() { 
-            const mIdx = document.getElementById("debug-map-select").value; 
-            const eIdx = document.getElementById("debug-event-select").value; 
-            const s = scenarios[mIdx]; 
-            
-            const progress = turn / maxTurn; 
-            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3); 
+        function launchDebugTestEvent() { 
+            const mIdx = document.getElementById("debug-map-select").value; const eIdx = document.getElementById("debug-event-select").value; const s = scenarios[mIdx]; 
+            // 修正：Tier判定とロード済みファイルからイベント取得
+            const progress = turn / maxTurn;
+            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3);
             const tKey = progress <= 1/6 ? 'newcomer' : (progress <= 5/6 ? 'mid' : 'veteran');
-            
-            const poolObj = gameAssets.events[`${s.file}_${tNum}`][tKey];
-            
-            // 【修正箇所】ここでも配列結合を行ってからインデックスアクセスします
-            const pool = [].concat(poolObj.success || [], poolObj.failure || [], poolObj.great || []);
-            
-            const ev = pool[eIdx]; 
-            if(!ev) return; 
-            
-            isEventActive = true; 
-            isResultDisplayed = false; 
-            applyEventView(ev.text, ev.changes||{}, false, null, s, ev.outcome, mIdx); 
+            const ev = gameAssets.events[`${s.file}_${tNum}`][tKey][eIdx];
+            if(!ev) return; isEventActive = true; isResultDisplayed = false; applyEventView(ev.text, ev.changes||{}, false, null, s, ev.outcome, mIdx); 
         }
         function renderHeroineSliders() { const c = document.getElementById("debug-heroine-sliders"); c.innerHTML = ""; heroines.forEach((h, i) => { const d = document.createElement("div"); d.innerHTML = `<div style=\"font-size:12px; margin-bottom:5px;\">${h.title} ${h.name} Lv.<span id=\"h-lv-${i}\">${h.progress}</span></div><input type=\"range\" min=\"0\" max=\"5\" value=\"${h.progress}\" style=\"width:100%\" oninput=\"heroines[${i}].progress=parseInt(this.value); heroines[${i}].affection=parseInt(this.value); document.getElementById('h-lv-${i}').innerText=this.value\">`; c.appendChild(d); }); }
         function debugResetAllData() { if(confirm("全消去しますか？")) { localStorage.clear(); location.reload(); } }
