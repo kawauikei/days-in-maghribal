@@ -9,7 +9,8 @@ const statConfig = {
 };
 const statKeys = Object.keys(statConfig);
 
-const HINT_AVG = "\n[Hint] 各地を巡り、全ステータスの「平均値」を上げると物語が進展します。";
+// game_data.js の定数を変更
+const HINT_AVG = "\n[Hint] 各地を巡り、全ステータスの「@average@」を上げると物語が進展します。";
 const getHintStat = (statKey) => `\n[Hint] この場所に関連する「@${statKey}@」をより高めると物語が進展します。`;
 
 const heroines = [

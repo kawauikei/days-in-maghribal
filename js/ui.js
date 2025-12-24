@@ -3,7 +3,12 @@
 // =========================================
 
 // UI用定数定義
-const statColors = { health: '#ff4d4d', body: '#ffa500', mind: '#4da6ff', magic: '#b366ff', fame: '#ffff4d', money: '#33cc33' };
+// ui.js の statColors に average を追加
+const statColors = { 
+    health: '#ff4d4d', body: '#ffa500', mind: '#4da6ff', 
+    magic: '#b366ff', fame: '#ffff4d', money: '#33cc33',
+    average: '#00ffff' // スカイシアンを追加
+};
 const rankColors = { LEGEND: '#ffcc00', GOLD: '#e6b422', SILVER: '#c0c0c0', BRONZE: '#cd7f32' };
 const soloTitles = { health: "不滅の冒険者", body: "孤高の拳王", mind: "深淵の求道者", magic: "無窮の魔術師", fame: "名もなき伝説", money: "豪腕の大富豪" };
 
@@ -75,11 +80,13 @@ function updateMapState() {
 function updateRecommend() {
     const vals = Object.values(stats); 
     const minVal = Math.min(...vals); 
-    const weakStats = statKeys.filter(k => stats[k] === minVal);
+    const maxVal = Math.max(...vals); // 最高値を取得
     
     spotAssignments.forEach((assign, i) => { 
-        const isRec = weakStats.includes(assign.main) || weakStats.includes(assign.sub); 
-        const spot = document.querySelectorAll('.map-spot')[i]; 
+        // 判定：メインステータスが最低値であり、かつ最高値（ブースト値）ではない
+        const isRec = (stats[assign.main] === minVal) && (stats[assign.main] < maxVal); 
+        
+        const spot = document.querySelectorAll('.map-spot')[i];
         if(spot) { 
             const icon = spot.querySelector('.recommend-icon'); 
             if(icon) { 
@@ -170,8 +177,12 @@ function getResultHtml(changes) {
 }
 
 // テキスト整形（色付けなど）
+// formatGameText の中で average を置換対象にする
 function formatGameText(text) { 
-    return text.replace(/@(\w+)@/g, (m, k) => `<span style="color:${statColors[k]}">${statConfig[k].name}</span>`); 
+    return text.replace(/@(\w+)@/g, (m, k) => {
+        if (k === 'average') return `<span style="color:${statColors.average}">平均値</span>`;
+        return `<span style="color:${statColors[k]}">${statConfig[k].name}</span>`;
+    });
 }
 
 // ステータスパネル表示切り替え
