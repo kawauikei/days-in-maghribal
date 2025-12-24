@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="js/game_data.js"></script>
     <script src="js/audio.js"></script>
+    <script src="js/debug.js"></script>
 </head>
 <body>
     <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0;">
@@ -762,65 +763,7 @@ function handleSpotClick(el, idx) {
         }
         function processBoostUnlock() { const sortedKeys = [...statKeys].sort((a, b) => stats[b] - stats[a]); for (let key of sortedKeys) { if (!unlockedBoosts[key]) { unlockedBoosts[key] = true; localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); break; } } }
         function viewSpecificLog(idx) { const records = JSON.parse(localStorage.getItem('maghribal_logs') || "[]"); const rec = records[idx]; if (rec) { const logWindow = document.getElementById("log-window"); document.getElementById("log-content").innerHTML = rec.log; toggleLog(); logWindow.scrollTop = 0; } }
-        function toggleDebugPanel() { const p = document.getElementById("debug-panel"); p.style.display = p.style.display === "block" ? "none" : "block"; if(p.style.display === "block") { renderHeroineSliders(); initDebugEventTester(); } }
-        function debugModTurn(amount) { turn = Math.max(1, Math.min(maxTurn, turn + amount)); updateMapState(); }
-        function initDebugEventTester() { const m = document.getElementById("debug-map-select"); if (m.options.length > 0) return; scenarios.forEach((s, i) => { const o = document.createElement("option"); o.value = i; o.innerText = s.name; m.appendChild(o); }); updateDebugEventList(); }
         
-function updateDebugEventList() { 
-            const mIdx = document.getElementById("debug-map-select").value; 
-            const eS = document.getElementById("debug-event-select"); 
-            
-            const progress = turn / maxTurn; 
-            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3); 
-            const tKey = progress <= 1/6 ? 'newcomer' : (progress <= 5/6 ? 'mid' : 'veteran');
-            
-            const poolObj = gameAssets.events[`${scenarios[mIdx].file}_${tNum}`][tKey]; 
-            eS.innerHTML = ""; 
-            
-            // 【修正箇所】ここでも配列結合を行います
-            const pool = [].concat(poolObj.success || [], poolObj.failure || [], poolObj.great || []);
-            
-            pool.forEach((ev, i) => { 
-                const o = document.createElement("option"); 
-                o.value = i; 
-                o.innerText = `[${tKey}] ${ev.text.substring(0, 30)}...`; 
-                eS.appendChild(o); 
-            }); 
-        }
-function launchDebugTestEvent() { 
-            const mIdx = document.getElementById("debug-map-select").value; 
-            const eIdx = document.getElementById("debug-event-select").value; 
-            const s = scenarios[mIdx]; 
-            
-            const progress = turn / maxTurn; 
-            const tNum = progress <= 1/6 ? 1 : (progress <= 5/6 ? 2 : 3); 
-            const tKey = progress <= 1/6 ? 'newcomer' : (progress <= 5/6 ? 'mid' : 'veteran');
-            
-            const poolObj = gameAssets.events[`${s.file}_${tNum}`][tKey];
-            
-            // 【修正箇所】ここでも配列結合を行ってからインデックスアクセスします
-            const pool = [].concat(poolObj.success || [], poolObj.failure || [], poolObj.great || []);
-            
-            const ev = pool[eIdx]; 
-            if(!ev) return; 
-            
-            isEventActive = true; 
-            isResultDisplayed = false; 
-            applyEventView(ev.text, ev.changes||{}, false, null, s, ev.outcome, mIdx); 
-        }
-        function renderHeroineSliders() { const c = document.getElementById("debug-heroine-sliders"); c.innerHTML = ""; heroines.forEach((h, i) => { const d = document.createElement("div"); d.innerHTML = `<div style=\"font-size:12px; margin-bottom:5px;\">${h.title} ${h.name} Lv.<span id=\"h-lv-${i}\">${h.progress}</span></div><input type=\"range\" min=\"0\" max=\"5\" value=\"${h.progress}\" style=\"width:100%\" oninput=\"heroines[${i}].progress=parseInt(this.value); heroines[${i}].affection=parseInt(this.value); document.getElementById('h-lv-${i}').innerText=this.value\">`; c.appendChild(d); }); }
-        function debugResetAllData() { if(confirm("全消去しますか？")) { localStorage.clear(); location.reload(); } }
-        function debugMaxStats() { statKeys.forEach(k => { stats[k] = 50; updateUI(k); }); checkRankUpdate(); }
-        function debugFinishGame() { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 1500); }
-        function debugToggleBoosts() { 
-            const isL = statKeys.some(k => !unlockedBoosts[k]); 
-            statKeys.forEach(k => { unlockedBoosts[k] = isL; }); 
-            if (isL) { clearedHeroines = heroines.map(h => h.name); } else { clearedHeroines = []; }
-            localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); 
-            localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines)); 
-            renderBoostButtons(); 
-        }
-        function toggleForceHeroine() { isForcedHeroine = !isForcedHeroine; document.getElementById("force-heroine-btn").innerText = isForcedHeroine ? "♥ Force Heroine: ON" : "♥ Force Heroine: OFF"; document.getElementById("force-heroine-btn").classList.toggle("active", isForcedHeroine); }
     </script>
 </body>
 </html>

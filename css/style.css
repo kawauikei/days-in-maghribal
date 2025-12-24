@@ -301,7 +301,9 @@ body {
 }
 .boost-btn.unlocked { border: 1px solid #b08d55; color: #b08d55; cursor: pointer; pointer-events: auto; opacity: 1; }
 .boost-btn.active { background: #b08d55 !important; color: #000 !important; box-shadow: 0 0 10px #b08d55; font-weight: bold; border-color: #fff; opacity: 1; }
-
+.hidden-screen .boost-btn {
+    pointer-events: none !important;
+}
 /* 過去の記録 (Logs) */
 #past-records-container { 
     margin-top: 5px; width: 460px; background: rgba(0, 0, 0, 0.8); border: 1px solid #b08d55; 
