@@ -126,20 +126,37 @@ function getLocStatusHtml(idx) {
     return `<span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-shield-halved" style="color:#aaa; margin-right:4px;"></i> ${stars(sec)}</span><span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-scale-balanced" style="color:#d4af37; margin-right:4px;"></i> ${stars(eco)}</span>`;
 }
 
-// タイプライター演出（タグ対応版）
+// タイプライター演出（HTMLタグ・ゲームタグ完全対応版）
 function typeWriter(el, text, speed) { 
     let i = 0; el.innerHTML = ""; isTyping = true; 
     targetText = text; 
+    
     typeInterval = setInterval(() => { 
         if (i < text.length) { 
+            // 1. ゲーム固有タグ (@stat@) のスキップ
             if (text[i] === '@') {
                 const match = text.substring(i).match(/^@(\w+)@/);
                 if (match) {
-                    i += match[0].length - 1; 
+                    i += match[0].length; // タグの終端まで進める
                 }
+            } 
+            // 2. HTMLタグ (<...>) のスキップ
+            else if (text[i] === '<') {
+                const tagEnd = text.indexOf('>', i);
+                if (tagEnd !== -1) {
+                    i = tagEnd + 1; // タグの終わりまで一気に進める
+                } else {
+                    i++;
+                }
+            } 
+            // 通常文字の処理
+            else {
+                i++;
             }
-            el.innerHTML = formatGameText(text.substring(0, i + 1)); 
-            i++; 
+            
+            // 現在の i までの文字列を整形して一気に流し込む
+            el.innerHTML = formatGameText(text.substring(0, i)); 
+            
         } else { 
             finishTyping(); 
         } 
@@ -232,7 +249,7 @@ function renderBoostButtons() {
     statKeys.forEach(k => { 
         const btn = document.createElement("button"); 
         btn.className = `boost-btn ${unlockedBoosts[k] ? 'unlocked' : ''} ${activeBoosts[k] ? 'active' : ''}`; 
-        btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +10`; 
+        btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +20`; 
         btn.onclick = (e) => { 
             e.stopPropagation(); 
             if(!unlockedBoosts[k]) return; 

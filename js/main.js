@@ -45,7 +45,8 @@ let monologueData = {};
 let heroineReactions = {}; 
 let clearedHeroines = [];
 
-let stats = { health: 0, body: 0, mind: 0, magic: 0, fame: 0, money: 0 };
+let isMotivationBuff = false; 
+let stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
 let turn = 1, maxTurn = 20, isEventActive = false, isGameStarted = false, isTyping = false, targetText = "";
 let messageQueue = [], currentMsgIndex = 0, pendingResultHtml = "", typeInterval;
 let consecutiveNormalEvents = 0, lastEventWasHeroine = false, isForcedHeroine = false, isResultDisplayed = false;
@@ -293,7 +294,7 @@ function startOP() {
     seOp.currentTime = 0; seOp.play(); 
     resizeGameContainer(); currentGameLog = []; document.getElementById("log-content").innerHTML = ""; 
     const activeIdx = activeImpacts.findIndex(Boolean);
-    if (activeIdx !== -1) { statKeys.forEach(k => { stats[k] = 0; updateUI(k); }); } else { statKeys.forEach(k => { stats[k] = activeBoosts[k] ? 10 : 0; updateUI(k); }); }
+    if (activeIdx !== -1) { statKeys.forEach(k => { stats[k] = 5; updateUI(k); }); } else { statKeys.forEach(k => { stats[k] = activeBoosts[k] ? 25 : 5; updateUI(k); }); }
     bgmOp.pause(); bgmOp.currentTime = 0; bgmOp.play(); 
     document.getElementById("title-screen").classList.add("hidden-screen"); 
     setTimeout(() => { document.getElementById("op-screen").classList.remove("hidden-screen"); 

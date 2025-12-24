@@ -7,6 +7,7 @@ const statConfig = {
     fame:   { name: "名声", icon: "fa-medal" },
     money:  { name: "資産", icon: "fa-coins" }
 };
+
 const statKeys = Object.keys(statConfig);
 
 // game_data.js の定数を変更

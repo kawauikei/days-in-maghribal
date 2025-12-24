@@ -4,6 +4,7 @@
 
 // マップスポットクリック時の処理
 function handleSpotClick(el, idx) {
+    console.log("--- handleSpotClick Start --- idx:", idx); // これを追加
     document.getElementById('monologue-container').classList.remove('visible');
 
     const activeIdx = activeImpacts.findIndex(Boolean);
@@ -21,6 +22,8 @@ function handleSpotClick(el, idx) {
     const s = scenarios[idx];
     const h = heroines[idx]; 
     h.events = gameAssets.heroines[h.file].events; 
+
+
     
     const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6;
     const assign = spotAssignments[idx];
@@ -72,15 +75,13 @@ function handleSpotClick(el, idx) {
                 clearedHeroines.push(h.name);
                 localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
             }
-        } 
-        else if (anyM && h.progress >= 1) { 
+        }else if (anyM && h.progress >= 1) { 
             // 世間話処理
             isH = true; lastEventWasHeroine = true; stopBgm = true;
             dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); 
             bCh[assign.main] = 2; bCh[assign.sub] = 1; 
             out = 'heroine'; 
-        } 
-        else if (Math.random() < chance) { 
+        }else if (Math.random() < chance) { 
             // ヒロイン本編イベント判定
             // --- 修正版：ステータス不足の動的な出し分け ---
             const reqA = h.minAvg[Math.min(h.progress, 4)] || 0;
@@ -96,30 +97,47 @@ function handleSpotClick(el, idx) {
                 isH = false; out = 'hint';
                 
                 if (!isAvgOk) {
-                    // 平均不足：game_data.js のメッセージをそのまま使用（HINT_AVGが含まれている）
                     dMsg = h.lockAvgMsgs[mIdx];
                 } else {
-                    // ステータス不足：lockStatMsgs からストーリー部分（\n[Hint]より前）を抜き出す
                     const baseStory = h.lockStatMsgs[mIdx].split('\n[Hint]')[0];
                     
-                    // 不足状況に合わせてヒントを動的に生成
                     let dynamicHint = "";
                     if (!isMainOk && !isSubOk) {
-                        dynamicHint = `\n[Hint] この場所に関連する「@${assign.main}@」や「@${assign.sub}@」をより高めると物語が進展します。`;
+                        // メイン・サブ両方不足時：アイコンを並べて表示
+                        const mainIcon = `<i class="fa-solid ${statConfig[assign.main].icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
+                        const subIcon = `<i class="fa-solid ${statConfig[assign.sub].icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
+                        
+                        dynamicHint = `\n[Hint] この場所に関連する${mainIcon}<span style="color:${statColors[assign.main]}">${statConfig[assign.main].name}</span>や、${subIcon}<span style="color:${statColors[assign.sub]}">${statConfig[assign.sub].name}</span>をより高めると物語が進展します。`;
                     } else if (!isMainOk) {
-                        dynamicHint = getHintStat(assign.main); // game_data.jsの関数を利用
+                        // メイン不足時：アイコン付きで表示
+                        const config = statConfig[assign.main];
+                        const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
+                        dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.main]}">${config.name}</span>がもう少しあれば、彼女の期待に応えられるかもしれない……。`;
                     } else {
-                        dynamicHint = getHintStat(assign.sub);  // サブが足りない場合はサブを提示
+                        // サブ不足時：アイコン付きで表示
+                        const config = statConfig[assign.sub];
+                        const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
+                        dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.sub]}">${config.name}</span>を磨けば、彼女との距離が縮まるはずだ。`;
                     }
                     dMsg = baseStory + dynamicHint;
                 }
                 
-                // 育成ボーナスフラグ
-                bCh[assign.main] = 1; bCh[assign.sub] = 1; 
+                // --- 育成ボーナス計算の修正 ---
+                // モチベーションバフがあれば +2
+                const buffBonus = isMotivationBuff ? 5 : 0;
                 
+                // tierNum (1:新人, 2:中堅, 3:ベテラン) を利用して成長量を決定
+                // 新人: 3/2, 中堅: 6/4, ベテラン: 9/6 (+バフ)
+                bCh[assign.main] = (tierNum * 4) + buffBonus;
+                bCh[assign.sub] = (tierNum * 3) + buffBonus;
+
                 // 重要：ここで表示を確定して return し、訓練イベントとの重複を防ぐ
-                applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId);
-                return;
+                const activeBuff = isMotivationBuff;                
+
+                // ログの生成（getResultHtmlの実行）が終わった後にフラグを折る
+                if (activeBuff) {
+                    isMotivationBuff = false;
+                }
             } else {
                 // すべての条件を達成：イベント発生
                 // ...以下、既存の成功処理...
@@ -128,7 +146,11 @@ function handleSpotClick(el, idx) {
                 dMsg = h.events[Math.min(h.progress, 4)]; 
                 h.progress++; h.affection++; 
                 if (h.progress >= 3) isResultHidden = true; 
-                bCh[assign.main] = 5; bCh[assign.sub] = 2; 
+                bCh[assign.main] = 4+(tierNum * 2);
+                bCh[assign.sub] = 2+(tierNum * 2); 
+                // バフをONにする
+                isMotivationBuff = true;
+
                 out = 'heroine'; 
                 lastEventContext = { name: h.name, progress: h.progress };
                 if (h.progress >= 5) {
@@ -138,8 +160,7 @@ function handleSpotClick(el, idx) {
                     }
                 }
             } 
-        } 
-        else { 
+        }else { 
             // 訓練（スポットイベント）抽選
             isH = false; lastEventWasHeroine = false; consecutiveNormalEvents++; 
             
@@ -168,15 +189,45 @@ function handleSpotClick(el, idx) {
             
             // 安全装置：プールが空ならsuccessを試行
             if (pool.length === 0 && eventFile[tierKey]) pool = eventFile[tierKey]["success"] || [];
-
             const ev = pool[Math.floor(Math.random() * pool.length)];
             
             if (ev) {
-                dMsg = ev.text; 
-                bCh = {...(ev.changes || {})}; 
                 out = outcomeType; 
                 lastEventResult = out;
                 imgId = ev.image; 
+
+                // --- ここからバフ適用ロジック ---
+                const bonus = isRecommended ? 1 : 0; 
+                const buffBonus = isMotivationBuff ? 2 : 0; // バフONなら+2、OFFなら0
+                
+                bCh = {}; // 空で初期化
+
+                if (out === 'success' || out === 'great') {
+                    // 成功・大成功：基本増加量 + おすすめボーナス + モチベバフ
+                    bCh[assign.main] = (ev.changes[assign.main] || 0) + bonus + buffBonus;
+                    bCh[assign.sub] = (ev.changes[assign.sub] || 0) + bonus + buffBonus;
+                } else if (out === 'failure') {
+                    // 失敗：減少が発生する場合、バフ中なら -1 に抑える
+                    const lossM = ev.changes[assign.main] || 0;
+                    const lossS = ev.changes[assign.sub] || 0;
+
+                    if (isMotivationBuff) {
+                        bCh[assign.main] = (lossM < 0) ? -1 : lossM;
+                        bCh[assign.sub] = (lossS < 0) ? -1 : lossS;
+                    } else {
+                        bCh[assign.main] = lossM;
+                        bCh[assign.sub] = lossS;
+                    }
+                }
+                
+                dMsg = ev.text;
+                console.log("ログ生成直前のバフ状態:", isMotivationBuff);
+                // メッセージの組み立てとバフの消費
+                if (isMotivationBuff) {                    
+                    isMotivationBuff = false; // 1回のみ有効なのでここでOFFにする
+                }
+                // --- ここまで ---
+
             } else {
                 console.error(`[EventError] No event found for ${s.file}_${tierNum} (${tierKey}:${outcomeType})`);
             }
@@ -187,13 +238,50 @@ function handleSpotClick(el, idx) {
             for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
         }
     }
-    
-    if (stopBgm) bgmMap.pause();
     applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId);
+    if (stopBgm) bgmMap.pause();
+}
+
+// ステータス変化をHTML化する関数（バフ対応版）
+function getResultHtml(changes) {
+    const parts = Object.entries(changes).map(([k, v]) => {
+        if (v === 0) return ""; 
+        
+        const config = statConfig[k] || {};
+        const statColor = statColors[k] || '#fff'; // パラメータ固有の色
+        const icon = config.icon || '';
+        const name = config.name || k; // パラメータ名
+        
+        // 記号と色の判別：上昇は赤系（#ff4d4d）、下降は青系（#4d94ff）
+        const mark = v > 0 ? '▲' : '▼';
+        const markColor = v > 0 ? '#ff4d4d' : '#4d94ff';
+        
+        // [アイコン] パラメータ名 [▲or▼] の形式で組み立て
+        return `<span style="margin-right:12px; white-space:nowrap;">` +
+               `<i class="fa-solid ${icon}" style="color:${statColor}"></i> ` +
+               `<span style="color:${statColor}">${name}</span>` +
+               `<span style="color:${markColor}">${mark}</span>` +
+               `</span>`;
+    });
+    
+    let html = parts.filter(p => p !== "").join('');
+    
+    // グローバル変数をそのまま参照して、trueなら炎を足す
+    if (isMotivationBuff) {
+        html += `<i class="fa-solid fa-fire" style="color:#ffaa00; margin-left:8px; font-size:14px;"></i>`;
+    }
+    
+    return html;
 }
 
 // イベント画面の構築・表示
 function applyEventView(msg, changes, isH, h, s, out, idx, imgId) {
+    // debug.js の関数を呼び出す
+    if (typeof logEventResult === 'function') {
+        logEventResult(turn, out, isH, changes, stats, statKeys, isMotivationBuff);
+    }
+
+
     for (let k in changes) { stats[k] = Math.max(0, Math.min(stats[k] + (changes[k] || 0), 50)); updateUI(k); } checkRankUpdate(); 
     let cLog = isResultHidden ? "" : getResultHtml(changes); 
     let outcomeHtml = ""; 

@@ -436,3 +436,24 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: 
     from { transform: scale(1); filter: drop-shadow(0 0 3px #ff69b4); } 
     to { transform: scale(1.2); filter: drop-shadow(0 0 8px #ff69b4); } 
 }
+
+/* タロット風カードのベースレイヤー */
+.zodiac-card {
+    background-color: #ffffff !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* 四隅にさりげなく色を配置 */
+    background-image: 
+        radial-gradient(circle at 0% 0%, var(--main-color), transparent 60%),
+        radial-gradient(circle at 100% 100%, var(--sub-color), transparent 60%) !important;
+}
+
+/* 中央の記号演出 */
+.zodiac-symbol {
+    font-size: 260px; /* 585x390の枠内で際立つサイズ */
+    color: #111111;   /* 黒の記号 */
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+    z-index: 10;
+}

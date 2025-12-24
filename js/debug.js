@@ -162,3 +162,70 @@ function toggleForceHeroine() {
     document.getElementById("force-heroine-btn").innerText = isForcedHeroine ? "♥ Force Heroine: ON" : "♥ Force Heroine: OFF"; 
     document.getElementById("force-heroine-btn").classList.toggle("active", isForcedHeroine); 
 }
+
+// debug.js
+
+function logEventResult(turn, out, isH, changes, stats, statKeys, isBuff) {
+    // 引数の安全策
+    const keys = statKeys || ['health', 'body', 'mind', 'magic', 'fame', 'money'];
+    const safeChanges = changes || {};
+    const safeStats = stats || {};
+
+    let eventLabel = " TRAINING ";
+    let labelColor = "#444";
+
+    if (isH) {
+        eventLabel = " HEROINE  ";
+        labelColor = "#ff0066";
+    } else if (out === 'hint') {
+        eventLabel = "   HINT   ";
+        labelColor = "#ff8800";
+    } else if (out === 'failure') {
+        eventLabel = " FAILURE  ";
+        labelColor = "#cc0000";
+    } else if (out === 'great') {
+        eventLabel = "  GREAT   ";
+        labelColor = "#00bbff";
+    }
+
+    // グループを開始
+    console.group(`%c TURN ${turn} %c${eventLabel}`, 
+        "background: #333; color: #00ffff; font-weight: bold;", 
+        `background: ${labelColor}; color: #fff; font-weight: bold;`);
+
+    try {
+        console.log(`バフ状態: %c${isBuff ? " 🔥 ACTIVE " : "  OFF  "}`, 
+            isBuff ? "background: #ffaa00; color: #000; font-weight: bold;" : "color: #999;");
+        
+        keys.forEach(k => {
+            const before = Number(safeStats[k]) || 0;
+            const change = Number(safeChanges[k]) || 0;
+            const after = Math.max(0, Math.min(before + change, 50));
+            
+            let style = "color: #444;"; 
+            let prefix = "  ";
+            
+            if (change > 0) {
+                style = "color: #008800; font-weight: bold;"; 
+                prefix = "▲ ";
+            } else if (change < 0) {
+                style = "color: #cc0000; font-weight: bold;"; 
+                prefix = "▼ ";
+            }
+
+            const diffStr = change !== 0 ? ` [${change > 0 ? '+' : ''}${change}]` : "";
+            console.log(`%c${prefix}${k.padEnd(7)}: %c${before.toString().padStart(2)} %c-> %c${after.toString().padStart(2)}%c${diffStr}`, 
+                style, "color: #000;", "color: #999;", "color: #000; font-weight: bold;", style);
+        });
+
+        const total = Object.values(safeStats).reduce((a, b) => a + (Number(b) || 0), 0) + 
+                      Object.values(safeChanges).reduce((a, b) => a + (Number(b) || 0), 0);
+        console.log(`%c TOTAL: ${total} / AVG: ${(total/6).toFixed(1)} `, "background: #eee; color: #333;");
+
+    } catch (e) {
+        console.error("デバッグログ出力中にエラーが発生しました:", e);
+    } finally {
+        // 何があっても必ずグループを閉じる
+        console.groupEnd();
+    }
+}
