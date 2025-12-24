@@ -12,6 +12,8 @@
     <script src="js/audio.js"></script>
     <script src="js/debug.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/event.js"></script>
+    <script src="js/main.js"></script>
 </head>
 <body>
     <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0;">
@@ -32,29 +34,59 @@
     </div>
 
     <div id="debug-toggle-btn" onclick="toggleDebugPanel()"><i class="fa-solid fa-gear"></i></div>
-    <div id="debug-panel">
-        <div style="font-size: 10px; color: #ffcc00; margin-bottom: 5px; border-bottom: 1px solid #444;">DATA CONTROL</div>
-        <button class="debug-btn" onclick="debugResetAllData()" style="color: #ff4d4d;">↺ Reset All Data</button>
-        <button class="debug-btn" onclick="debugToggleBoosts()" id="debug-boost-btn">🔓 Unlock Boosts</button>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">TURN CONTROL</div>
-        <div class="debug-row">
-            <button class="debug-btn" onclick="debugModTurn(-5)">-5</button>
-            <button class="debug-btn" onclick="debugModTurn(-1)">-1</button>
-            <button class="debug-btn" onclick="debugModTurn(1)">+1</button>
-            <button class="debug-btn" onclick="debugModTurn(5)">+5</button>
+<div id="debug-panel" style="display:none;">
+        <h3>SETTINGS</h3>
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;">
+            <div style="font-size:12px; margin-bottom:2px;">BGM VOLUME</div>
+            <input type="range" id="bgm-slider" min="0" max="1" step="0.05" style="width:100%" 
+                   oninput="setBgmVolume(this.value)">
+            
+            <div style="font-size:12px; margin-bottom:2px; margin-top:8px;">SE VOLUME</div>
+            <input type="range" id="se-slider" min="0" max="1" step="0.05" style="width:100%" 
+                   oninput="setSeVolume(this.value)">
         </div>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">EVENT TESTER</div>
-        <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 5px;">
-            <select id="debug-map-select" onchange="updateDebugEventList()" style="background: #222; color: #fff; font-size: 10px; border: 1px solid #b08d55;"></select>
-            <select id="debug-event-select" style="background: #222; color: #fff; font-size: 10px; border: 1px solid #b08d55;"></select>
+
+        <h4>Debug Menu</h4>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">DATA CONTROL</div>
+        <button onclick="debugResetAllData()" style="background:#cc3333; color:white; width:100%; margin-bottom:5px;">
+            <i class="fa-solid fa-trash"></i> Reset All Data
+        </button>
+        
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <button onclick="debugToggleBoosts()" style="flex:1; background:#111; border: 1px solid #76ff03; color: #76ff03; font-weight:bold;">
+                <i class="fa-solid fa-unlock"></i> Unlock Boosts
+            </button>
+            <button onclick="debugMaxStats()" style="flex:1; background:#111; border: 1px solid #00e5ff; color: #00e5ff; font-weight:bold;">
+                <i class="fa-solid fa-bolt"></i> Status MAX
+            </button>
         </div>
-        <button class="debug-btn" onclick="launchDebugTestEvent()" style="width: 100%; background: #b08d55; color: #000;">⚡ Launch Test</button>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">HEROINE PROGRESS</div>
-        <div id="debug-heroine-sliders" style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px;"></div>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">GAMEPLAY</div>
-        <button class="debug-btn" onclick="debugMaxStats()">★ Max</button>
-        <button class="debug-btn" onclick="debugFinishGame()">🏁 Finish</button>
-        <button id="force-heroine-btn" class="debug-btn" onclick="toggleForceHeroine()">♥ Force: OFF</button>
+        
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">TURN CONTROL</div>
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <button onclick="debugModTurn(-5)" style="flex:1;">-5</button>
+            <button onclick="debugModTurn(-1)" style="flex:1;">-1</button>
+            <button onclick="debugModTurn(1)" style="flex:1;">+1</button>
+            <button onclick="debugModTurn(5)" style="flex:1;">+5</button>
+        </div>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">EVENT TESTER</div>
+        <select id="debug-map-select" onchange="updateDebugEventList()" style="width:100%; margin-bottom:5px;"></select>
+        <select id="debug-event-select" style="width:100%; margin-bottom:5px;"></select>
+        <button onclick="launchDebugTestEvent()" style="width:100%; margin-bottom:15px;">
+            <i class="fa-solid fa-play"></i> Launch Test
+        </button>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">HEROINE PROGRESS</div>
+        <div id="debug-heroine-sliders" style="margin-bottom:15px;"></div>
+        
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">GAMEPLAY</div>
+        <button onclick="showEnding()" style="width:100%; margin-bottom:5px;">
+            <i class="fa-solid fa-flag-checkered"></i> Finish
+        </button>
+        <button id="force-heroine-btn" onclick="toggleForceHeroine()" style="width:100%;">
+            <i class="fa-solid fa-heart"></i> Force: OFF
+        </button>
     </div>
 
     <div id="game-container">
@@ -63,7 +95,7 @@
         <div id="monologue-container"><div class="monologue-text"></div></div>
 
         <div id="map-spots-container"></div>
-        
+        <div id="event-still-layer"></div>
         
         <div id="top-ui-container">
             <div id="turn-display"><span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">1</span>/20</div>
@@ -126,553 +158,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const impactConfig = {
-            "オルテンシア": { targetName: "辺境の村", sec: 1, eco: 1, name: "王家の配給" },
-            "エルナ": { targetName: "静謐な修道院", sec: 1, eco: 0, name: "収穫の祈り" },
-            "シルフィエット": { targetName: "賢者の塔", sec: 0, eco: 0, name: "古書の寄贈" },
-            "ルナリス": { targetName: "迷宮の入り口", sec: -1, eco: 1, name: "深淵の解明" },
-            "マリーナ": { targetName: "六角の王都", sec: -1, eco: 1, name: "闇市場" },
-            "カタリナ": { targetName: "賑わいの港町", sec: 1, eco: -1, name: "海賊狩り" },
-            "エリスフェリア": { targetName: "太古の墓地", sec: 1, eco: 1, name: "精霊祭" },
-            "レグリナ": { targetName: "喧騒の闘技場", sec: -1, eco: 1, name: "真夜中" },
-            "ゼファー": { targetName: "緑の隠れ里", sec: 1, eco: 1, name: "異文化" },
-            "メルル": { targetName: "巨岩の要塞", sec: 0, eco: 0, name: "傭兵団" },
-            "ネクロア": { targetName: "忘れられた古城", sec: -1, eco: 1, name: "幻影の祝宴" },
-            "エルヴィーラ": { targetName: "真鍮の荒野", sec: 1, eco: 0, name: "砂漠の花" }
-        };
-        
-        let heroineImpacts = []; 
-        let isResultHidden = false;
-        let lastEventContext = null; 
-        let lastEventResult = null;
-        let monologueInterval;
-        let specialData = []; 
-        let monologueData = {}; 
-        let heroineReactions = {}; 
-        let clearedHeroines = [];
-
-        const heroineOPLines = [
-            ["王都の威光が辺境を照らす。", "王女の命により、貧しき村に物資が届けられた。", "希望の光が、人々の瞳に宿り始める。"], 
-            ["賢者の叡智が、迷宮の深淵を照らす。", "封印が解かれ、冒険者たちが深層へと挑む。", "危険と隣り合わせの、富への扉が開かれた。"],
-            ["辺境の実りが、修道院の食卓を満たす。", "村人たちが届けた新鮮な糧が、祈りの場を支える。", "ささやかな幸福が、静かに満ちていく。"],
-            ["禁忌の知識が、塔の夜を怪しく照らす。", "古城から持ち込まれた古文書が、賢者たちを熱狂させる。", "知の交流が、新たな発見を生む。"],
-            ["港の熱気が、王都の夜を彩る。", "海からの珍品が闇市場に溢れ、貴族たちを魅了する。", "欲望と金貨が、街の影で渦巻いている。"],
-            ["巨岩の盾が、港の波濤を鎮める。", "要塞の騎士たちが海賊を追い払い、交易路が開かれた。", "港町はかつてない賑わいを見せている。"],
-            ["修道院の祈りが、太古の魂を慰める。", "聖女の浄化により、墓地は安らぎの地へと変わった。", "今宵、死者を偲ぶ静かな祭りが始まる。"],
-            ["古城の闇が、闘技場の鮮血を求める。", "吸血鬼の戯れで、夜な夜な過激な殺し合いが行われる。", "観客の熱狂は、恐怖と共に最高潮へ達する。"],
-            ["荒野の情熱が、隠れ里の扉を開く。", "踊り子たちの情熱が、閉ざされたエルフの心を溶かす。", "森の奥深くで、種族を超えた宴が始まる。"],
-            ["迷宮の探求者が、忘れられた城に挑む。", "亡霊の呼び声に応え、廃墟に幻の灯りがともる。", "かつての栄華が、一夜の夢として蘇る。"],
-            ["闘技場の狂騒が、要塞の静寂を破る。", "猛者たちが守備隊に加わり、鉄壁の守りが築かれた。", "しかし、その荒々しさに住民は怯えている。"],
-            ["深緑の息吹が、荒野に潤いをもたらす。", "エルフの秘術により、砂漠の只中に泉が湧き出した。", "不毛の大地に、奇跡の花が咲き乱れる。"]
-        ];
-
-        const defaultRegionStats = [ { sec: 4, eco: 4 }, { sec: 5, eco: 2 }, { sec: 3, eco: 2 }, { sec: 1, eco: 1 }, { sec: 2, eco: 5 }, { sec: 2, eco: 4 }, { sec: 4, eco: 2 }, { sec: 1, eco: 2 }, { sec: 1, eco: 1 }, { sec: 3, eco: 1 }, { sec: 3, eco: 3 }, { sec: 1, eco: 3 } ];
-        let stats = { health: 0, body: 0, mind: 0, magic: 0, fame: 0, money: 0 };
-        let turn = 1, maxTurn = 20, isEventActive = false, isGameStarted = false, isTyping = false, targetText = "";
-        let messageQueue = [], currentMsgIndex = 0, pendingResultHtml = "", typeInterval;
-        let consecutiveNormalEvents = 0, lastEventWasHeroine = false, isForcedHeroine = false, isResultDisplayed = false;
-        let currentGameLog = [];
-        let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
-        let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
-        let activeImpacts = Array(12).fill(false);
-        const gameAssets = { events: {}, heroines: {} };
-
-        window.onload = async () => {
-            const statusEl = document.getElementById("load-status"); const barFill = document.getElementById("load-bar-fill");
-            const assetsToLoad = []; 
-            
-            // 修正：36ファイル（12エリア×3ランク）の一括ロード
-            scenarios.forEach(s => {
-                for (let i = 1; i <= 3; i++) {
-                    assetsToLoad.push({ type: 'event', file: `${s.file}_${i}` });
-                }
-            });
-            heroines.forEach(h => assetsToLoad.push({ type: 'heroine', file: h.file }));
-            
-            let loadedCount = 0;
-            const loadPromises = assetsToLoad.map(async (asset) => {
-                try {
-                    const res = await fetch(`data/${asset.type === 'event' ? 'events' : 'heroines'}/${asset.file}.json`);
-                    const data = await res.json();
-                    if (asset.type === 'event') { 
-                        gameAssets.events[asset.file] = data; // 例: gameAssets.events["e01_royal_city_1"] に格納
-                    }
-                    else if (asset.type === 'heroine') { gameAssets.heroines[asset.file] = await fetch(`data/heroines/${asset.file}.json`).then(r => r.json()); }
-                    loadedCount++; const percent = (loadedCount / assetsToLoad.length) * 100; barFill.style.width = percent + "%"; statusEl.innerText = `Loading: ${asset.file} (${Math.round(percent)}%)`;
-                } catch (e) { console.error(e); }
-            });
-            await Promise.all(loadPromises);
-            
-            try {
-                const monoRes = await fetch('data/events/monologues.json');
-                const monoJson = await monoRes.json();
-                monologueData = monoJson.common;
-                heroineReactions = monoJson.heroines;
-                const specRes = await fetch('data/events/special.json');
-                specialData = await specRes.json();
-            } catch (e) { console.error("Data load failed", e); }
-
-            heroineImpacts = heroines.map(h => {
-                const conf = impactConfig[h.name];
-                if (!conf) return { target: 0, sec: 0, eco: 0, name: "Unknown", btnLabel: "???" };
-                const targetIdx = scenarios.findIndex(s => s.name === conf.targetName);
-                return { 
-                    target: targetIdx !== -1 ? targetIdx : 0, 
-                    sec: conf.sec, eco: conf.eco, name: conf.name,
-                    btnLabel: `${conf.targetName} +`
-                };
-            });
-
-            const savedB = localStorage.getItem('maghribal_boosts'); if(savedB) unlockedBoosts = JSON.parse(savedB);
-            const savedA = localStorage.getItem('maghribal_active_boosts'); if(savedA) activeBoosts = JSON.parse(savedA);
-            const savedI = localStorage.getItem('maghribal_active_impacts'); if(savedI) activeImpacts = JSON.parse(savedI);
-            const savedC = localStorage.getItem('maghribal_cleared_heroines'); if(savedC) clearedHeroines = JSON.parse(savedC);
-            
-            initUI(); displayPastRecords(); renderBoostButtons();
-            resizeGameContainer(); window.addEventListener('resize', resizeGameContainer);
-            
-            checkResumeData(); 
-            
-            // ▼▼▼ 修正: フェードアウト処理に変更 ▼▼▼
-            setTimeout(() => { 
-                const loader = document.getElementById("loading-screen");
-                loader.classList.add("loaded"); // 透明化開始
-                
-                // CSSのtransition(0.5s)が終わった頃に完全に消す
-                setTimeout(() => {
-                    loader.style.display = "none";
-                }, 500);
-            }, 800);
-        };
-        
-        function checkResumeData() {
-            try {
-                const savedSession = localStorage.getItem('maghribal_resume_data');
-                if(savedSession) {
-                    const btn = document.getElementById('continue-btn');
-                    if(btn) {
-                        btn.style.display = 'block'; 
-                    }
-                }
-            } catch(e) { console.error("Error checking resume data:", e); }
-        }
-
-        function saveSessionData() {
-            if (turn > maxTurn && activeImpacts.findIndex(Boolean) === -1) return; 
-            try {
-                const sessionData = {
-                    turn: turn,
-                    stats: stats,
-                    activeImpacts: activeImpacts,
-                    consecutiveNormalEvents: consecutiveNormalEvents,
-                    lastEventWasHeroine: lastEventWasHeroine,
-                    heroineProgress: heroines.map(h => ({p: h.progress || 0, a: h.affection || 0})),
-                    gameLog: currentGameLog
-                };
-                localStorage.setItem('maghribal_resume_data', JSON.stringify(sessionData));
-                
-                const contBtn = document.getElementById("continue-btn");
-                if(contBtn) contBtn.style.display = "block";
-            } catch(e) {
-                console.error("Save failed:", e);
-            }
-        }
-
-        function continueGame() {
-            playSE(seOp); // ★追加：GAME STARTと同じ音を鳴らす
-            const saved = localStorage.getItem('maghribal_resume_data');
-            if (!saved) return;
-            try {
-                const data = JSON.parse(saved);
-
-                turn = data.turn;
-                stats = data.stats;
-                activeImpacts = data.activeImpacts || Array(12).fill(false);
-                consecutiveNormalEvents = data.consecutiveNormalEvents;
-                lastEventWasHeroine = data.lastEventWasHeroine;
-                currentGameLog = data.gameLog || [];
-
-                if (data.heroineProgress) {
-                    heroines.forEach((h, i) => {
-                        if (data.heroineProgress[i]) {
-                            h.progress = data.heroineProgress[i].p;
-                            h.affection = data.heroineProgress[i].a;
-                        }
-                    });
-                }
-
-                document.getElementById("title-screen").classList.add("hidden-screen");
-                document.getElementById("top-ui-container").style.display = "flex";
-                document.getElementById("background-layer").classList.add("visible");
-                document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible'));
-
-                statKeys.forEach(k => updateUI(k));
-                document.getElementById("turn-count").innerText = turn;
-                document.getElementById("log-content").innerHTML = currentGameLog.join('');
-                updateMapState();
-
-                bgmOp.pause();
-                bgmMap.currentTime = 0;
-                bgmMap.play();
-                isGameStarted = true;
-                
-                updateMonologue('resume', false); 
-            } catch(e) {
-                console.error("Load failed:", e);
-                alert("セーブデータの読み込みに失敗しました。");
-            }
-        }
-        
-        const updateMonologue = (type = 'random', saveToLog = true) => { 
-            const container = document.getElementById('monologue-container');
-            const textEl = container.querySelector('.monologue-text');
-            
-            if (activeImpacts.findIndex(Boolean) !== -1) { container.style.display = 'none'; return; }
-
-            let text = "";
-            let pool = [];
-
-            if (type === 'resume') { 
-                text = "……さて、旅の続きを始めよう。"; 
-            } else if (type === 'start') {
-                pool = monologueData.start;
-            } else if (lastEventContext) { 
-                const { name, progress } = lastEventContext;
-                const stage = Math.min(progress - 1, 5); 
-                if (heroineReactions[name] && heroineReactions[name][stage]) {
-                    text = heroineReactions[name][stage];
-                } else {
-                    pool = monologueData.success; 
-                }
-                lastEventContext = null;
-            } else {
-                const maxStats = statKeys.filter(k => stats[k] >= 50);
-                if (maxStats.length > 0 && Math.random() < 0.3) { 
-                    pool = monologueData.stat_max; 
-                } 
-                else if (lastEventResult && Math.random() < 0.7) {
-                    const resKey = (lastEventResult === 'great_success' || lastEventResult === 'great') ? 'great' : lastEventResult;
-                    pool = monologueData[resKey] || monologueData.failure;
-                    lastEventResult = null;
-                }
-                else if (Math.random() < 0.4) { 
-                    const unmetHeroines = heroines.filter(h => h.progress === 0);
-                    if (unmetHeroines.length > 0 && Math.random() < 0.5) {
-                        const target = unmetHeroines[Math.floor(Math.random() * unmetHeroines.length)];
-                        const originalIdx = heroines.indexOf(target);
-                        if (originalIdx !== -1) {
-                            text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
-                        }
-                    } else {
-                        pool = monologueData.hint_weak;
-                    }
-                }
-                else {
-                    if (turn < 5) pool = monologueData.progress_low;
-                    else if (turn < 15) pool = monologueData.progress_mid;
-                    else pool = monologueData.progress_high;
-                }
-            }
-
-            if (!text) {
-                if (!pool || pool.length === 0) pool = monologueData.progress_mid;
-                text = pool[Math.floor(Math.random() * pool.length)];
-            }
-
-            if (saveToLog) {
-                currentGameLog.push(`<div class=\"log-entry monologue-log\">（独り言）${text}</div>`);
-                const logContent = document.getElementById("log-content");
-                if (logContent) {
-                    logContent.innerHTML = currentGameLog.join('');
-                }
-            }
-
-            textEl.innerHTML = "";
-            container.style.display = 'flex';
-            container.classList.remove('visible');
-            void container.offsetWidth; 
-            container.classList.add('visible');
-            
-            clearInterval(monologueInterval);
-            let i = 0;
-            monologueInterval = setInterval(() => {
-                textEl.textContent += text.charAt(i);
-                i++;
-                if (i >= text.length) clearInterval(monologueInterval);
-            }, 50);
-        };
-        
-function handleSpotClick(el, idx) {
-            document.getElementById('monologue-container').classList.remove('visible');
-
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1 && idx !== heroineImpacts[activeIdx].target) return;
-
-            if (!isGameStarted || isEventActive || (activeIdx === -1 && turn > maxTurn)) return; 
-            isEventActive = true; isResultDisplayed = false; isResultHidden = false;
-            playSE(seFootstep); 
-            
-            let stopBgm = false;
-
-            el.querySelector('.hint-text').classList.add('selected-yellow'); 
-            document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
-            
-            const s = scenarios[idx];
-            const h = heroines[idx]; 
-            h.events = gameAssets.heroines[h.file].events; 
-            
-            const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6;
-            const assign = spotAssignments[idx];
-            const anyM = heroines.some(hero => hero.progress >= 5);
-            
-            const minVal = Math.min(...Object.values(stats)); 
-            const weakStats = statKeys.filter(k => stats[k] === minVal); 
-            const isRecommended = weakStats.includes(assign.main) || weakStats.includes(assign.sub);
-            
-            let tierNum, tierKey; 
-            const progressRatio = turn / maxTurn;
-            if (progressRatio <= 1/6) { tierNum = 1; tierKey = 'newcomer'; }
-            else if (progressRatio <= 5/6) { tierNum = 2; tierKey = 'mid'; }
-            else { tierNum = 3; tierKey = 'veteran'; }
-            
-            const eventFile = gameAssets.events[`${s.file}_${tierNum}`];
-
-            let isH = false, dMsg = "", bCh = {}, out = 'success';
-
-            if (activeIdx !== -1) {
-                isH = false; isResultHidden = true; stopBgm = true;
-                if (specialData[activeIdx]) {
-                    dMsg = specialData[activeIdx].text;
-                    bCh = specialData[activeIdx].changes;
-                } else {
-                    dMsg = "イベントデータが見つかりません。";
-                    bCh = {};
-                }
-                out = 'exclusive'; 
-            } else {
-                let chance = isForcedHeroine ? 1.0 : (stats[assign.main] / 50) + (consecutiveNormalEvents * 0.1); 
-                if (chance < 0.05) chance = 0.05; 
-                if (lastEventWasHeroine && !isForcedHeroine) chance = 0;
-                
-                if (h.progress >= 5) { 
-                    isH = true; lastEventWasHeroine = true; isResultHidden = true; stopBgm = true;
-                    dMsg = "【後日談】\n" + (h.afterMsg || "穏やかな時間が流れた。"); 
-                    bCh[assign.main] = 5; bCh[assign.sub] = 2; 
-                    out = 'heroine'; 
-                    lastEventContext = { name: h.name, progress: 6 }; 
-                    if (!clearedHeroines.includes(h.name)) {
-                        clearedHeroines.push(h.name);
-                        localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-                    }
-                } 
-                else if (anyM && h.progress >= 1) { 
-                    isH = true; lastEventWasHeroine = true; stopBgm = true;
-                    dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); 
-                    bCh[assign.main] = 2; bCh[assign.sub] = 1; 
-                    out = 'heroine'; 
-                } 
-                else if (Math.random() < chance) { 
-                    const reqA = h.minAvg[Math.min(h.progress, 4)] || 0;
-                    const reqS = (h.progress + 1) * 8;
-                    const mIdx = h.progress < 2 ? 0 : 1; 
-                    
-                    if (avgStat < reqA) { 
-                        isH = false; lastEventWasHeroine = false; 
-                        dMsg = h.lockAvgMsgs[mIdx]; 
-                        bCh[assign.main] = 1; bCh[assign.sub] = 1; 
-                        out = 'hint'; 
-                    } 
-                    else if (stats[assign.main] < reqS) { 
-                        isH = false; lastEventWasHeroine = false; 
-                        dMsg = h.lockStatMsgs[mIdx]; 
-                        bCh[assign.main] = 1; bCh[assign.sub] = 1; 
-                        out = 'hint'; 
-                    } 
-                    else { 
-                        isH = true; lastEventWasHeroine = true; consecutiveNormalEvents = 0; stopBgm = true;
-                        dMsg = h.events[Math.min(h.progress, 4)]; 
-                        h.progress++; h.affection++; 
-                        if (h.progress >= 3) isResultHidden = true; 
-                        bCh[assign.main] = 5; bCh[assign.sub] = 2; 
-                        out = 'heroine'; 
-                        lastEventContext = { name: h.name, progress: h.progress };
-                        if (h.progress >= 5) {
-                            if (!clearedHeroines.includes(h.name)) {
-                                clearedHeroines.push(h.name);
-                                localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-                            }
-                        }
-                    } 
-                } 
-                else { 
-                    // 通常イベントの抽選
-                    isH = false; lastEventWasHeroine = false; consecutiveNormalEvents++; 
-                    
-                    let pool = [];
-                    // データ形式（配列orオブジェクト）の自動判別は維持
-                    if (Array.isArray(eventFile)) {
-                        pool = eventFile;
-                    } else if (eventFile && typeof eventFile === 'object') {
-                        const tierData = eventFile[tierKey] || Object.values(eventFile)[0];
-                        if (Array.isArray(tierData)) {
-                            pool = tierData; 
-                        } else if (tierData) {
-                            pool = [].concat(tierData.success || [], tierData.failure || [], tierData.great || []);
-                        }
-                    }
-                    
-                    let targetPool = pool;
-                    if (isRecommended) { 
-                        const successPool = pool.filter(e => e.outcome !== 'failure'); 
-                        if (successPool.length > 0) targetPool = successPool; 
-                    } 
-                    
-                    // 【修正】「静かな時が流れた」のフォールバックを削除
-                    const ev = targetPool[Math.floor(Math.random() * targetPool.length)];
-                    
-                    // evが取得できた場合のみ処理を実行（なければエラー等で止まる）
-                    if (ev) {
-                        dMsg = ev.text; 
-                        bCh = {...(ev.changes || {})}; 
-                        out = ev.outcome; 
-                        lastEventResult = out;
-                        
-                        // 【確認用ログ】正しいテキストが引けているか確認用
-                        console.log(`[EventCheck] File:${s.file}_${tierNum}, Key:${tierKey}, Text:${dMsg}`);
-                    } else {
-                        console.error(`[EventError] No event found for ${s.file}_${tierNum} (${tierKey})`);
-                    }
-                }
-                
-                if (isRecommended) { 
-                    for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
-                }
-            }
-            
-            if (stopBgm) bgmMap.pause();
-            
-            // evが取得できずdMsgが空の場合、ウィンドウ表示でおかしくなる可能性がありますが、
-            // 「ロジックを入れない」方針に従いそのまま渡します。
-            applyEventView(dMsg, bCh, isH, h, s, out, idx);
-        }
-        function applyEventView(msg, changes, isH, h, s, out, idx) {
-            for (let k in changes) { stats[k] = Math.max(0, Math.min(stats[k] + (changes[k] || 0), 50)); updateUI(k); } checkRankUpdate(); 
-            let cLog = isResultHidden ? "" : getResultHtml(changes); 
-            let outcomeHtml = ""; 
-            if (!isH && out !== 'hint' && out !== 'heroine' && out !== 'exclusive') { 
-                if (out === 'great_success' || out === 'great') outcomeHtml = `<span class=\"outcome-badge great\">【大成功】</span>`; 
-                else if (out === 'success') outcomeHtml = `<span class=\"outcome-badge success\">【成功】</span>`; 
-                else if (out === 'failure') outcomeHtml = `<span class=\"outcome-badge failure\">【失敗】</span>`; 
-            } 
-            let logL = isH ? `(<i class=\"fa-solid ${h ? h.icon : ''}\"></i> ${h ? h.name : ''})` : ""; const locLabel = `<i class=\"fa-solid ${s.icon}\"></i> ${s.name}`; currentGameLog.push(`<div class=\"log-entry\"><div class=\"log-header\">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class=\"log-body\">${formatGameText(msg).replace(/\n/g, '<br>')}</div></div>`); document.getElementById("log-content").innerHTML = currentGameLog.join(''); document.getElementById("background-layer").style.transformOrigin = `${spotAssignments[idx].l}% ${spotAssignments[idx].t}%`; document.getElementById("background-layer").style.transform = `scale(${s.zoom || 2.5})`; document.getElementById("background-layer").classList.add("blur-bg"); 
-            
-            if (typeof msg === 'string') {
-                messageQueue = msg.split('\n').filter(line => line.trim() !== "");
-            } else {
-                messageQueue = Array.isArray(msg) ? msg : [msg];
-            }
-            
-            currentMsgIndex = 0; isResultDisplayed = false; pendingResultHtml = outcomeHtml + cLog; document.getElementById("loc-icon").innerHTML = `<i class=\"fa-solid ${s.icon}\"></i>`; document.getElementById("loc-name").innerText = s.name; document.getElementById("loc-stats").innerHTML = getLocStatusHtml(idx); const cb = document.getElementById("char-name-badge"); if (isH && h) { cb.innerHTML = `<i class=\"fa-solid ${h.icon}\"></i> ${h.title} ${h.name}`; cb.style.display = "flex"; } else cb.style.display = "none"; document.getElementById("message-text").innerHTML = ""; document.getElementById("result-display").innerHTML = ""; document.getElementById("result-display").style.opacity = "0"; document.getElementById("page-cursor").classList.remove("active"); document.getElementById("message-window").classList.add("active"); document.getElementById("click-overlay").classList.add("active"); setTimeout(advanceMessage, 300);
-        }
-        function advanceMessage() { 
-            const cursor = document.getElementById("page-cursor"); 
-            if (isTyping) { finishTyping(); return; } 
-            if (currentMsgIndex < messageQueue.length) { 
-                cursor.classList.remove("active"); targetText = messageQueue[currentMsgIndex++]; typeWriter(document.getElementById("message-text"), targetText, 15); 
-            } else {
-                if (isResultHidden) { closeEvent(); } else if (!isResultDisplayed) { cursor.classList.remove("active"); showFinalResult(); cursor.classList.add("active"); } else { cursor.classList.remove("active"); closeEvent(); }
-            }
-        }
-        function getResultHtml(changes) { let h = ''; for (let k in changes) { if (changes[k] !== 0) { const arrow = changes[k] > 0 ? `<span style=\"color:#76ff03; font-size:0.8em;\">▲</span>` : `<span style=\"color:#ea80fc; font-size:0.8em;\">▼</span>`; h += `<span style=\"color:${statColors[k]}; margin:0 8px; font-weight:bold; white-space:nowrap;\"><i class=\"fa-solid ${statConfig[k].icon}\"></i> ${statConfig[k].name}${arrow}</span>`; } } return h; }
-        
-        function closeEvent() { 
-            document.getElementById("background-layer").style.transform = "scale(1)"; document.getElementById("background-layer").classList.remove("blur-bg"); document.getElementById("message-window").classList.remove("active"); document.getElementById("click-overlay").classList.remove("active"); document.getElementById("page-cursor").classList.remove("active"); 
-            if (bgmMap.paused && activeImpacts.findIndex(Boolean) === -1) bgmMap.play();
-
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) { 
-                document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 1500); 
-                return; 
-            }
-            
-            if (turn < maxTurn) { 
-                turn++; 
-                document.getElementById("turn-count").innerText = turn; 
-                isEventActive = false; 
-                updateMonologue(); 
-                saveSessionData(); 
-                
-                setTimeout(() => { 
-                     document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
-                }, 250);
-            } 
-            else { 
-                updateMonologue(); 
-                saveSessionData(); 
-                setTimeout(() => { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 3000); }, 3000);
-            }
-        }
-        function showEnding() { 
-            processBoostUnlock(); 
-            if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
-            
-            localStorage.removeItem('maghribal_resume_data'); 
-
-            document.getElementById("ed-screen").classList.remove("hidden-screen"); 
-            bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
-            
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) {
-                document.getElementById("ed-rank").innerText = "SPECIAL EPISODE CLEAR";
-                const h1 = heroines[activeIdx];
-                const tIdx = heroineImpacts[activeIdx].target;
-                const scene = scenarios[tIdx];
-                const h2 = heroines.find(h => h.file === scene.file) || heroines[tIdx];
-                const partnerHTML = `<span style=\"display:flex; align-items:center; gap:8px;\"><i class=\"fa-solid ${h1.icon}\"></i> ${h1.name} <span style=\"font-size:0.8em; opacity:0.7;\">+</span> <i class=\"fa-solid ${scene.icon}\"></i> ${scene.name} <span style=\"font-size:0.8em; opacity:0.7;\">+</span> <i class=\"fa-solid ${h2.icon}\"></i> ${h2.name}</span>`;
-                document.getElementById("ed-heroine").innerHTML = partnerHTML;
-                document.getElementById("ed-stats").innerHTML = ""; 
-            } else {
-                const total = Object.values(stats).reduce((sum, v) => sum + v, 0); let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE")); document.getElementById("ed-rank").innerText = `Rank: ${rank}`; let best = heroines.reduce((a, b) => a.affection > b.affection ? a : b); let endingDisplay = ""; if (best && best.affection > 0) { const hIcon = `<i class=\"fa-solid ${best.icon}\" style=\"margin:0 10px;\"></i>`; let affinityIcon = ""; if (best.progress >= 5) affinityIcon = `<span class=\"affinity-icon bouquet-icon\"><i class=\"fa-solid fa-mound\"></i></span>`; else if (best.progress >= 3) affinityIcon = `<span class=\"affinity-icon affinity-seedling\" style=\"margin-left:8px;\"><i class=\"fa-solid fa-seedling\"></i></span>`; else affinityIcon = `<span class=\"affinity-icon affinity-leaf\" style=\"margin-left:8px;\"><i class=\"fa-solid fa-leaf\"></i></span>`; endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`; } else { const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0]; endingDisplay = `称号: ${soloTitles[maxK]}`; } document.getElementById("ed-heroine").innerHTML = endingDisplay; let h = ""; statKeys.forEach(k => { const val = Math.floor(stats[k]); const isMax = val >= 50; const color = statColors[k]; const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : ""; const iconStyle = isMax ? `color: ${color};` : ""; const maxLabel = isMax ? `<span class=\"max-label\" style=\"color:${color}\">MAX</span>` : ""; h += `<div class=\"ed-stat-box\" style=\"${borderStyle}\"><i class=\"fa-solid ${statConfig[k].icon}\" style=\"${iconStyle}\"></i><div style=\"font-size:9px; color:#ccc;\">${statConfig[k].name}</div><span class=\"ed-stat-val\">${val}</span>${maxLabel}</div>`; }); document.getElementById("ed-stats").innerHTML = h; 
-            }
-            setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
-        }
-        function startOP() { 
-            seOp.currentTime = 0; seOp.play(); 
-            resizeGameContainer(); currentGameLog = []; document.getElementById("log-content").innerHTML = ""; 
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) { statKeys.forEach(k => { stats[k] = 0; updateUI(k); }); } else { statKeys.forEach(k => { stats[k] = activeBoosts[k] ? 10 : 0; updateUI(k); }); }
-            bgmOp.pause(); bgmOp.currentTime = 0; bgmOp.play(); 
-            document.getElementById("title-screen").classList.add("hidden-screen"); 
-            setTimeout(() => { document.getElementById("op-screen").classList.remove("hidden-screen"); 
-            const opLines = (activeIdx !== -1) ? heroineOPLines[activeIdx] : ["陽が沈む西の地、マグリバル。", "ここには名声、富、知識、そして力が眠っている。", "残された時間は、そう長くはない。", "どの道を歩み、何者となるか。", "全ては汝の選択に委ねられている。"];
-            updateMapState(); 
-            
-            let idx = 0; const opDiv = document.getElementById("op-text"); const showLine = () => { opDiv.style.opacity = 0; setTimeout(() => { opDiv.innerHTML = opLines[idx]; opDiv.style.opacity = 1; }, 400); }; showLine(); window.nextOP = () => { idx++; if (idx < opLines.length) showLine(); else { 
-                document.getElementById("op-screen").classList.add("hidden-screen"); document.getElementById("top-ui-container").style.display = "flex"; document.getElementById("background-layer").classList.add("visible"); 
-                bgmOp.pause(); bgmMap.currentTime = 0; bgmMap.play();
-                setTimeout(() => { 
-                    document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
-                    updateMonologue('start');
-                    isGameStarted = true; 
-                }, 1000); 
-            } }; }, 500); 
-        }
-        // RETRYボタン用の関数（暗転追加版）
-        function retryGame() {
-            playSE(seFootstep); // 足音再生
-            
-            // 暗転処理を開始 (CSSのtransition: 1.5sに合わせています)
-            document.getElementById('fade-overlay').classList.add('active'); 
-            
-            // 暗転しきったタイミング(1.5秒後)でリロード
-            setTimeout(() => {
-                location.reload();
-            }, 1500);
-        }
-        function processBoostUnlock() { const sortedKeys = [...statKeys].sort((a, b) => stats[b] - stats[a]); for (let key of sortedKeys) { if (!unlockedBoosts[key]) { unlockedBoosts[key] = true; localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); break; } } }
-        
-    </script>
 </body>
 </html>

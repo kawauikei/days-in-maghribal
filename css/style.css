@@ -47,29 +47,59 @@ body {
 }
 #background-layer.visible { opacity: 1; }
 #background-layer.blur-bg { filter: blur(5px); }
-
+/* --- スチル表示用レイヤー（アニメーション強化版） --- */
 #event-still-layer {
-    display: none;
+    /* ▼▼▼ 変更点1：display:none を廃止し、visibility で制御 ▼▼▼ */
+    /* display: none; だとアニメーションしないため */
+    visibility: hidden;
+    
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 900px;
-    height: 600px;
+    
+    /* ▼▼▼ 変更点2：初期位置とサイズ ▼▼▼ */
+    /* 少し下(-45%)にずらし、わずかに縮小(0.95)させておく */
+    /* これにより、表示時に「浮き上がりながら迫ってくる」演出になります */
+    transform: translate(-50%, -45%) scale(0.95);
+    
+    width: 585px;
+    height: 390px;
+
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover; 
     background-position: center;
     z-index: 150;
+
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease-out;
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.8));
-}
-#event-still-layer.active {
-    display: block;
-    opacity: 1;
+    
+    /* ▼▼▼ 変更点3：トランジション設定 ▼▼▼ */
+    /* transform（移動・拡大）もアニメーションさせる */
+    /* 時間を0.6sにして、ウィンドウより少しゆったりと余韻を持たせています */
+    transition: 
+        opacity 0.6s ease-out, 
+        transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+        visibility 0.6s;
+
+    /* エフェクト・枠線（前回決定分） */
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)) blur(2px) brightness(1.1) contrast(0.95);
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 
+        0 0 30px rgba(0,0,0,0.8), 
+        inset 0 0 20px rgba(0,0,0,0.6);
+        
+    overflow: hidden;
 }
 
+#event-still-layer.active {
+    /* ▼▼▼ 変更点4：表示状態 ▼▼▼ */
+    visibility: visible; /* 見えるようにする */
+    opacity: 1;
+    
+    /* 定位置(-50%)に戻し、サイズも等倍(1)へ */
+    transform: translate(-50%, -50%) scale(1);
+}
 /* マップスポット */
 .map-spot { 
     position: absolute; width: 80px; height: 80px; 

@@ -8,7 +8,13 @@
 function toggleDebugPanel() { 
     const p = document.getElementById("debug-panel"); 
     p.style.display = p.style.display === "block" ? "none" : "block"; 
+    
     if(p.style.display === "block") { 
+        // ▼▼▼ 追加: スライダーの位置を現在の音量に合わせる ▼▼▼
+        document.getElementById("bgm-slider").value = currentBgmVol;
+        document.getElementById("se-slider").value = currentSeVol;
+        // ▲▲▲ 追加ここまで ▲▲▲
+
         renderHeroineSliders(); 
         initDebugEventTester(); 
     } 
