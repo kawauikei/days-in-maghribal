@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/game_data.js"></script>
+    <script src="js/audio.js"></script>
 </head>
 <body>
     <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0;">
@@ -125,17 +126,6 @@
     </div>
 
     <script>
-        const sePi = new Audio('se/pi.mp3'); const seOp = new Audio('se/op.mp3'); const seFootstep = new Audio('se/za.mp3'); const sePage = new Audio('se/pera.mp3');
-        const bgmOp = new Audio('bgm/op.mp3'); bgmOp.loop = true; bgmOp.volume = 0.3;
-        const bgmMap = new Audio('bgm/map.mp3'); bgmMap.loop = true; bgmMap.volume = 0.3;
-        const bgmEd = new Audio('bgm/ed.mp3'); bgmEd.loop = true; bgmEd.volume = 0.3;
-        
-        function playSE(audio) {
-            const clone = audio.cloneNode();
-            clone.volume = audio.volume;
-            clone.play();
-        }
-
         const statColors = { health: '#ff4d4d', body: '#ffa500', mind: '#4da6ff', magic: '#b366ff', fame: '#ffff4d', money: '#33cc33' };
         const rankColors = { LEGEND: '#ffcc00', GOLD: '#e6b422', SILVER: '#c0c0c0', BRONZE: '#cd7f32' };
         const soloTitles = { health: "不滅の冒険者", body: "孤高の拳王", mind: "深淵の求道者", magic: "無窮の魔術師", fame: "名もなき伝説", money: "豪腕の大富豪" };
