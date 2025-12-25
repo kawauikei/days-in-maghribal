@@ -1,14 +1,45 @@
 {
   "veteran": {
     "success": [
-      { "image": "01", "text": "世界樹の意思と完全に同調し、森そのものを操る究極の魔術を獲得した。", "changes": { "magic": 5, "health": 1 } },
-      { "image": "01", "text": "エルフの始祖より不老の秘薬を授かり、生命力が溢れ出る体躯となった。", "changes": { "health": 5, "magic": 1 } }
+      { "image": "01", "text": "世界樹の意思と完全に同調し、森そのものを操る究極の魔術を獲得した。", "changes": { "magic": 4, "health": 4 } },
+      { "image": "01", "text": "エルフの始祖より不老の秘薬を授かり、生命力が溢れ出る体躯となった。", "changes": { "magic": 5, "health": 2 } },
+      { "image": "01", "text": "森羅万象の声を聞き、世界の理を理解した。", "changes": { "magic": 3, "health": 2 } },
+      { "image": "01", "text": "精霊界への扉を開き、高位精霊を招き入れた。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "枯れ果てた大地を蘇らせ、緑豊かな森に変えた。", "changes": { "magic": 6 } },
+      { "image": "01", "text": "古代の邪悪な封印を強化し、森の平和を守った。", "changes": { "magic": 2, "health": 4 } },
+      { "image": "01", "text": "精霊王の代理人として、森の全権を委ねられた。", "changes": { "magic": 2, "health": 3 } },
+      { "image": "01", "text": "あらゆる病を癒やす奇跡の力を手に入れた。", "changes": { "magic": 4, "health": 2 } },
+      { "image": "01", "text": "森の魔力を身体に取り込み、半精霊化した。", "changes": { "magic": 6, "health": 2 } },
+      { "image": "01", "text": "時を操る魔法の一端に触れ、過去や未来を垣間見た。", "changes": { "magic": 5, "health": 3 } },
+      { "image": "01", "text": "世界樹の守護竜と契約し、最強の守りを得た。", "changes": { "magic": 2, "health": 2 } },
+      { "image": "01", "text": "森の賢者たちを束ね、新たな魔法体系を確立した。", "changes": { "magic": 2, "health": 2 } },
+      { "image": "01", "text": "天変地異から森を守り抜き、伝説となった。", "changes": { "magic": 2, "health": 4 } },
+      { "image": "01", "text": "精霊たちと共に歌い、世界を祝福した。", "changes": { "magic": 6, "health": 3 } },
+      { "image": "01", "text": "死者の魂を森へ還し、輪廻の輪を守った。", "changes": { "magic": 4, "health": 3 } },
+      { "image": "01", "text": "異界からの侵略者を撃退し、森の平穏を維持した。", "changes": { "magic": 4, "health": 1 } },
+      { "image": "01", "text": "自らの命を削って森に活力を与え、より強大な力を得た。", "changes": { "magic": 6, "health": 1 } },
+      { "image": "01", "text": "森の歴史そのものとなり、語り継がれる存在となった。", "changes": { "magic": 2, "health": 2 } },
+      { "image": "01", "text": "次代の守護者を見出し、知識と力を継承した。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "肉体を捨て、森の意識の一部となる準備を始めた。", "changes": { "magic": 5, "health": 4 } }
     ],
     "failure": [
-      { "image": "02", "text": "精霊の怒りに触れ、森の守護者としての資格を剥奪された。魔力と体力を奪われる。", "changes": { "magic": -5, "health": -4 } }
+      { "image": "02", "text": "精霊の怒りに触れ、森の守護者としての資格を剥奪された。魔力と体力を奪われる。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "世界樹の拒絶に遭い、精神に深い傷を負った。", "changes": { "magic": -3, "health": -1 } },
+      { "image": "02", "text": "森の魔力に飲み込まれ、自我を失いかけた。", "changes": { "magic": -3, "health": -4 } },
+      { "image": "02", "text": "邪悪な封印が解けかけ、必死の攻防を強いられた。", "changes": { "magic": -3, "health": -3 } },
+      { "image": "02", "text": "半精霊化の副作用で、人間としての感情が薄れた。", "changes": { "magic": -5, "health": -2 } },
+      { "image": "02", "text": "時の魔法の代償として、記憶の一部を失った。", "changes": { "magic": -5 } },
+      { "image": "02", "text": "守護竜に試され、瀕死の重傷を負った。", "changes": { "magic": -3, "health": -2 } },
+      { "image": "02", "text": "魔法体系の構築に失敗し、魔力が暴走した。", "changes": { "magic": -2, "health": -1 } },
+      { "image": "02", "text": "侵略者の攻撃で森の一部が焼失し、心に穴が開いた。", "changes": { "magic": -4 } },
+      { "image": "02", "text": "継承者が育たず、未来への不安を残した。", "changes": { "magic": -2, "health": -4 } }
     ],
     "great": [
-      { "image": "03", "text": "千年に一度の開花に立ち会い、精霊王としての魔力と生命の源泉を手に入れた！", "changes": { "magic": 6, "health": 4 } }
+      { "image": "03", "text": "千年に一度の開花に立ち会い、精霊王としての魔力と生命の源泉を手に入れた！", "changes": { "magic": 7 } },
+      { "image": "03", "text": "世界樹の化身となり、神に近い存在へと昇華した！", "changes": { "magic": 5 } },
+      { "image": "03", "text": "全世界の森と繋がり、地球規模の魔力ネットワークを掌握した！", "changes": { "magic": 5, "health": 3 } },
+      { "image": "03", "text": "死を超越し、永遠の森の番人となった！", "changes": { "magic": 4 } },
+      { "image": "03", "text": "新たな世界樹を植え、新しい時代の創造主となった！", "changes": { "magic": 5 } }
     ]
   }
 }

@@ -437,23 +437,33 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: 
     to { transform: scale(1.2); filter: drop-shadow(0 0 8px #ff69b4); } 
 }
 
-/* タロット風カードのベースレイヤー */
-.zodiac-card {
-    background-color: #ffffff !important;
-    display: flex !important;
-    align-items: center;
+/* --- キャラクター立ち絵レイヤー --- */
+#character-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* キャラをクリックしても下のボタンを押せるように */
+    z-index: 15; /* スチル(10想定)より上、UI(20以上想定)より下 */
+    
+    /* フレックスボックスで中央下揃えにする */
+    display: flex;
     justify-content: center;
-    position: relative;
-    /* 四隅にさりげなく色を配置 */
-    background-image: 
-        radial-gradient(circle at 0% 0%, var(--main-color), transparent 60%),
-        radial-gradient(circle at 100% 100%, var(--sub-color), transparent 60%) !important;
+    align-items: flex-end;
+    padding-bottom: 0; /* 必要に応じて調整 */
 }
 
-/* 中央の記号演出 */
-.zodiac-symbol {
-    font-size: 260px; /* 585x390の枠内で際立つサイズ */
-    color: #111111;   /* 黒の記号 */
-    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
-    z-index: 10;
+/* 生成されたキャンバス（立ち絵）のスタイル */
+#character-layer canvas {
+    max-height: 95%; /* 画面からはみ出さないように制限 */
+    width: auto;     /* アスペクト比を維持 */
+    
+    /* フェードインアニメーション（任意） */
+    animation: fadeInChar 0.5s ease-out;
+}
+
+@keyframes fadeInChar {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

@@ -1,14 +1,45 @@
 {
   "mid": {
     "success": [
-      { "image": "01", "text": "魔物の巣窟を攻略し、戦闘に耐えうる魔力を練り上げた。", "changes": { "magic": 2, "body": 1 } },
-      { "image": "01", "text": "迷宮内の仕掛けを力ずくで突破し、肉体のリミッターが外れた。", "changes": { "body": 2, "magic": 1 } }
+      { "image": "01", "text": "魔物の巣窟を攻略し、戦闘に耐えうる魔力を練り上げた。", "changes": { "magic": 3, "body": 1 } },
+      { "image": "01", "text": "迷宮内の仕掛けを力ずくで突破し、肉体のリミッターが外れた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "中層域のボスを撃破し、強力な素材を手に入れた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "魔力を纏わせた武器で岩を砕き、破壊力を増した。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "複雑な迷宮構造を解析し、最短ルートを開拓した。", "changes": { "magic": 3, "body": 1 } },
+      { "image": "01", "text": "魔力枯渇状態での戦闘訓練を行い、精神力を鍛えた。", "changes": { "magic": 1, "body": 2 } },
+      { "image": "01", "text": "古代の自動人形（オートマタ）を停止させ、部品を回収した。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "迷宮の環境変化に適応し、どんな状況でも動ける体を作った。", "changes": { "magic": 3, "body": 1 } },
+      { "image": "01", "text": "魔法障壁を展開しながら進軍し、防御技術を高めた。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "魔物の群れを一掃する広範囲魔法を習得した。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "重装備での長時間探索を行い、持久力を極限まで高めた。", "changes": { "magic": 2, "body": 1 } },
+      { "image": "01", "text": "迷宮に眠る呪われた装備を回収し、浄化した。", "changes": { "magic": 1, "body": 2 } },
+      { "image": "01", "text": "幻影を見せる魔物を看破し、真実を見抜く目を持った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔力を動力とする古代のエレベーターを起動させた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "強酸の沼地を突破し、毒への耐性を得た。", "changes": { "magic": 2, "body": 2 } },
+      { "image": "01", "text": "身体強化魔法の効率を上げ、長時間維持できるようになった。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "迷宮の生態系の頂点に立つ魔物と戦い、生き延びた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "未知の鉱石を発見し、武具の強化に使った。", "changes": { "magic": 2, "body": 1 } },
+      { "image": "01", "text": "魔力嵐の中で瞑想し、魔力の制御力を高めた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "他のパーティと協力し、大規模なレイド戦を成功させた。", "changes": { "magic": 3, "body": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "罠を解除しきれず、毒と魔力ダメージを同時に負った。", "changes": { "magic": -2, "body": -1 } }
+      { "image": "02", "text": "罠を解除しきれず、毒と魔力ダメージを同時に負った。", "changes": { "magic": -2, "body": -1 } },
+      { "image": "02", "text": "ボスの攻撃を受け、装備が大破した。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "魔力制御を誤り、味方を巻き込みかけた。", "changes": { "magic": -3 } },
+      { "image": "02", "text": "迷宮の幻覚に惑わされ、同士討ちをしそうになった。", "changes": { "magic": -3 } },
+      { "image": "02", "text": "身体強化の反動で、筋肉断裂を起こした。", "changes": { "magic": -3, "body": -2 } },
+      { "image": "02", "text": "オートマタの暴走に巻き込まれ、怪我を負った。", "changes": { "magic": -3, "body": -1 } },
+      { "image": "02", "text": "食料が底をつき、魔物を食べて腹を壊した。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "迷宮の深層に迷い込み、死を覚悟した。", "changes": { "magic": -2, "body": -1 } },
+      { "image": "02", "text": "呪われた装備に精神を蝕まれかけた。", "changes": { "magic": -2, "body": -2 } },
+      { "image": "02", "text": "レイド戦で連携が取れず、作戦が失敗した。", "changes": { "magic": -2, "body": -2 } }
     ],
     "great": [
-      { "image": "03", "text": "迷宮の隠しボスを討伐し、強力な力をその身に宿した！", "changes": { "magic": 3, "body": 2 } }
+      { "image": "03", "text": "迷宮の隠しボスを討伐し、強力な力をその身に宿した！", "changes": { "magic": 2, "body": 2 } },
+      { "image": "03", "text": "古代文明の遺産を発見し、魔導技術の発展に貢献した！", "changes": { "magic": 2, "body": 1 } },
+      { "image": "03", "text": "迷宮の主と認められ、ダンジョンの機能を一部制御できるようになった！", "changes": { "magic": 3 } },
+      { "image": "03", "text": "死にかけた仲間を魔力と体力で無理やり蘇生させた！", "changes": { "magic": 2 } },
+      { "image": "03", "text": "伝説の武具を手に入れ、最強の魔装戦士となった！", "changes": { "magic": 2, "body": 1 } }
     ]
   }
 }

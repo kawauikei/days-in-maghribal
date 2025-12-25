@@ -219,26 +219,53 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
     let text = "";
     let pool = [];
 
+    // --- コンソールデバッグ開始 ---
+    console.group("--- Monologue Debug ---");
+    console.log("Type:", type);
+    console.log("Last Event Context:", lastEventContext);
+
     if (type === 'resume') { 
         text = "……さて、旅の続きを始めよう。"; 
     } else if (type === 'start') {
         pool = monologueData.start;
     } else if (lastEventContext) { 
         const { name, progress } = lastEventContext;
-        const stage = Math.min(progress - 1, 5); 
-        if (heroineReactions[name] && heroineReactions[name][stage]) {
-            text = heroineReactions[name][stage];
+        console.log(`Heroine Event detected: ${name}, Context Progress Value: ${progress}`);
+        
+        // --- 修正箇所：progressの値に基づいて参照インデックスを決定 ---
+        // progress: 6 は「後日談(events[5])」を見た直後 → モノローグも index 5 を出す
+        // progress: 7 は「世間話(events[6])」を見た直後 → モノローグも index 6 を出す
+        
+        let targetIndex = 0;
+        if (progress === 7) {
+            targetIndex = 6; // 世間話用モノローグ
+            console.log("System: Small Talk result detected. Using index 6.");
+        } else if (progress === 6) {
+            targetIndex = 5; // 後日談用モノローグ
+            console.log("System: After Story result detected. Using index 5.");
         } else {
-            pool = monologueData.success; 
+            targetIndex = Math.min(progress - 1, 4); // 通常イベント(1-5回目)
+            console.log(`System: Normal Event detected. Using index ${targetIndex}.`);
+        }
+
+        if (heroineReactions[name] && heroineReactions[name][targetIndex]) {
+            text = heroineReactions[name][targetIndex];
+        } else {
+            console.warn(`Result: heroineReactions['${name}'][${targetIndex}] not found.`);
+            pool = monologueData.success;
         }
         lastEventContext = null;
     } else {
+        // --- 汎用モノローグの抽選 ---
+        console.log("System: Selecting random general monologue.");
         const maxStats = statKeys.filter(k => stats[k] >= 50);
         if (maxStats.length > 0 && Math.random() < 0.3) { 
+            console.log("Selected: Max Stat Pool");
             pool = monologueData.stat_max; 
         } 
         else if (lastEventResult && Math.random() < 0.7) {
             const resKey = (lastEventResult === 'great_success' || lastEventResult === 'great') ? 'great' : lastEventResult;
+            console.log(`Selected: Result Pool (${resKey})`);
             pool = monologueData[resKey] || monologueData.failure;
             lastEventResult = null;
         }
@@ -249,8 +276,10 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
                 const originalIdx = heroines.indexOf(target);
                 if (originalIdx !== -1) {
                     text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
+                    console.log("Selected: Rumor text");
                 }
             } else {
+                console.log("Selected: Hint Pool");
                 pool = monologueData.hint_weak;
             }
         }
@@ -258,13 +287,20 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
             if (turn < 5) pool = monologueData.progress_low;
             else if (turn < 15) pool = monologueData.progress_mid;
             else pool = monologueData.progress_high;
+            console.log("Selected: Turn Progress Pool");
         }
     }
 
     if (!text) {
-        if (!pool || pool.length === 0) pool = monologueData.progress_mid;
+        if (!pool || pool.length === 0) {
+            console.error("Critical: No pool found, using backup progress_mid.");
+            pool = monologueData.progress_mid;
+        }
         text = pool[Math.floor(Math.random() * pool.length)];
     }
+    console.log("Final Text:", text);
+    console.groupEnd();
+    // --- コンソールデバッグ終了 ---
 
     if (saveToLog) {
         currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
@@ -324,17 +360,18 @@ function processBoostUnlock() {
     } 
 }
 
-function showEnding() { 
-    processBoostUnlock(); 
+function showEnding() {
+    processBoostUnlock();
     if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
     
-    localStorage.removeItem('maghribal_resume_data'); 
+    localStorage.removeItem('maghribal_resume_data');
 
-    document.getElementById("ed-screen").classList.remove("hidden-screen"); 
+    document.getElementById("ed-screen").classList.remove("hidden-screen");
     bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
     
     const activeIdx = activeImpacts.findIndex(Boolean);
     if (activeIdx !== -1) {
+        // --- スペシャルエピソードクリア時 ---
         document.getElementById("ed-rank").innerText = "SPECIAL EPISODE CLEAR";
         const h1 = heroines[activeIdx];
         const tIdx = heroineImpacts[activeIdx].target;
@@ -344,7 +381,60 @@ function showEnding() {
         document.getElementById("ed-heroine").innerHTML = partnerHTML;
         document.getElementById("ed-stats").innerHTML = ""; 
     } else {
-        const total = Object.values(stats).reduce((sum, v) => sum + v, 0); let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE")); document.getElementById("ed-rank").innerText = `Rank: ${rank}`; let best = heroines.reduce((a, b) => a.affection > b.affection ? a : b); let endingDisplay = ""; if (best && best.affection > 0) { const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`; let affinityIcon = ""; if (best.progress >= 5) affinityIcon = `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>`; else if (best.progress >= 3) affinityIcon = `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>`; else affinityIcon = `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`; endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`; } else { const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0]; endingDisplay = `称号: ${soloTitles[maxK]}`; } document.getElementById("ed-heroine").innerHTML = endingDisplay; let h = ""; statKeys.forEach(k => { const val = Math.floor(stats[k]); const isMax = val >= 50; const color = statColors[k]; const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : ""; const iconStyle = isMax ? `color: ${color};` : ""; const maxLabel = isMax ? `<span class="max-label" style="color:${color}">MAX</span>` : ""; h += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`; }); document.getElementById("ed-stats").innerHTML = h; 
+        // --- 通常エンディング時 ---
+        const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
+        let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
+        document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
+
+        let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
+        let endingDisplay = "";
+        let finalMessage = "";
+
+        if (best && best.progress > 0) {
+            const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`;
+            let affinityIcon = (best.progress >= 5) ? `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>` : 
+                               (best.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
+                                                      `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
+            endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
+            finalMessage = best.finMsg[best.progress];
+        } else {
+            const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
+            endingDisplay = `称号: ${soloTitles[maxK]}`;
+            const randomH = heroines[Math.floor(Math.random() * heroines.length)];
+            finalMessage = randomH.finMsg[0];
+        }
+
+        document.getElementById("ed-heroine").innerHTML = endingDisplay;
+        
+        // --- レイアウト修正の核 ---
+        // 既存の ed-stats コンテナの中ではなく、その「前」にメッセージを配置するように設計します。
+        // ed-stats の中身を空にしてから、まずはメッセージ、次にステータスを流し込みます。
+        
+        const statsContainer = document.getElementById("ed-stats");
+        
+        // 1. メッセージ用のHTML (中央寄せを保証し、下のステータスとは明確に距離を取る)
+        const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 20px 0 40px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
+        
+        // 2. ステータスボックスのHTML生成
+        let statHTML = "";
+        statKeys.forEach(k => {
+            const val = Math.floor(stats[k]);
+            const isMax = val >= 50;
+            const color = statColors[k];
+            const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : "";
+            const iconStyle = isMax ? `color: ${color};` : "";
+            const maxLabel = isMax ? `<span class="max-label" style="color:${color}">MAX</span>` : "";
+            statHTML += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`;
+        });
+
+        // 3. 全てを ed-stats に流し込む。
+        // Flexbox の親要素で「100%幅」の要素を最初に入れれば、後続の要素は必ず改行されます。
+        statsContainer.innerHTML = msgHTML + statHTML;
+        
+        // 念のため、親要素の FlexWrap を強制的に有効化します
+        statsContainer.style.display = "flex";
+        statsContainer.style.flexWrap = "wrap";
+        statsContainer.style.justifyContent = "center";
     }
     setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
 }

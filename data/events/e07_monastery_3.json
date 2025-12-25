@@ -1,14 +1,45 @@
 {
   "veteran": {
     "success": [
-      { "image": "01", "text": "神聖な啓示を直接受け取り、世俗の迷いを完全に断ち切った至高の精神を得た。", "changes": { "mind": 5, "health": 1 } },
-      { "image": "01", "text": "修道院に伝わる究極の治癒術を修め、自己の生命力を限界まで高めた。", "changes": { "health": 4, "mind": 2 } }
+      { "image": "01", "text": "神聖な啓示を直接受け取り、世俗の迷いを完全に断ち切った至高の精神を得た。", "changes": { "mind": 2, "health": 2 } },
+      { "image": "01", "text": "修道院に伝わる究極の治癒術を修め、自己の生命力を限界まで高めた。", "changes": { "mind": 4, "health": 3 } },
+      { "image": "01", "text": "大司教として教団を導き、多くの信徒の心の支えとなった。", "changes": { "mind": 2, "health": 3 } },
+      { "image": "01", "text": "疫病の蔓延を食い止め、国中から感謝された。", "changes": { "mind": 4, "health": 4 } },
+      { "image": "01", "text": "邪悪なドラゴンの呪いを解き、大地に祝福をもたらした。", "changes": { "mind": 4, "health": 2 } },
+      { "image": "01", "text": "死者の魂を安らかに送る儀式を行い、冥界との調和を保った。", "changes": { "mind": 3, "health": 2 } },
+      { "image": "01", "text": "聖域を作り出し、あらゆる邪悪を寄せ付けない空間とした。", "changes": { "mind": 5 } },
+      { "image": "01", "text": "精神世界で悪魔と対話し、改心させた。", "changes": { "mind": 5, "health": 4 } },
+      { "image": "01", "text": "神の奇跡を代行し、不毛の大地を緑豊かな森に変えた。", "changes": { "mind": 6, "health": 3 } },
+      { "image": "01", "text": "古の予言を解読し、世界の危機を未然に防いだ。", "changes": { "mind": 2 } },
+      { "image": "01", "text": "聖女の列に加えられ、生きながらにして伝説となった。", "changes": { "mind": 2, "health": 3 } },
+      { "image": "01", "text": "あらゆる毒や病に対する完全な耐性を獲得した。", "changes": { "mind": 6, "health": 2 } },
+      { "image": "01", "text": "他者の精神に干渉し、トラウマを癒やす力を得た。", "changes": { "mind": 3, "health": 2 } },
+      { "image": "01", "text": "天候を祈りで操作し、干ばつに苦しむ村に雨を降らせた。", "changes": { "mind": 3, "health": 2 } },
+      { "image": "01", "text": "紛争地帯に赴き、祈りの力で停戦を実現させた。", "changes": { "mind": 3, "health": 3 } },
+      { "image": "01", "text": "最高位の天使を召喚し、守護を授かった。", "changes": { "mind": 5, "health": 3 } },
+      { "image": "01", "text": "自らの魂を分け与え、瀕死の重傷者を蘇生させた。", "changes": { "mind": 6, "health": 2 } },
+      { "image": "01", "text": "教団の腐敗を正し、清廉潔白な組織へと改革した。", "changes": { "mind": 5, "health": 2 } },
+      { "image": "01", "text": "神の声を聞き、迷える王に正しい道を説いた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "肉体を捨て、精神だけの存在へと昇華する一歩手前まで到達した。", "changes": { "mind": 2, "health": 3 } }
     ],
     "failure": [
-      { "image": "02", "text": "信仰上の重大な疑念に囚われ、魂が内側から崩壊するような苦痛を味わった。", "changes": { "mind": -7 } }
+      { "image": "02", "text": "信仰上の重大な疑念に囚われ、魂が内側から崩壊するような苦痛を味わった。", "changes": { "mind": -4 } },
+      { "image": "02", "text": "奇跡の代償として、自らの生命力を大きく削ってしまった。", "changes": { "mind": -6, "health": -2 } },
+      { "image": "02", "text": "悪魔の誘惑に負けそうになり、必死に抵抗した。", "changes": { "mind": -5, "health": -3 } },
+      { "image": "02", "text": "予言の解釈を誤り、間違った行動をとってしまった。", "changes": { "mind": -5 } },
+      { "image": "02", "text": "救えなかった命の重みに耐えきれず、心が折れかけた。", "changes": { "mind": -6, "health": -2 } },
+      { "image": "02", "text": "教団内の権力争いに巻き込まれ、疲弊した。", "changes": { "mind": -5 } },
+      { "image": "02", "text": "聖域の維持に魔力を使い果たし、倒れてしまった。", "changes": { "mind": -3 } },
+      { "image": "02", "text": "祈りが届かず、目の前で悲劇が起きてしまった。", "changes": { "mind": -4, "health": -3 } },
+      { "image": "02", "text": "神の声が聞こえなくなり、孤独感に襲われた。", "changes": { "mind": -6, "health": -2 } },
+      { "image": "02", "text": "過度な自己犠牲により、体がボロボロになった。", "changes": { "mind": -4, "health": -4 } }
     ],
     "great": [
-      { "image": "03", "text": "聖女と共に奇跡を顕現させ、その精神は神々しい光となって世界を照らした！", "changes": { "mind": 5, "health": 3 } }
+      { "image": "03", "text": "聖女と共に奇跡を顕現させ、その精神は神々しい光となって世界を照らした！", "changes": { "mind": 7, "health": 5 } },
+      { "image": "03", "text": "神の化身として崇められ、世界中の信仰を集めた！", "changes": { "mind": 4 } },
+      { "image": "03", "text": "死者を蘇らせる禁忌の奇跡を成功させ、理を超越した！", "changes": { "mind": 5, "health": 4 } },
+      { "image": "03", "text": "世界を覆う闇を払い、恒久の平和をもたらした！", "changes": { "mind": 5, "health": 4 } },
+      { "image": "03", "text": "天界への扉を開き、神の国を垣間見た！", "changes": { "mind": 5, "health": 2 } }
     ]
   }
 }

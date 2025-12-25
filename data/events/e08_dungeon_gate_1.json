@@ -1,14 +1,45 @@
 {
   "newcomer": {
     "success": [
-      { "image": "01", "text": "入り口付近の魔素を収集し、感覚を研ぎ澄ませた。", "changes": { "magic": 2 } },
-      { "image": "01", "text": "迷宮の岩場を登り、身体能力を向上させた。", "changes": { "body": 2 } }
+      { "image": "01", "text": "入り口付近の魔素を収集し、感覚を研ぎ澄ませた。", "changes": { "magic": 2, "body": 1 } },
+      { "image": "01", "text": "迷宮の岩場を登り、身体能力を向上させた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "小さなスライムを退治し、魔力操作のコツを掴んだ。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔力灯の燃料を集め、暗い迷宮に光を灯した。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "先輩冒険者の荷物持ちをし、迷宮の歩き方を学んだ。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "浅い階層の地図を作成し、空間把握能力を養った。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "魔力を帯びた鉱石を採掘し、重さに耐える体を作った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "迷宮の瘴気に慣れる訓練を行い、耐性をつけた。", "changes": { "magic": 2, "body": 1 } },
+      { "image": "01", "text": "罠の解除を手伝い、手先の器用さと集中力を鍛えた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "魔物の生態を観察し、知識を深めた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "迷宮内で一晩過ごし、精神的なタフさを養った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔力草を採取し、微弱な魔力の流れを感じ取った。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "崩れた瓦礫を撤去し、筋力を鍛えた。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "冒険者ギルドの依頼をこなし、実戦経験を積んだ。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔力感知の訓練を行い、見えない敵の気配を探った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "緊急時の撤退訓練を行い、瞬発力を高めた。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "迷宮の水を濾過して飲み、サバイバル能力を磨いた。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔力を込めた打撃の練習をし、攻撃力を上げた。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "防具の手入れを行い、長く使う大切さを知った。", "changes": { "magic": 1, "body": 1 } },
+      { "image": "01", "text": "冒険譚を聞き、未知への好奇心を刺激された。", "changes": { "magic": 1, "body": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "突如発生した魔力嵐に巻き込まれ、負傷した。", "changes": { "magic": -1, "body": -1 } }
+      { "image": "02", "text": "突如発生した魔力嵐に巻き込まれ、負傷した。", "changes": { "magic": -1, "body": -1 } },
+      { "image": "02", "text": "スライムに装備を溶かされ、修理費がかさんだ。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "迷宮の瘴気に当てられ、体調を崩した。", "changes": { "magic": -1, "body": -1 } },
+      { "image": "02", "text": "落とし穴に落ち、全身を強打した。", "changes": { "magic": -2, "body": -1 } },
+      { "image": "02", "text": "魔力切れを起こし、動けなくなってしまった。", "changes": { "magic": -1, "body": -1 } },
+      { "image": "02", "text": "方向感覚を失い、入り口に戻るまで時間がかかった。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "魔物の奇襲を受け、逃げるのに精一杯だった。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "採掘中に落盤事故に遭いかけ、肝を冷やした。", "changes": { "magic": -2, "body": -1 } },
+      { "image": "02", "text": "食料を魔物に奪われ、空腹で倒れそうになった。", "changes": { "magic": -2, "body": -1 } },
+      { "image": "02", "text": "魔力感知に失敗し、罠を作動させてしまった。", "changes": { "magic": -2 } }
     ],
     "great": [
-      { "image": "03", "text": "未踏の小部屋を発見し、魔力結晶を手に入れた！", "changes": { "magic": 3, "body": 1 } }
+      { "image": "03", "text": "未踏の小部屋を発見し、魔力結晶を手に入れた！", "changes": { "magic": 2 } },
+      { "image": "03", "text": "希少な魔物を単独で討伐し、実力を認められた！", "changes": { "magic": 1, "body": 1 } },
+      { "image": "03", "text": "古代の壁画を見つけ、失われた魔法のヒントを得た！", "changes": { "magic": 1, "body": 1 } },
+      { "image": "03", "text": "迷宮の奥から響く声を聞き、魔力の資質が開花した！", "changes": { "magic": 1, "body": 1 } },
+      { "image": "03", "text": "崩落する通路から仲間を救い、怪力ぶりを発揮した！", "changes": { "magic": 2, "body": 1 } }
     ]
   }
 }

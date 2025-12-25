@@ -1,14 +1,45 @@
 {
   "veteran": {
     "success": [
-      { "image": "01", "text": "未開の原生林を一人で切り開き、伝説の開拓者として強靭な肉体を作り上げた。", "changes": { "body": 4, "health": 2 } },
-      { "image": "01", "text": "村を襲う大嵐から堤防を素手で守り抜き、生命力の極致を体現した。", "changes": { "health": 4, "body": 1 } }
+      { "image": "01", "text": "未開の原生林を切り開き、新たな集落の基礎を築いた。", "changes": { "body": 2, "health": 2 } },
+      { "image": "01", "text": "村を襲う大嵐から堤防を守り抜き、その不屈の肉体を示した。", "changes": { "body": 4 } },
+      { "image": "01", "text": "竜の巣を調査し、生態系への理解を深めた。", "changes": { "body": 4, "health": 3 } },
+      { "image": "01", "text": "幻の巨獣を鎮め、森の守り神として祀った。", "changes": { "body": 6, "health": 2 } },
+      { "image": "01", "text": "極寒の地でのサバイバル訓練を行い、極限状態への耐性を得た。", "changes": { "body": 6, "health": 4 } },
+      { "image": "01", "text": "断崖絶壁に新たな道を切り開き、交通の便を劇的に改善した。", "changes": { "body": 4, "health": 2 } },
+      { "image": "01", "text": "疫病の特効薬となる幻の薬草を持ち帰り、多くの命を救った。", "changes": { "body": 2, "health": 2 } },
+      { "image": "01", "text": "周辺の村々をまとめ上げ、大規模な開拓連合を結成した。", "changes": { "body": 5 } },
+      { "image": "01", "text": "後継者を育成し、自らの技術と精神を伝承した。", "changes": { "body": 6, "health": 2 } },
+      { "image": "01", "text": "自然災害の予兆を読み取り、的確な避難誘導を行った。", "changes": { "body": 4, "health": 1 } },
+      { "image": "01", "text": "素手で岩を砕くほどの身体能力を身につけた。", "changes": { "body": 5, "health": 1 } },
+      { "image": "01", "text": "滝行を行い、精神と肉体を極限まで研ぎ澄ませた。", "changes": { "body": 2 } },
+      { "image": "01", "text": "一週間不眠不休で村の防衛にあたり、鉄壁の守りを見せた。", "changes": { "body": 2, "health": 2 } },
+      { "image": "01", "text": "老いた主のような巨大熊と対峙し、気迫だけで退かせた。", "changes": { "body": 4, "health": 3 } },
+      { "image": "01", "text": "砂漠を横断し、新たな交易ルートを開拓した。", "changes": { "body": 3 } },
+      { "image": "01", "text": "深海の底に潜り、貴重な資源を持ち帰った。", "changes": { "body": 3 } },
+      { "image": "01", "text": "毒への完全な耐性を獲得し、どんな環境でも生存できるようになった。", "changes": { "body": 5, "health": 3 } },
+      { "image": "01", "text": "千里眼のような視力を得て、遠くの獲物を見逃さなくなった。", "changes": { "body": 3, "health": 4 } },
+      { "image": "01", "text": "動物たちと心を通わせ、森の王者として君臨した。", "changes": { "body": 3, "health": 4 } },
+      { "image": "01", "text": "自らの開拓記を記し、冒険者たちのバイブルとなった。", "changes": { "body": 6 } }
     ],
     "failure": [
-      { "image": "02", "text": "自然の猛威に呑まれ、不屈の肉体をもってしても癒えぬ深手を負った。", "changes": { "health": -5, "body": -3 } }
+      { "image": "02", "text": "自然の猛威に呑まれ、不屈の肉体をもってしても癒えぬ深手を負った。", "changes": { "body": -5, "health": -4 } },
+      { "image": "02", "text": "原生林の毒虫に刺され、生死の境を彷徨った。", "changes": { "body": -6 } },
+      { "image": "02", "text": "巨獣の怒りを買い、命からがら逃げ出した。", "changes": { "body": -3 } },
+      { "image": "02", "text": "極寒の地で凍傷になり、一部の感覚を失った。", "changes": { "body": -5, "health": -2 } },
+      { "image": "02", "text": "開拓連合の方針を巡って対立し、孤立してしまった。", "changes": { "body": -2, "health": -3 } },
+      { "image": "02", "text": "後継者が育たず、技術の継承に不安を残した。", "changes": { "body": -6, "health": -1 } },
+      { "image": "02", "text": "予兆の読み間違いで、村に被害を出してしまった。", "changes": { "body": -2, "health": -1 } },
+      { "image": "02", "text": "無理な修行が祟って、体を壊してしまった。", "changes": { "body": -4 } },
+      { "image": "02", "text": "砂漠で遭難し、数日間水を飲めずに彷徨った。", "changes": { "body": -6 } },
+      { "image": "02", "text": "深海の水圧に耐えきれず、鼓膜を痛めた。", "changes": { "body": -3, "health": -3 } }
     ],
     "great": [
-      { "image": "03", "text": "森の古老より野生の奥義を伝承され、もはや人間を超越した身体能力を得た！", "changes": { "body": 5, "health": 3 } }
+      { "image": "03", "text": "森の古老より野生の奥義を伝承され、人間離れした身体能力を得た！", "changes": { "body": 5, "health": 5 } },
+      { "image": "03", "text": "未踏の秘境を発見し、その名を地図に刻んだ！", "changes": { "body": 4, "health": 4 } },
+      { "image": "03", "text": "伝説の神獣と絆を結び、大自然の加護を得た！", "changes": { "body": 6, "health": 4 } },
+      { "image": "03", "text": "不治の病を克服し、強靭な免疫力を手に入れた！", "changes": { "body": 5, "health": 3 } },
+      { "image": "03", "text": "開拓の神として銅像が建てられ、後世まで語り継がれる存在となった！", "changes": { "body": 6, "health": 3 } }
     ]
   }
 }

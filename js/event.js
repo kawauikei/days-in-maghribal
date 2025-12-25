@@ -66,8 +66,12 @@ function handleSpotClick(el, idx) {
         
         if (h.progress >= 5) { 
             // 後日談処理
-            isH = true; lastEventWasHeroine = true; isResultHidden = true; stopBgm = true;
-            dMsg = "【後日談】\n" + (h.afterMsg || "穏やかな時間が流れた。"); 
+            isH = true; lastEventWasHeroine = true; stopBgm = true;
+            
+            // プレフィックスを削除し、JSON内のテキストをそのまま表示
+            const storyBody = h.events[5] || h.afterMsg || "穏やかな時間が流れた。";
+            dMsg = storyBody; 
+
             bCh[assign.main] = 5; bCh[assign.sub] = 2; 
             out = 'heroine'; 
             lastEventContext = { name: h.name, progress: 6 }; 
@@ -75,15 +79,19 @@ function handleSpotClick(el, idx) {
                 clearedHeroines.push(h.name);
                 localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
             }
-        }else if (anyM && h.progress >= 1) { 
+        } else if (anyM && h.progress >= 1) { 
             // 世間話処理
             isH = true; lastEventWasHeroine = true; stopBgm = true;
-            dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); 
+
+            // 7番目（インデックス6）に専用の世間話があればそれを、なければ汎用を表示
+            const chatBody = h.events[6] || h.chatMsg || "互いの近況を語り合い、穏やかな時間を過ごした。";
+            dMsg = chatBody; 
+
             bCh[assign.main] = 2; bCh[assign.sub] = 1; 
             out = 'heroine'; 
+            lastEventContext = { name: h.name, progress: 7 };
         }else if (Math.random() < chance) { 
             // ヒロイン本編イベント判定
-            // --- 修正版：ステータス不足の動的な出し分け ---
             const reqA = h.minAvg[Math.min(h.progress, 4)] || 0;
             const reqM = (h.progress + 1) * 8; 
             const reqS = (h.progress + 1) * 4;
@@ -96,25 +104,36 @@ function handleSpotClick(el, idx) {
             if (!isAvgOk || !isMainOk || !isSubOk) {
                 isH = false; out = 'hint';
                 
+                // --- 親密度に応じたメッセージ段階の決定 (追加箇所) ---
+                let mIdx = 0;
+                if (h.progress >= 4) {
+                    mIdx = 2; // 最終盤（親密度4）
+                } else if (h.progress >= 1) {
+                    mIdx = 1; // 交流中（親密度1-3）
+                } else {
+                    mIdx = 0; // 初対目前（親密度0）
+                }
+                // ------------------------------------------------
+                
                 if (!isAvgOk) {
                     dMsg = h.lockAvgMsgs[mIdx];
                 } else {
+                    // lockStatMsgsから地の文を取得（ヒントラベルを除去して動的生成に備える）
                     const baseStory = h.lockStatMsgs[mIdx].split('\n[Hint]')[0];
-                    
                     let dynamicHint = "";
+                    
                     if (!isMainOk && !isSubOk) {
-                        // メイン・サブ両方不足時：アイコンを並べて表示
+                        // メイン・サブ両方不足時
                         const mainIcon = `<i class="fa-solid ${statConfig[assign.main].icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
                         const subIcon = `<i class="fa-solid ${statConfig[assign.sub].icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
-                        
                         dynamicHint = `\n[Hint] この場所に関連する${mainIcon}<span style="color:${statColors[assign.main]}">${statConfig[assign.main].name}</span>や、${subIcon}<span style="color:${statColors[assign.sub]}">${statConfig[assign.sub].name}</span>をより高めると物語が進展します。`;
                     } else if (!isMainOk) {
-                        // メイン不足時：アイコン付きで表示
+                        // メイン不足時
                         const config = statConfig[assign.main];
                         const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
                         dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.main]}">${config.name}</span>がもう少しあれば、彼女の期待に応えられるかもしれない……。`;
                     } else {
-                        // サブ不足時：アイコン付きで表示
+                        // サブ不足時
                         const config = statConfig[assign.sub];
                         const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
                         dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.sub]}">${config.name}</span>を磨けば、彼女との距離が縮まるはずだ。`;
@@ -122,19 +141,12 @@ function handleSpotClick(el, idx) {
                     dMsg = baseStory + dynamicHint;
                 }
                 
-                // --- 育成ボーナス計算の修正 ---
-                // モチベーションバフがあれば +2
-                const buffBonus = isMotivationBuff ? 5 : 0;
-                
-                // tierNum (1:新人, 2:中堅, 3:ベテラン) を利用して成長量を決定
-                // 新人: 3/2, 中堅: 6/4, ベテラン: 9/6 (+バフ)
-                bCh[assign.main] = (tierNum * 4) + buffBonus;
-                bCh[assign.sub] = (tierNum * 3) + buffBonus;
+                // --- 育成ボーナス計算 (既存) ---
+                const buffBonus = isMotivationBuff ? 3 : 0;
+                bCh[assign.main] = (tierNum * 2) + buffBonus;
+                bCh[assign.sub] = (tierNum * 1) + buffBonus;
 
-                // 重要：ここで表示を確定して return し、訓練イベントとの重複を防ぐ
-                const activeBuff = isMotivationBuff;                
-
-                // ログの生成（getResultHtmlの実行）が終わった後にフラグを折る
+                const activeBuff = isMotivationBuff;
                 if (activeBuff) {
                     isMotivationBuff = false;
                 }
@@ -145,7 +157,6 @@ function handleSpotClick(el, idx) {
                 isH = true; lastEventWasHeroine = true; consecutiveNormalEvents = 0; stopBgm = true;
                 dMsg = h.events[Math.min(h.progress, 4)]; 
                 h.progress++; h.affection++; 
-                if (h.progress >= 3) isResultHidden = true; 
                 bCh[assign.main] = 4+(tierNum * 2);
                 bCh[assign.sub] = 2+(tierNum * 2); 
                 // バフをONにする
@@ -221,7 +232,6 @@ function handleSpotClick(el, idx) {
                 }
                 
                 dMsg = ev.text;
-                console.log("ログ生成直前のバフ状態:", isMotivationBuff);
                 // メッセージの組み立てとバフの消費
                 if (isMotivationBuff) {                    
                     isMotivationBuff = false; // 1回のみ有効なのでここでOFFにする
@@ -233,13 +243,73 @@ function handleSpotClick(el, idx) {
             }
         }
         
-        // おすすめスポットでの成長ボーナス(+1)
-        if (isRecommended) { 
-            for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
+    }
+
+    // おすすめスポットでの成長ボーナス(+1)
+    if (isRecommended) { 
+        for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
+    }
+    // handleSpotClick の末尾
+    const statsBefore = { ...stats };
+    const originalChanges = { ...bCh }; // ここでコピーを取る
+    const overflowChanges = updateStatsWithOverflow(bCh); 
+
+    for (const [key, bonus] of Object.entries(overflowChanges)) {
+        // bCh[key] は updateStatsWithOverflow 内ですでに「実際の増分」に書き換わっているので、
+        // そこにおこぼれ分を加算すれば「そのターンにその項目が動いた総量」になります
+        bCh[key] = (bCh[key] || 0) + bonus;
+    }
+
+    applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges);    if (stopBgm) bgmMap.pause();
+}
+
+// 余剰分を最小ステータスに振り分ける共通関数
+function updateStatsWithOverflow(changes) {
+    const overflowChanges = {};
+
+    for (const [key, val] of Object.entries(changes)) {
+        if (val <= 0) {
+            stats[key] = Math.max(0, stats[key] + val);
+            updateUI(key);
+            continue;
+        }
+
+        const oldVal = stats[key];
+        let newVal = oldVal + val;
+        
+        if (newVal > 50) {
+            const actualGain = 50 - oldVal; // 実際に増えた量（例: 48->50なら2）
+            const overflow = newVal - 50;  // 溢れた量（例: 8-2=6）
+            
+            stats[key] = 50;
+            updateUI(key);
+
+            // ★ changes[key] を「実際に増えた量」に書き換える！
+            // これでログが [+8 -> +2] という表示の材料になります
+            changes[key] = actualGain; 
+            
+            const bonus = Math.ceil(overflow / 2);
+            if (bonus > 0) {
+                let minKey = Object.keys(stats)[0];
+                for (const s in stats) {
+                    if (stats[s] < stats[minKey]) minKey = s;
+                }
+                stats[minKey] = Math.min(50, stats[minKey] + bonus);
+                updateUI(minKey);
+
+                // overflowChanges には「おこぼれ」を入れる
+                overflowChanges[minKey] = (overflowChanges[minKey] || 0) + bonus;
+                //console.log(`[Overflow] ${key}から${minKey}に+${bonus}加算`);
+            }
+        } else {
+            stats[key] = newVal;
+            updateUI(key);
+            // changes[key] はそのまま（valと同じ）
         }
     }
-    applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId);
-    if (stopBgm) bgmMap.pause();
+    checkRankUpdate(); 
+    // デバッグ用に溢れ情報を返す（または広域変数にセットする）
+    return overflowChanges;
 }
 
 // ステータス変化をHTML化する関数（バフ対応版）
@@ -275,14 +345,11 @@ function getResultHtml(changes) {
 }
 
 // イベント画面の構築・表示
-function applyEventView(msg, changes, isH, h, s, out, idx, imgId) {
-    // debug.js の関数を呼び出す
+function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges) {
     if (typeof logEventResult === 'function') {
-        logEventResult(turn, out, isH, changes, stats, statKeys, isMotivationBuff);
+        // 10番目の引数として、この関数の引数にある h をそのまま渡す
+        logEventResult(turn, out, isH, changes, statsBefore, statKeys, isMotivationBuff, overflowChanges, originalChanges, h);
     }
-
-
-    for (let k in changes) { stats[k] = Math.max(0, Math.min(stats[k] + (changes[k] || 0), 50)); updateUI(k); } checkRankUpdate(); 
     let cLog = isResultHidden ? "" : getResultHtml(changes); 
     let outcomeHtml = ""; 
     if (!isH && out !== 'hint' && out !== 'heroine' && out !== 'exclusive') { 
@@ -304,12 +371,19 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId) {
     
     // イベントスチル表示処理
     const stillLayer = document.getElementById("event-still-layer");
+    // 以前の動的生成要素（アイコン）をクリアし、クラスをリセット
+    stillLayer.innerHTML = ""; 
+    stillLayer.classList.remove("zodiac-card");
+    stillLayer.style.backgroundImage = ""; // グラデーション用リセット
+
     if (imgId) {
+        console.log("画像ルート");
+        // ▼ 既存の処理をそのまま維持 ▼
         stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.png')`;
         stillLayer.classList.add("active");
-    } else {
-        stillLayer.classList.remove("active");
-        stillLayer.style.backgroundImage = "none";
+    } 
+    else if (isH && h.zodiac) {
+        console.log("ヒロインイベントルート");
     }
     
     if (typeof msg === 'string') {

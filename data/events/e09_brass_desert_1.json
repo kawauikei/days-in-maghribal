@@ -1,14 +1,45 @@
 {
   "newcomer": {
     "success": [
-      { "image": "01", "text": "キャラバンの護衛を手伝い、報酬を得た。", "changes": { "money": 2 } },
-      { "image": "01", "text": "広大な地平線を眺め、精神を鍛錬した。", "changes": { "mind": 2 } }
+      { "image": "01", "text": "キャラバンの護衛を手伝い、報酬を得た。", "changes": { "money": 1 } },
+      { "image": "01", "text": "広大な地平線を眺め、精神を鍛錬した。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "砂漠の生き物を捕獲し、商人に売った。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "オアシスの水を汲み、乾きを癒やした。", "changes": { "money": 1 } },
+      { "image": "01", "text": "砂嵐をやり過ごし、忍耐力を養った。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "夜空の星を頼りに進み、方向感覚を磨いた。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "古代の陶器の欠片を見つけ、骨董屋に持ち込んだ。", "changes": { "money": 2 } },
+      { "image": "01", "text": "ラクダの世話をし、扱い方を覚えた。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "熱砂の上を歩き、暑さに耐える精神力を得た。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "旅人の荷物を運び、駄賃をもらった。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "サソリの毒を抜き、薬の材料にした。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "砂漠の植物を採取し、貴重な水分源とした。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "蜃気楼を見破り、冷静な判断力を養った。", "changes": { "money": 2 } },
+      { "image": "01", "text": "砂に埋もれた看板を掘り出し、道標とした。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "日陰で休息を取り、体調管理の大切さを学んだ。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "風の音を聞き、砂嵐の前兆を察知した。", "changes": { "money": 1 } },
+      { "image": "01", "text": "迷子の旅人を案内し、感謝の印を受け取った。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "砂漠の夜の寒さに耐え、精神的なタフさを得た。", "changes": { "money": 1 } },
+      { "image": "01", "text": "珍しい石を拾い、コレクションに加えた。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "焚き火を囲み、異国の歌を聞いた。", "changes": { "money": 2, "mind": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "砂嵐で荷物を失い、気力が削られた。", "changes": { "money": -1, "mind": -2 } }
+      { "image": "02", "text": "砂嵐で荷物を失い、気力が削られた。", "changes": { "money": -1, "mind": -1 } },
+      { "image": "02", "text": "水筒の水をこぼしてしまい、渇きに苦しんだ。", "changes": { "money": -1 } },
+      { "image": "02", "text": "ラクダに噛まれ、怪我をした。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "偽物の宝石を掴まされ、損をした。", "changes": { "money": -1 } },
+      { "image": "02", "text": "熱射病になりかけ、意識が朦朧とした。", "changes": { "money": -1, "mind": -1 } },
+      { "image": "02", "text": "砂漠の迷宮に迷い込み、不安にかられた。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "サソリに刺され、毒で苦しんだ。", "changes": { "money": -1, "mind": -1 } },
+      { "image": "02", "text": "夜の寒さで風邪をひいた。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "盗賊に襲われ、所持金を奪われた。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "蜃気楼を追いかけ、無駄に体力を消耗した。", "changes": { "money": -2, "mind": -1 } }
     ],
     "great": [
-      { "image": "03", "text": "砂の中から貴重な鉱石を掘り当てた！", "changes": { "money": 3, "mind": 1 } }
+      { "image": "03", "text": "砂の中から貴重な鉱石を掘り当てた！", "changes": { "money": 1 } },
+      { "image": "03", "text": "隠された水源を発見し、命拾いした！", "changes": { "money": 1 } },
+      { "image": "03", "text": "伝説のキャラバンと遭遇し、珍しい品を譲り受けた！", "changes": { "money": 2 } },
+      { "image": "03", "text": "砂漠の民に助けられ、彼らの知恵を授かった！", "changes": { "money": 1, "mind": 1 } },
+      { "image": "03", "text": "古代の石板を見つけ、考古学者に高く売れた！", "changes": { "money": 1, "mind": 1 } }
     ]
   }
 }

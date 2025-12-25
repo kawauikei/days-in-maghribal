@@ -1,14 +1,45 @@
 {
   "newcomer": {
     "success": [
-      { "image": "01", "text": "村の農作業を手伝い、心地よい汗を流した。", "changes": { "health": 1, "body": 1 } },
-      { "image": "01", "text": "新鮮な空気の中で走り込みを行った。", "changes": { "body": 2 } }
+      { "image": "01", "text": "村の農作業を手伝い、心地よい汗を流した。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "新鮮な空気の中で走り込みを行った。", "changes": { "body": 1, "health": 1 } },
+      { "image": "01", "text": "薪割りを手伝い、腕力がついた。", "changes": { "body": 1 } },
+      { "image": "01", "text": "川で水を汲み、足腰を鍛えた。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "木登りをして果実を採り、身軽さを養った。", "changes": { "body": 1 } },
+      { "image": "01", "text": "畑の石を取り除き、根気強さを身につけた。", "changes": { "body": 2 } },
+      { "image": "01", "text": "村の子供たちと鬼ごっこをし、持久力を高めた。", "changes": { "body": 1 } },
+      { "image": "01", "text": "早起きして体操を行い、健康的な一日を始めた。", "changes": { "body": 2 } },
+      { "image": "01", "text": "家畜の世話を手伝い、動物との触れ合いを楽しんだ。", "changes": { "body": 2 } },
+      { "image": "01", "text": "壊れた柵を直し、大工仕事の基礎を学んだ。", "changes": { "body": 2 } },
+      { "image": "01", "text": "山菜採りに行き、自然の恵みを味わった。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "井戸水を冷たく感じ、体が引き締まった。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "荷車を押し、全身の筋肉を使った。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "村の祭りで踊り、リズム感を養った。", "changes": { "body": 1, "health": 1 } },
+      { "image": "01", "text": "野宿の練習をし、自然への適応力を高めた。", "changes": { "body": 1, "health": 1 } },
+      { "image": "01", "text": "魚釣りに挑戦し、静かに待つ忍耐力を養った。", "changes": { "body": 1 } },
+      { "image": "01", "text": "薬草を探して森を歩き、知識と体力を得た。", "changes": { "body": 2, "health": 1 } },
+      { "image": "01", "text": "雨漏りを修理し、住環境を整えた。", "changes": { "body": 1, "health": 1 } },
+      { "image": "01", "text": "手作りの弁当を食べ、栄養満点だった。", "changes": { "body": 1, "health": 1 } },
+      { "image": "01", "text": "焚き火を囲み、心身ともにリラックスした。", "changes": { "body": 2, "health": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "慣れない農作業で腰を痛めてしまった。", "changes": { "body": -1, "health": -1 } }
+      { "image": "02", "text": "慣れない農作業で腰を痛めてしまった。", "changes": { "body": -2, "health": -1 } },
+      { "image": "02", "text": "山道で足を滑らせ、軽く怪我をした。", "changes": { "body": -2 } },
+      { "image": "02", "text": "虫に刺され、痒みで眠れなかった。", "changes": { "body": -2, "health": -1 } },
+      { "image": "02", "text": "冷たい川に入りすぎて、風邪をひきかけた。", "changes": { "body": -1 } },
+      { "image": "02", "text": "重い荷物を持ち上げようとして、筋肉痛になった。", "changes": { "body": -1 } },
+      { "image": "02", "text": "毒キノコを食べてしまい、お腹を壊した。", "changes": { "body": -1, "health": -1 } },
+      { "image": "02", "text": "蜂に追いかけられ、必死に逃げ回った。", "changes": { "body": -1, "health": -1 } },
+      { "image": "02", "text": "日焼けをしすぎて、肌がヒリヒリした。", "changes": { "body": -1, "health": -1 } },
+      { "image": "02", "text": "ぬかるみに足を取られ、泥だらけになった。", "changes": { "body": -2, "health": -1 } },
+      { "image": "02", "text": "夜中に獣の鳴き声を聞き、怖くて眠れなかった。", "changes": { "body": -2 } }
     ],
     "great": [
-      { "image": "03", "text": "開拓作業で巨石をどかし、村人から驚かれた！", "changes": { "body": 3, "health": 1 } }
+      { "image": "03", "text": "開拓作業で巨石をどかし、村人から驚かれた！", "changes": { "body": 1 } },
+      { "image": "03", "text": "野生の勘が働き、美味しい湧き水を見つけた！", "changes": { "body": 1, "health": 1 } },
+      { "image": "03", "text": "迷子の家畜を連れ戻し、村長から褒められた！", "changes": { "body": 2, "health": 1 } },
+      { "image": "03", "text": "珍しい薬草を発見し、体調が劇的に良くなった！", "changes": { "body": 1, "health": 1 } },
+      { "image": "03", "text": "木の上から絶景を眺め、心身ともにリフレッシュした！", "changes": { "body": 2, "health": 1 } }
     ]
   }
 }

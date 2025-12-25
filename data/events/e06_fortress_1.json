@@ -1,14 +1,45 @@
 {
   "newcomer": {
     "success": [
-      { "image": "01", "text": "新兵の訓練に参加し、徹底的に体を鍛えた。", "changes": { "body": 2 } },
-      { "image": "01", "text": "規則正しい生活を送り、体調を整えた。", "changes": { "health": 2 } }
+      { "image": "01", "text": "新兵訓練に参加し、基礎体力を徹底的に叩き込まれた。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "城壁の修復作業を手伝い、力仕事に慣れた。", "changes": { "health": 1 } },
+      { "image": "01", "text": "武器の手入れを行い、道具への愛着が湧いた。", "changes": { "health": 1 } },
+      { "image": "01", "text": "夜間警備の見習いとして、寒さに耐える訓練をした。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "食料庫の整理をし、重い袋を何往復も運んだ。", "changes": { "health": 1 } },
+      { "image": "01", "text": "先輩兵士の模擬戦を見学し、動きを目に焼き付けた。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "朝の点呼に一番乗りし、気合を入れた。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "武具の運搬を手伝い、足腰を鍛えた。", "changes": { "health": 2 } },
+      { "image": "01", "text": "厩舎の掃除をし、馬との信頼関係を築いた。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "弓の練習を行い、集中力と筋力を養った。", "changes": { "health": 2 } },
+      { "image": "01", "text": "盾を使った防御訓練で、衝撃に耐える体を作った。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "要塞内のランニングで、持久力を高めた。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "怪我をした兵士を運び、人命救助の重さを知った。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "伝令として走り回り、体力の限界に挑んだ。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "炊き出しを手伝い、温かい食事で兵士を労った。", "changes": { "health": 1 } },
+      { "image": "01", "text": "雪かきを行い、足場の悪い中での作業に慣れた。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "泥沼の中での訓練を完遂し、精神力を鍛えた。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "高い壁を登る訓練で、腕力と度胸を養った。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "重い鎧を着て動き回り、負荷に耐える体を作った。", "changes": { "health": 2 } },
+      { "image": "01", "text": "焚き火を囲んで兵士たちの話を聞き、戦場の厳しさを知った。", "changes": { "health": 2 } }
     ],
     "failure": [
-      { "image": "02", "text": "訓練中に激しく転倒し、怪我を負った。", "changes": { "body": -1, "health": -2 } }
+      { "image": "02", "text": "訓練についていけず、途中で脱落してしまった。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "武器の手入れ中に指を切ってしまった。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "夜間警備で居眠りをしてしまい、叱責された。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "重い荷物を落としてしまい、足の爪を割った。", "changes": { "health": -2, "body": -1 } },
+      { "image": "02", "text": "模擬戦で手加減ができず、相手を怒らせてしまった。", "changes": { "health": -2 } },
+      { "image": "02", "text": "点呼に遅刻し、罰として掃除をさせられた。", "changes": { "health": -2, "body": -1 } },
+      { "image": "02", "text": "馬に蹴られそうになり、肝を冷やした。", "changes": { "health": -2, "body": -1 } },
+      { "image": "02", "text": "弓の弦で腕を打ち、青あざを作った。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "ランニング中に足を挫き、医務室に運ばれた。", "changes": { "health": -1 } },
+      { "image": "02", "text": "伝令の内容を忘れ、パニックになった。", "changes": { "health": -2 } }
     ],
     "great": [
-      { "image": "03", "text": "教官との手合わせで、見事な一撃を入れた！", "changes": { "body": 3, "fame": 1 } }
+      { "image": "03", "text": "模擬戦で教官から一本取り、周囲を驚かせた！", "changes": { "health": 1, "body": 1 } },
+      { "image": "03", "text": "崩れかけた足場から仲間を救い、怪力ぶりを発揮した！", "changes": { "health": 2, "body": 1 } },
+      { "image": "03", "text": "夜襲の予兆に気づき、未然に防ぐ手柄を立てた！", "changes": { "health": 2, "body": 1 } },
+      { "image": "03", "text": "悪天候の中での行軍を先導し、強靭な体力を見せつけた！", "changes": { "health": 1 } },
+      { "image": "03", "text": "射撃大会で優勝し、新兵のホープとして期待された！", "changes": { "health": 2, "body": 1 } }
     ]
   }
 }

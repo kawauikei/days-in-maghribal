@@ -1,14 +1,45 @@
 {
   "mid": {
     "success": [
-      { "image": "01", "text": "エルフの秘儀を授かり、魔力の根源に一歩近づいた。", "changes": { "magic": 3 } },
-      { "image": "01", "text": "精霊の泉での沐浴を繰り返し、不老不死に近い活力を得た。", "changes": { "health": 2, "magic": 1 } }
+      { "image": "01", "text": "エルフの秘儀を授かり、魔力の根源に一歩近づいた。", "changes": { "magic": 2, "health": 2 } },
+      { "image": "01", "text": "精霊の泉での沐浴を繰り返し、不老不死に近い活力を得た。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "森を侵す病魔を浄化し、感謝された。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "迷い込んだ旅人を導き、森の守護者としての務めを果たした。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "精霊との対話が可能になり、森の異変を察知した。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "古代樹の守り人として認められ、森の深部へ入る許可を得た。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "森の恵みを使った料理を振る舞い、エルフたちと親睦を深めた。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "暴れる森の主を鎮め、共存の道を探った。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "秘伝の魔法薬を作成し、難病を治療した。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "森の結界を修復し、外敵の侵入を防いだ。", "changes": { "magic": 1, "health": 2 } },
+      { "image": "01", "text": "エルフの武術を学び、身のこなしが軽くなった。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "精霊魔法の基礎を習得し、自然の力を借りられるようになった。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "森の動物たちを指揮し、協力して作業を行った。", "changes": { "magic": 3, "health": 2 } },
+      { "image": "01", "text": "古代語で書かれた石碑を解読し、森の秘密を知った。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "月夜の儀式に参加し、神秘的な体験をした。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "森の賢者と議論し、新たな知見を得た。", "changes": { "magic": 1, "health": 2 } },
+      { "image": "01", "text": "希少な魔法植物の栽培に成功した。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "森の音楽会に参加し、芸術的感性を磨いた。", "changes": { "magic": 2, "health": 2 } },
+      { "image": "01", "text": "精霊の力を借りて天候を安定させ、作物の成長を助けた。", "changes": { "magic": 3, "health": 1 } },
+      { "image": "01", "text": "エルフの集落で人間との交流会を開き、架け橋となった。", "changes": { "magic": 1, "health": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "森の植物の毒に触れ、魔力回路が一時的に麻痺した。", "changes": { "magic": -2, "health": -1 } }
+      { "image": "02", "text": "森の植物の毒に触れ、魔力回路が一時的に麻痺した。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "浄化の儀式に失敗し、逆流した穢れを受けた。", "changes": { "magic": -2, "health": -1 } },
+      { "image": "02", "text": "精霊の言葉を聞き間違え、トラブルを起こした。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "森の主を怒らせてしまい、追い回された。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "魔法薬の調合ミスで、変な副作用が出た。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "結界の綻びを見逃し、小規模な火災を許してしまった。", "changes": { "magic": -3, "health": -2 } },
+      { "image": "02", "text": "エルフの武術についていけず、筋肉痛になった。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "精霊魔法が暴発し、小爆発を起こした。", "changes": { "magic": -2, "health": -2 } },
+      { "image": "02", "text": "石碑の呪いに触れ、悪夢を見た。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "儀式の作法を間違え、気まずい雰囲気になった。", "changes": { "magic": -1, "health": -2 } }
     ],
     "great": [
-      { "image": "03", "text": "森の精霊王と交信し、溢れんばかりの生命力と魔力を得た！", "changes": { "magic": 3, "health": 2 } }
+      { "image": "03", "text": "森の精霊王と交信し、溢れんばかりの生命力と魔力を得た！", "changes": { "magic": 4, "health": 2 } },
+      { "image": "03", "text": "千年樹の種を譲り受け、新たな森を育てる希望を得た！", "changes": { "magic": 2, "health": 1 } },
+      { "image": "03", "text": "幻の霊薬を作成し、死の淵から人を救った！", "changes": { "magic": 2, "health": 2 } },
+      { "image": "03", "text": "森を襲う大災害を予知し、未然に防いだ！", "changes": { "magic": 2 } },
+      { "image": "03", "text": "エルフの英雄として讃えられ、名誉ある称号を得た！", "changes": { "magic": 4 } }
     ]
   }
 }

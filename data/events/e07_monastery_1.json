@@ -2,13 +2,44 @@
   "newcomer": {
     "success": [
       { "image": "01", "text": "聖歌の書写を行い、穏やかな心を得た。", "changes": { "mind": 2 } },
-      { "image": "01", "text": "質素ながら栄養のある食事を頂いた。", "changes": { "health": 2 } }
+      { "image": "01", "text": "質素ながら栄養のある食事を頂いた。", "changes": { "mind": 2, "health": 1 } },
+      { "image": "01", "text": "早朝の礼拝に参加し、精神を統一した。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "修道院の清掃を行い、無心になれた。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "薬草園の手入れを手伝い、植物の生命力を感じた。", "changes": { "mind": 2, "health": 1 } },
+      { "image": "01", "text": "古い教典を読み、先人の知恵に触れた。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "鐘つきの役目を果たし、規則正しい生活を送った。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "巡礼者の案内をし、感謝の言葉をもらった。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "瞑想の時間に集中し、雑念を払った。", "changes": { "mind": 2, "health": 1 } },
+      { "image": "01", "text": "写本の手伝いをし、文字の美しさに心を洗われた。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "怪我をした小鳥の手当てをし、命の尊さを学んだ。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "静寂の中で祈りを捧げ、心の安らぎを得た。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "修道女たちの手伝いをし、奉仕の精神を学んだ。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "冷たい井戸水を汲み、身が引き締まる思いがした。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "ろうそくの火を見つめ、集中力を高めた。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "聖歌隊の練習に参加し、声を出すことでストレスを発散した。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "断食を行い、精神的な強さを養った。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "貧しい人々に食事を配り、感謝された。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "懺悔室の掃除をし、心が清められた気がした。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "ステンドグラスから差し込む光を浴び、希望を感じた。", "changes": { "mind": 1, "health": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "断食の修行が厳しく、体調を崩した。", "changes": { "health": -2, "mind": -1 } }
+      { "image": "02", "text": "断食の修行が厳しく、体調を崩した。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "お祈りの最中に居眠りをしてしまい、叱られた。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "聖歌の音程を外し、恥ずかしい思いをした。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "掃除中に大切な壺を割ってしまい、落ち込んだ。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "瞑想中に雑念が浮かび、集中できなかった。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "寒さに耐えきれず、風邪をひいてしまった。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "古い教典の内容が難しく、理解できなかった。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "鐘を鳴らす時間を間違え、修道院中を混乱させた。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "薬草の種類を間違え、苦いお茶を作ってしまった。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "巡礼者とぶつかり、怪我をさせてしまいそうになった。", "changes": { "mind": -1, "health": -1 } }
     ],
     "great": [
-      { "image": "03", "text": "深い瞑想の末に、神聖な加護を感じ取った！", "changes": { "mind": 3, "health": 1 } }
+      { "image": "03", "text": "深い瞑想の末に、神聖な加護を感じ取った！", "changes": { "mind": 1, "health": 1 } },
+      { "image": "03", "text": "迷える子羊を導き、感謝の涙を流された！", "changes": { "mind": 1, "health": 1 } },
+      { "image": "03", "text": "荒れた花壇を見事に再生させ、生命の奇跡を見た！", "changes": { "mind": 1, "health": 1 } },
+      { "image": "03", "text": "古びたオルガンを修理し、美しい音色を蘇らせた！", "changes": { "mind": 2, "health": 1 } },
+      { "image": "03", "text": "聖なる光に包まれ、心身の不調が嘘のように消え去った！", "changes": { "mind": 2 } }
     ]
   }
 }

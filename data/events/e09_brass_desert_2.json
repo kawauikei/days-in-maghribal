@@ -1,14 +1,45 @@
 {
   "mid": {
     "success": [
-      { "image": "01", "text": "砂漠に眠る古代の金貨を大量に発掘した。", "changes": { "money": 3 } },
-      { "image": "01", "text": "灼熱の中、一歩も引かずに道を切り開き精神が鋼となった。", "changes": { "mind": 2, "money": 1 } }
+      { "image": "01", "text": "砂漠に眠る古代の金貨を大量に発掘した。", "changes": { "money": 1, "mind": 2 } },
+      { "image": "01", "text": "灼熱の中、一歩も引かずに道を切り開き精神が鋼となった。", "changes": { "money": 2, "mind": 2 } },
+      { "image": "01", "text": "盗賊団のアジトを発見し、通報して報奨金を得た。", "changes": { "money": 3 } },
+      { "image": "01", "text": "難易度の高い交易ルートを成功させ、利益を上げた。", "changes": { "money": 1 } },
+      { "image": "01", "text": "砂漠の遺跡を調査し、歴史的な発見をした。", "changes": { "money": 3 } },
+      { "image": "01", "text": "巨大な砂虫を退治し、素材を高値で売却した。", "changes": { "money": 1 } },
+      { "image": "01", "text": "オアシスの管理を任され、利用料を徴収した。", "changes": { "money": 3, "mind": 1 } },
+      { "image": "01", "text": "砂漠の民と交易を行い、独自のコネクションを作った。", "changes": { "money": 1 } },
+      { "image": "01", "text": "砂嵐の中で遭難者を救助し、謝礼をもらった。", "changes": { "money": 1, "mind": 2 } },
+      { "image": "01", "text": "古代の地図を解読し、新たな遺跡への手がかりを得た。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "ラクダレースで優勝し、賞金を獲得した。", "changes": { "money": 2, "mind": 1 } },
+      { "image": "01", "text": "砂漠の秘薬を調合し、高価な薬として販売した。", "changes": { "money": 3 } },
+      { "image": "01", "text": "砂漠の生態系を調査し、学術的な成果を上げた。", "changes": { "money": 3, "mind": 2 } },
+      { "image": "01", "text": "廃墟となった宿場町を再建し、宿代を得た。", "changes": { "money": 1, "mind": 2 } },
+      { "image": "01", "text": "砂漠の精霊と契約し、加護を得た。", "changes": { "money": 2, "mind": 2 } },
+      { "image": "01", "text": "流砂に飲み込まれそうな荷車を救出し、積み荷の一部をもらった。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "砂漠の夜空に現れる星座を記録し、航海術に応用した。", "changes": { "money": 3, "mind": 2 } },
+      { "image": "01", "text": "枯れた井戸を復活させ、村人から感謝された。", "changes": { "money": 3, "mind": 1 } },
+      { "image": "01", "text": "砂漠横断のガイドを務め、高額な報酬を得た。", "changes": { "money": 2 } },
+      { "image": "01", "text": "古代の魔導具を発見し、コレクターに売却した。", "changes": { "money": 1, "mind": 2 } }
     ],
     "failure": [
-      { "image": "02", "text": "蜃気楼に惑わされ、貴重な物資を使い果たした。", "changes": { "money": -2, "mind": -1 } }
+      { "image": "02", "text": "蜃気楼に惑わされ、貴重な物資を使い果たした。", "changes": { "money": -3 } },
+      { "image": "02", "text": "発掘調査が難航し、資金が底をつきかけた。", "changes": { "money": -1 } },
+      { "image": "02", "text": "盗賊団の逆襲に遭い、隠れ家を焼かれた。", "changes": { "money": -1, "mind": -2 } },
+      { "image": "02", "text": "交易品が砂嵐でダメになり、大損害を出した。", "changes": { "money": -2 } },
+      { "image": "02", "text": "遺跡の罠にかかり、精神的なトラウマを負った。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "砂虫に装備を壊され、修理費がかさんだ。", "changes": { "money": -1, "mind": -1 } },
+      { "image": "02", "text": "オアシスが干上がり、収入源を失った。", "changes": { "money": -3, "mind": -2 } },
+      { "image": "02", "text": "砂漠の民との交渉が決裂し、信頼を失った。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "ラクダが逃げ出し、徒歩での移動を余儀なくされた。", "changes": { "money": -3, "mind": -2 } },
+      { "image": "02", "text": "秘薬の調合に失敗し、材料を無駄にした。", "changes": { "money": -2, "mind": -1 } }
     ],
     "great": [
-      { "image": "03", "text": "砂の下に眠るオアシスへの扉を開き、莫大な富の権利を得た！", "changes": { "money": 3, "mind": 2 } }
+      { "image": "03", "text": "砂の下に眠るオアシスへの扉を開き、莫大な富の権利を得た！", "changes": { "money": 2 } },
+      { "image": "03", "text": "王家の墓所を発見し、国宝級の遺物を手に入れた！", "changes": { "money": 4, "mind": 2 } },
+      { "image": "03", "text": "砂漠の神殿で試練を乗り越え、強靭な精神力を得た！", "changes": { "money": 2, "mind": 2 } },
+      { "image": "03", "text": "幻の都市を発見し、第一発見者として歴史に名を残した！", "changes": { "money": 4, "mind": 1 } },
+      { "image": "03", "text": "巨大な油田を掘り当て、一夜にして大富豪となった！", "changes": { "money": 4, "mind": 2 } }
     ]
   }
 }

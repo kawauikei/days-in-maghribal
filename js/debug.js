@@ -165,67 +165,66 @@ function toggleForceHeroine() {
 
 // debug.js
 
-function logEventResult(turn, out, isH, changes, stats, statKeys, isBuff) {
-    // 引数の安全策
+// 引数の順番を厳密に固定
+function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, overflowChanges, originalChanges, h) {
     const keys = statKeys || ['health', 'body', 'mind', 'magic', 'fame', 'money'];
-    const safeChanges = changes || {};
-    const safeStats = stats || {};
+    const sBefore = statsBefore || {};
+    const oChanges = overflowChanges || {};
+    const origChanges = originalChanges || {};
+    const sChanges = changes || {};
 
+    // 1. まずデフォルト値を設定
     let eventLabel = " TRAINING ";
     let labelColor = "#444";
 
-    if (isH) {
-        eventLabel = " HEROINE  ";
+    // 2. 条件に応じてラベルを上書き
+    if (isH && h) {
+        // ヒロインイベントの場合（親密度レベルを付与）
+        const lv = h.progress !== undefined ? ` Lv.${h.progress}` : "";
+        eventLabel = ` HEROINE${lv} `;
         labelColor = "#ff0066";
     } else if (out === 'hint') {
-        eventLabel = "   HINT   ";
+        eventLabel = "    HINT   ";
         labelColor = "#ff8800";
     } else if (out === 'failure') {
         eventLabel = " FAILURE  ";
         labelColor = "#cc0000";
     } else if (out === 'great') {
-        eventLabel = "  GREAT   ";
+        eventLabel = "   GREAT   ";
         labelColor = "#00bbff";
     }
 
-    // グループを開始
+    // 3. ラベルが決まってから group を開始
     console.group(`%c TURN ${turn} %c${eventLabel}`, 
         "background: #333; color: #00ffff; font-weight: bold;", 
         `background: ${labelColor}; color: #fff; font-weight: bold;`);
 
     try {
-        console.log(`バフ状態: %c${isBuff ? " 🔥 ACTIVE " : "  OFF  "}`, 
-            isBuff ? "background: #ffaa00; color: #000; font-weight: bold;" : "color: #999;");
-        
         keys.forEach(k => {
-            const before = Number(safeStats[k]) || 0;
-            const change = Number(safeChanges[k]) || 0;
-            const after = Math.max(0, Math.min(before + change, 50));
-            
-            let style = "color: #444;"; 
-            let prefix = "  ";
-            
-            if (change > 0) {
-                style = "color: #008800; font-weight: bold;"; 
-                prefix = "▲ ";
-            } else if (change < 0) {
-                style = "color: #cc0000; font-weight: bold;"; 
-                prefix = "▼ ";
+            const before = sBefore[k] || 0;
+            const after = stats[k];
+            const original = origChanges[k] || 0;
+            const actual = sChanges[k] || 0;
+            const bonus = oChanges[k] || 0;
+
+            let mark = (original !== 0 || bonus !== 0) ? (original < 0 ? "▼ " : "▲ ") : "  ";
+
+            let changeDetail = "";
+            if (original !== 0) {
+                changeDetail = `[${original >= 0 ? '+' : ''}${original} -> ${actual >= 0 ? '+' : ''}${actual}]`;
+            } else if (bonus !== 0) {
+                changeDetail = `[+0 -> +${bonus}]`;
             }
 
-            const diffStr = change !== 0 ? ` [${change > 0 ? '+' : ''}${change}]` : "";
-            console.log(`%c${prefix}${k.padEnd(7)}: %c${before.toString().padStart(2)} %c-> %c${after.toString().padStart(2)}%c${diffStr}`, 
-                style, "color: #000;", "color: #999;", "color: #000; font-weight: bold;", style);
+            console.log(`${mark} ${k.padEnd(8)}: ${String(before).padStart(2)} -> ${String(after).padStart(2)} ${changeDetail}`);
         });
 
-        const total = Object.values(safeStats).reduce((a, b) => a + (Number(b) || 0), 0) + 
-                      Object.values(safeChanges).reduce((a, b) => a + (Number(b) || 0), 0);
+        const total = Object.values(stats).reduce((a, b) => a + b, 0);
         console.log(`%c TOTAL: ${total} / AVG: ${(total/6).toFixed(1)} `, "background: #eee; color: #333;");
 
     } catch (e) {
         console.error("デバッグログ出力中にエラーが発生しました:", e);
     } finally {
-        // 何があっても必ずグループを閉じる
         console.groupEnd();
     }
 }

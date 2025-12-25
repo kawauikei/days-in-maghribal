@@ -1,14 +1,45 @@
 {
   "newcomer": {
     "success": [
-      { "image": "01", "text": "精霊が宿る森で、清浄な魔力を感じ取った。", "changes": { "magic": 2 } },
-      { "image": "01", "text": "エルフ秘伝の薬草茶を飲み、健康を増進した。", "changes": { "health": 2 } }
+      { "image": "01", "text": "精霊が宿る森で、清浄な魔力を感じ取った。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "エルフ秘伝の薬草茶を飲み、健康を増進した。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "森の賢者から古の伝説を聞き、知識を深めた。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "木々のざわめきに耳を傾け、自然の声を聞いた。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "清流で身を清め、心身の汚れを落とした。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "森の動物たちと触れ合い、癒やされた。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "珍しい木の実を採取し、栄養を補給した。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "精霊の悪戯に遭い、森の不思議を体験した。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "木漏れ日の中で昼寝をし、魔力を回復した。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "古い祠を掃除し、感謝の祈りを捧げた。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "森の奥深くへ続く小道を見つけ、冒険心をくすぐられた。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "夜光虫の光を眺め、幻想的な時間を過ごした。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "妖精の踊りを見かけ、幸運を感じた。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "森の恵みを分けてもらい、感謝の気持ちを持った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "巨樹の根元で瞑想し、大地のエネルギーを感じた。", "changes": { "magic": 2, "health": 1 } },
+      { "image": "01", "text": "雨上がりの森を散策し、生命の息吹を感じた。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "森の掟を教わり、自然との共存を学んだ。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "木登りをして遠くを見渡し、気分転換をした。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "森の番人と話し、森の歴史を知った。", "changes": { "magic": 1, "health": 1 } },
+      { "image": "01", "text": "焚き火の周りでエルフの歌を聞き、心が洗われた。", "changes": { "magic": 2, "health": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "森の結界に弾かれ、軽い混乱に陥った。", "changes": { "magic": -1, "mind": -1 } }
+      { "image": "02", "text": "森の結界に弾かれ、軽い混乱に陥った。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "毒キノコを触ってしまい、手が痺れた。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "迷いの森で方向感覚を失い、不安になった。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "精霊の怒りを買い、風邪をひいた。", "changes": { "magic": -2, "health": -1 } },
+      { "image": "02", "text": "木の根につまずいて転び、擦り傷を作った。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "虫に刺され、痒みで集中できなかった。", "changes": { "magic": -2, "health": -1 } },
+      { "image": "02", "text": "急な雷雨に遭い、ずぶ濡れになった。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "夜の森の静寂が怖く、眠れなかった。", "changes": { "magic": -1, "health": -1 } },
+      { "image": "02", "text": "野生動物に威嚇され、逃げ出した。", "changes": { "magic": -2, "health": -1 } },
+      { "image": "02", "text": "森の掟を破りそうになり、注意された。", "changes": { "magic": -1, "health": -1 } }
     ],
     "great": [
-      { "image": "03", "text": "世界樹の枝から零れた雫を口にし、力が漲った！", "changes": { "magic": 3, "health": 2 } }
+      { "image": "03", "text": "世界樹の枝から零れた雫を口にし、力が漲った！", "changes": { "magic": 2, "health": 1 } },
+      { "image": "03", "text": "伝説のユニコーンを目撃し、幸運が舞い込んだ！", "changes": { "magic": 1, "health": 1 } },
+      { "image": "03", "text": "精霊の加護を受け、体調が劇的に良くなった！", "changes": { "magic": 2, "health": 1 } },
+      { "image": "03", "text": "森の奥地で秘湯を発見し、疲れを完全に癒やした！", "changes": { "magic": 1 } },
+      { "image": "03", "text": "エルフの女王から祝福を受け、魔力が向上した！", "changes": { "magic": 1, "health": 1 } }
     ]
   }
 }

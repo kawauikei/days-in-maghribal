@@ -1,14 +1,45 @@
 {
   "mid": {
     "success": [
-      { "image": "01", "text": "乱された墓所を修復し、霊たちから感謝と名声を得た。", "changes": { "fame": 3 } },
-      { "image": "01", "text": "彷徨う魂を導く儀式を行い、魔力の深度が増した。", "changes": { "magic": 2, "fame": 1 } }
+      { "image": "01", "text": "乱された墓所を修復し、霊たちから感謝と名声を得た。", "changes": { "fame": 2 } },
+      { "image": "01", "text": "彷徨う魂を導く儀式を行い、魔力の深度が増した。", "changes": { "fame": 3, "magic": 2 } },
+      { "image": "01", "text": "強力な悪霊を祓い、除霊師としての評判を高めた。", "changes": { "fame": 3, "magic": 1 } },
+      { "image": "01", "text": "墓荒らしを撃退し、遺品を守り抜いた。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "古い呪いを解き、土地を浄化した。", "changes": { "fame": 3, "magic": 2 } },
+      { "image": "01", "text": "霊界との交信に成功し、死者の言葉を聞いた。", "changes": { "fame": 1, "magic": 2 } },
+      { "image": "01", "text": "墓地の結界を強化し、邪悪なものの侵入を防いだ。", "changes": { "fame": 3, "magic": 1 } },
+      { "image": "01", "text": "行方不明者の遺体を発見し、遺族に引き渡した。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "夜な夜な現れる幽霊騎士と剣を交え、腕を磨いた。", "changes": { "fame": 1, "magic": 2 } },
+      { "image": "01", "text": "禁じられた儀式の痕跡を見つけ、報告した。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "墓地に自生する霊草を採取し、薬の材料にした。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "霊魂を鎮めるための鎮魂歌を作曲した。", "changes": { "fame": 3 } },
+      { "image": "01", "text": "スケルトンの暴走を止め、骨を元に戻した。", "changes": { "fame": 3, "magic": 1 } },
+      { "image": "01", "text": "霊的な現象を調査し、レポートにまとめた。", "changes": { "fame": 1, "magic": 2 } },
+      { "image": "01", "text": "墓地の地下通路を探索し、安全を確保した。", "changes": { "fame": 2, "magic": 2 } },
+      { "image": "01", "text": "ポルターガイスト現象を鎮め、静けさを取り戻した。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "取り憑かれた人を救い出し、感謝された。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "古い霊廟の扉を開き、中の空気を入れ替えた。", "changes": { "fame": 2, "magic": 2 } },
+      { "image": "01", "text": "死者の記憶を一部共有し、人生の儚さを知った。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "墓守組合から表彰され、信頼を得た。", "changes": { "fame": 1, "magic": 1 } }
     ],
     "failure": [
-      { "image": "02", "text": "死者の呪縛を受けてしまい、名声に泥がついた。", "changes": { "fame": -3 } }
+      { "image": "02", "text": "死者の呪縛を受けてしまい、名声に泥がついた。", "changes": { "fame": -2, "magic": -1 } },
+      { "image": "02", "text": "除霊に失敗し、逆に憑依されかけた。", "changes": { "fame": -3, "magic": -1 } },
+      { "image": "02", "text": "墓荒らしを取り逃がし、悔しい思いをした。", "changes": { "fame": -1, "magic": -1 } },
+      { "image": "02", "text": "呪いの解除に手間取り、魔力を消耗しすぎた。", "changes": { "fame": -3, "magic": -1 } },
+      { "image": "02", "text": "霊界の住人を怒らせてしまい、謝罪した。", "changes": { "fame": -2, "magic": -1 } },
+      { "image": "02", "text": "結界の設置ミスで、小規模な騒動が起きた。", "changes": { "fame": -3 } },
+      { "image": "02", "text": "幽霊騎士に完敗し、自信を喪失した。", "changes": { "fame": -3, "magic": -2 } },
+      { "image": "02", "text": "鎮魂歌の音程を外し、霊たちを不快にさせた。", "changes": { "fame": -2, "magic": -1 } },
+      { "image": "02", "text": "地下通路で落盤に遭い、生き埋めになりかけた。", "changes": { "fame": -3, "magic": -1 } },
+      { "image": "02", "text": "ポルターガイストに物を投げられ、怪我をした。", "changes": { "fame": -3 } }
     ],
     "great": [
-      { "image": "03", "text": "大英雄の霊を安息に導き、歴史に名を残す快挙を成した！", "changes": { "fame": 4, "magic": 1 } }
+      { "image": "03", "text": "大英雄の霊を安息に導き、歴史に名を残す快挙を成した！", "changes": { "fame": 2, "magic": 2 } },
+      { "image": "03", "text": "古代王国の秘宝を発見し、博物館に寄贈した！", "changes": { "fame": 2, "magic": 2 } },
+      { "image": "03", "text": "死神との賭けに勝ち、寿命を延ばしてもらった！", "changes": { "fame": 4, "magic": 2 } },
+      { "image": "03", "text": "伝説の霊獣を手なずけ、相棒にした！", "changes": { "fame": 2, "magic": 2 } },
+      { "image": "03", "text": "冥界の門を一時的に開き、異界の知識を得た！", "changes": { "fame": 4, "magic": 2 } }
     ]
   }
 }
