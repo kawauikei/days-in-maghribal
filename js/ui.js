@@ -54,24 +54,29 @@ function initUI() {
 }
 
 // マップの状態更新（スポットの有効・無効化）
+
 function updateMapState() {
-    const activeIdx = activeImpacts.findIndex(Boolean);
     const spots = document.querySelectorAll('.map-spot');
     
+    // 1. 各スポットの状態を更新
     spots.forEach((spot, i) => {
+        // 基本リセット
         spot.classList.remove('spot-disabled');
-        if (activeIdx !== -1) {
-            const target = heroineImpacts[activeIdx].target;
-            if (i !== target) spot.classList.add('spot-disabled');
+        spot.classList.remove('boost-mode'); // 一旦ブーストクラスを外す
+
+        // ブースト判定
+        // activeImpactsの中で「有効(true)」かつ「ターゲットがこの場所(i)」なものを探す
+        const isBoosted = activeImpacts.some((isActive, idx) => isActive && heroineImpacts[idx].target === i);
+
+        // ブースト対象ならクラスを付与（見た目はCSSにおまかせ）
+        if (isBoosted) {
+            spot.classList.add('boost-mode');
         }
     });
-    
-    const displayEl = document.getElementById("turn-display");
-    if (!displayEl) return;
 
-    if (activeIdx !== -1) {
-        displayEl.innerHTML = `<span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">1</span>/1`;
-    } else {
+    // 2. ターン表示の更新（変更なし）
+    const displayEl = document.getElementById("turn-display");
+    if (displayEl) {
         displayEl.innerHTML = `<span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">${turn}</span>/20`;
     }
 }
@@ -249,7 +254,7 @@ function renderBoostButtons() {
     statKeys.forEach(k => { 
         const btn = document.createElement("button"); 
         btn.className = `boost-btn ${unlockedBoosts[k] ? 'unlocked' : ''} ${activeBoosts[k] ? 'active' : ''}`; 
-        btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +20`; 
+        btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +15`; 
         btn.onclick = (e) => { 
             e.stopPropagation(); 
             if(!unlockedBoosts[k]) return; 
@@ -270,15 +275,18 @@ function renderBoostButtons() {
         const targetScene = scenarios[impact.target]; 
         const isActive = activeImpacts[i]; 
         const isUnlocked = clearedHeroines.includes(h.name); 
+        
         const btn = document.createElement("button"); 
         btn.className = `boost-btn ${isUnlocked ? 'unlocked' : ''} ${isActive ? 'active' : ''}`; 
         btn.innerHTML = `<i class="fa-solid ${targetScene.icon}"></i> ${impact.btnLabel}`; 
+        
         btn.onclick = (e) => { 
             e.stopPropagation(); 
             if (!isUnlocked) return; 
-            const wasActive = activeImpacts[i]; 
-            activeImpacts.fill(false); 
-            if (!wasActive) activeImpacts[i] = true; 
+            
+            // ★変更箇所: 以前の排他制御（.fill(false)）を削除し、単純なトグルに変更
+            activeImpacts[i] = !activeImpacts[i]; 
+            
             localStorage.setItem('maghribal_active_impacts', JSON.stringify(activeImpacts)); 
             playSE(sePi); 
             renderBoostButtons(); 

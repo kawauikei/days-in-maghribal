@@ -165,21 +165,20 @@ function toggleForceHeroine() {
 
 // debug.js
 
-// 引数の順番を厳密に固定
-function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, overflowChanges, originalChanges, h) {
+/* --- js/debug.js --- */
+
+// ▼ 引数の最後に isBoost を追加
+function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, overflowChanges, originalChanges, h, isRecommended, isBoost) {
     const keys = statKeys || ['health', 'body', 'mind', 'magic', 'fame', 'money'];
     const sBefore = statsBefore || {};
     const oChanges = overflowChanges || {};
     const origChanges = originalChanges || {};
     const sChanges = changes || {};
 
-    // 1. まずデフォルト値を設定
     let eventLabel = " TRAINING ";
     let labelColor = "#444";
 
-    // 2. 条件に応じてラベルを上書き
     if (isH && h) {
-        // ヒロインイベントの場合（親密度レベルを付与）
         const lv = h.progress !== undefined ? ` Lv.${h.progress}` : "";
         eventLabel = ` HEROINE${lv} `;
         labelColor = "#ff0066";
@@ -194,12 +193,17 @@ function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, 
         labelColor = "#00bbff";
     }
 
-    // 3. ラベルが決まってから group を開始
-    console.group(`%c TURN ${turn} %c${eventLabel}`, 
+    // おすすめ(★) と 地域ブースト(AREA+) のマーク作成
+    const starMark = isRecommended ? "★sts" : "";
+    // ▼ 地域ブーストマーク
+    const boostMark = isBoost ? "＊hir" : "";
+
+    console.group(`%c TURN ${turn} %c${eventLabel}${starMark}${boostMark}`, 
         "background: #333; color: #00ffff; font-weight: bold;", 
         `background: ${labelColor}; color: #fff; font-weight: bold;`);
 
     try {
+        // ... (中身のログ出力ループは変更なし) ...
         keys.forEach(k => {
             const before = sBefore[k] || 0;
             const after = stats[k];

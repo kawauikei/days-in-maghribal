@@ -4,18 +4,18 @@
 
 // --- グローバル変数定義 ---
 const impactConfig = {
-    "オルテンシア": { targetName: "辺境の村", sec: 1, eco: 1, name: "王家の配給" },
-    "エルナ": { targetName: "静謐な修道院", sec: 1, eco: 0, name: "収穫の祈り" },
-    "シルフィエット": { targetName: "賢者の塔", sec: 0, eco: 0, name: "古書の寄贈" },
-    "ルナリス": { targetName: "迷宮の入り口", sec: -1, eco: 1, name: "深淵の解明" },
-    "マリーナ": { targetName: "六角の王都", sec: -1, eco: 1, name: "闇市場" },
-    "カタリナ": { targetName: "賑わいの港町", sec: 1, eco: -1, name: "海賊狩り" },
-    "エリスフェリア": { targetName: "太古の墓地", sec: 1, eco: 1, name: "精霊祭" },
-    "レグリナ": { targetName: "喧騒の闘技場", sec: -1, eco: 1, name: "真夜中" },
-    "ゼファー": { targetName: "緑の隠れ里", sec: 1, eco: 1, name: "異文化" },
-    "メルル": { targetName: "巨岩の要塞", sec: 0, eco: 0, name: "傭兵団" },
-    "ネクロア": { targetName: "忘れられた古城", sec: -1, eco: 1, name: "幻影の祝宴" },
-    "エルヴィーラ": { targetName: "真鍮の荒野", sec: 1, eco: 0, name: "砂漠の花" }
+    "オルテンシア":   { targetIdx: 2,  sec: 1,  eco: 1,  name: "王家の配給" }, // 辺境の村
+    "エルナ":         { targetIdx: 6,  sec: 1,  eco: 0,  name: "収穫の祈り" }, // 静謐な修道院
+    "シルフィエット": { targetIdx: 1,  sec: 0,  eco: 0,  name: "古書の寄贈" }, // 賢者の塔
+    "ルナリス":       { targetIdx: 7,  sec: -1, eco: 1,  name: "深淵の解明" }, // 迷宮の入り口
+    "マリーナ":       { targetIdx: 0,  sec: -1, eco: 1,  name: "闇市場" },    // 六角の王都
+    "カタリナ":       { targetIdx: 4,  sec: 1,  eco: -1, name: "海賊狩り" },  // 賑わいの港町
+    "エリスフェリア": { targetIdx: 9,  sec: 1,  eco: 1,  name: "精霊祭" },    // 太古の墓地
+    "レグリナ":       { targetIdx: 10, sec: -1, eco: 1,  name: "真夜中" },    // 喧騒の闘技場
+    "ゼファー":       { targetIdx: 11, sec: 1,  eco: 1,  name: "異文化" },    // 緑の隠れ里
+    "メルル":         { targetIdx: 5,  sec: 0,  eco: 0,  name: "傭兵団" },    // 巨岩の要塞
+    "ネクロア":       { targetIdx: 3,  sec: -1, eco: 1,  name: "幻影の祝宴" }, // 忘れられた古城
+    "エルヴィーラ":   { targetIdx: 8,  sec: 1,  eco: 0,  name: "砂漠の花" }    // 真鍮の荒野
 };
 
 const heroineOPLines = [
@@ -57,7 +57,6 @@ let activeImpacts = Array(12).fill(false);
 const gameAssets = { events: {}, heroines: {} };
 
 // --- 初期化処理 ---
-// --- 初期化処理 ---
 window.onload = async () => {
     loadAudioSettings(); 
     const statusEl = document.getElementById("load-status"); 
@@ -87,7 +86,7 @@ window.onload = async () => {
     // 3. ★追加: ヒロイン立ち絵のロード予約
     // heroinesデータの .file (例: "h01_hortensia") を利用して _01.png ～ _07.png を読み込む
     heroines.forEach(h => {
-        for (let i = 1; i <= 7; i++) {
+        for (let i = 0; i <= 6; i++) {
             const numStr = String(i).padStart(2, '0');
             const path = `images/chara/${h.file}_${numStr}.png`;
             assetsToLoad.push({ type: 'image', path: path });
@@ -150,14 +149,25 @@ window.onload = async () => {
 
     // --- インパクト・設定データの復元 ---
     heroineImpacts = heroines.map(h => {
-        const conf = impactConfig[h.name];
-        if (!conf) return { target: 0, sec: 0, eco: 0, name: "Unknown", btnLabel: "???" };
-        const targetIdx = scenarios.findIndex(s => s.name === conf.targetName);
-        return { 
-            target: targetIdx !== -1 ? targetIdx : 0, 
-            sec: conf.sec, eco: conf.eco, name: conf.name,
-            btnLabel: `${conf.targetName} +`
-        };
+        const config = impactConfig[h.name];
+        
+        if (config) {
+            // ID(番号)からシナリオデータを取得して、現在の名前を参照する
+            const targetScenario = scenarios[config.targetIdx];
+            const currentMapName = targetScenario ? targetScenario.name : "不明な地域";
+
+            return { 
+                target: config.targetIdx, // 番号を直接使用
+                sec: config.sec, 
+                eco: config.eco, 
+                name: config.name,
+                // 最新の地名を使ってボタンのラベルを生成
+                btnLabel: `${currentMapName} +`
+            };
+        } else {
+            // 設定が見つからない場合の予備処理
+            return { target: 0, sec: 0, eco: 0, name: "Unknown", btnLabel: "???" };
+        }
     });
 
     const savedB = localStorage.getItem('maghribal_boosts'); if(savedB) unlockedBoosts = JSON.parse(savedB);
@@ -265,8 +275,6 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
     const container = document.getElementById('monologue-container');
     const textEl = container.querySelector('.monologue-text');
     
-    if (activeImpacts.findIndex(Boolean) !== -1) { container.style.display = 'none'; return; }
-
     let text = "";
     let pool = [];
 
@@ -379,24 +387,54 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
 // オープニング開始
 function startOP() { 
     seOp.currentTime = 0; seOp.play(); 
-    resizeGameContainer(); currentGameLog = []; document.getElementById("log-content").innerHTML = ""; 
-    const activeIdx = activeImpacts.findIndex(Boolean);
-    if (activeIdx !== -1) { statKeys.forEach(k => { stats[k] = 5; updateUI(k); }); } else { statKeys.forEach(k => { stats[k] = activeBoosts[k] ? 25 : 5; updateUI(k); }); }
+    resizeGameContainer(); 
+    currentGameLog = []; 
+    document.getElementById("log-content").innerHTML = ""; 
+    
+    statKeys.forEach(k => { 
+        // activeBoosts[k] が true なら 3+15=18、false なら 3
+        stats[k] = activeBoosts[k] ? 18 : 3; 
+        updateUI(k); 
+    });
+    
     bgmOp.pause(); bgmOp.currentTime = 0; bgmOp.play(); 
     document.getElementById("title-screen").classList.add("hidden-screen"); 
-    setTimeout(() => { document.getElementById("op-screen").classList.remove("hidden-screen"); 
-    const opLines = (activeIdx !== -1) ? heroineOPLines[activeIdx] : ["陽が沈む西の地、マグリバル。", "ここには名声、富、知識、そして力が眠っている。", "残された時間は、そう長くはない。", "どの道を歩み、何者となるか。", "全ては汝の選択に委ねられている。"];
-    updateMapState(); 
     
-    let idx = 0; const opDiv = document.getElementById("op-text"); const showLine = () => { opDiv.style.opacity = 0; setTimeout(() => { opDiv.innerHTML = opLines[idx]; opDiv.style.opacity = 1; }, 400); }; showLine(); window.nextOP = () => { idx++; if (idx < opLines.length) showLine(); else { 
-        document.getElementById("op-screen").classList.add("hidden-screen"); document.getElementById("top-ui-container").style.display = "flex"; document.getElementById("background-layer").classList.add("visible"); 
-        bgmOp.pause(); bgmMap.currentTime = 0; playBgmFadeIn(bgmMap);
-        setTimeout(() => { 
-            document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
-            updateMonologue('start');
-            isGameStarted = true; 
-        }, 1000); 
-    } }; }, 500); 
+    setTimeout(() => { 
+        document.getElementById("op-screen").classList.remove("hidden-screen"); 
+
+        // ▼【変更】opLines の分岐を削除し、常に通常OPテキストを使用
+        const opLines = ["陽が沈む西の地、マグリバル。", "ここには名声、富、知識、そして力が眠っている。", "残された時間は、そう長くはない。", "どの道を歩み、何者となるか。", "全ては汝の選択に委ねられている。"];
+        
+        updateMapState(); 
+        
+        // ... (以降のアニメーション処理はそのまま) ...
+        let idx = 0; 
+        const opDiv = document.getElementById("op-text"); 
+        const showLine = () => { 
+            opDiv.style.opacity = 0; 
+            setTimeout(() => { 
+                opDiv.innerHTML = opLines[idx]; 
+                opDiv.style.opacity = 1; 
+            }, 400); 
+        }; 
+        showLine(); 
+        window.nextOP = () => { 
+            idx++; 
+            if (idx < opLines.length) showLine(); 
+            else { 
+                document.getElementById("op-screen").classList.add("hidden-screen"); 
+                document.getElementById("top-ui-container").style.display = "flex"; 
+                document.getElementById("background-layer").classList.add("visible"); 
+                bgmOp.pause(); bgmMap.currentTime = 0; playBgmFadeIn(bgmMap);
+                setTimeout(() => { 
+                    document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
+                    updateMonologue('start');
+                    isGameStarted = true; 
+                }, 1000); 
+            } 
+        }; 
+    }, 500); 
 }
 
 // ブースト解放処理（ヘルパー）
@@ -411,8 +449,27 @@ function processBoostUnlock() {
     } 
 }
 
+/* --- js/main.js --- */
+
 function showEnding() {
-    processBoostUnlock();
+    processBoostUnlock(); // 既存: ステータスブーストの解放処理
+
+    // ▼▼▼ 追加: 親密度No.1ヒロインの地域解放処理 ▼▼▼
+    // 親密度(affection)が最も高いヒロインを特定
+    // (同点の場合は配列の順序が早い方が選ばれますが、仕様として許容します)
+    const bestHeroine = heroines.reduce((prev, current) => 
+        (prev.affection > current.affection) ? prev : current
+    );
+
+    // まだ解放されていない場合、リストに追加して保存
+    if (bestHeroine && !clearedHeroines.includes(bestHeroine.name)) {
+        clearedHeroines.push(bestHeroine.name);
+        localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
+        
+        console.log(`[Unlock] Best Heroine: ${bestHeroine.name} (Affection: ${bestHeroine.affection})`);
+    }
+    // ▲▲▲ 追加ここまで ▲▲▲
+
     if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
     
     localStorage.removeItem('maghribal_resume_data');
@@ -422,8 +479,10 @@ function showEnding() {
     
     const activeIdx = activeImpacts.findIndex(Boolean);
     if (activeIdx !== -1) {
-        // --- スペシャルエピソードクリア時 ---
-        document.getElementById("ed-rank").innerText = "SPECIAL EPISODE CLEAR";
+        // --- スイッチON時のエンディング（簡易表示） ---
+        // ※スイッチONでも親密度判定で解放は行われるようにしてあります
+        document.getElementById("ed-rank").innerText = "EPISODE CLEAR";
+        // ... (以下、既存のスイッチON時表示処理) ...
         const h1 = heroines[activeIdx];
         const tIdx = heroineImpacts[activeIdx].target;
         const scene = scenarios[tIdx];
@@ -432,12 +491,15 @@ function showEnding() {
         document.getElementById("ed-heroine").innerHTML = partnerHTML;
         document.getElementById("ed-stats").innerHTML = ""; 
     } else {
-        // --- 通常エンディング時 ---
+        // --- 通常エンディング ---
         const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
         let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
         document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
 
-        let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
+        // 画面表示用のベストパートナー選定（ここもaffection基準に統一します）
+        // 元コード: let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
+        let best = bestHeroine; // さっき計算したものを使う
+
         let endingDisplay = "";
         let finalMessage = "";
 
@@ -447,7 +509,7 @@ function showEnding() {
                                (best.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
                                                       `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
             endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
-            finalMessage = best.finMsg[best.progress];
+            finalMessage = best.finMsg[best.progress] || best.finMsg[best.finMsg.length - 1];
         } else {
             const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
             endingDisplay = `称号: ${soloTitles[maxK]}`;
@@ -457,16 +519,9 @@ function showEnding() {
 
         document.getElementById("ed-heroine").innerHTML = endingDisplay;
         
-        // --- レイアウト修正の核 ---
-        // 既存の ed-stats コンテナの中ではなく、その「前」にメッセージを配置するように設計します。
-        // ed-stats の中身を空にしてから、まずはメッセージ、次にステータスを流し込みます。
-        
         const statsContainer = document.getElementById("ed-stats");
-        
-        // 1. メッセージ用のHTML (中央寄せを保証し、下のステータスとは明確に距離を取る)
         const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 20px 0 40px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
         
-        // 2. ステータスボックスのHTML生成
         let statHTML = "";
         statKeys.forEach(k => {
             const val = Math.floor(stats[k]);
@@ -478,11 +533,7 @@ function showEnding() {
             statHTML += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`;
         });
 
-        // 3. 全てを ed-stats に流し込む。
-        // Flexbox の親要素で「100%幅」の要素を最初に入れれば、後続の要素は必ず改行されます。
         statsContainer.innerHTML = msgHTML + statHTML;
-        
-        // 念のため、親要素の FlexWrap を強制的に有効化します
         statsContainer.style.display = "flex";
         statsContainer.style.flexWrap = "wrap";
         statsContainer.style.justifyContent = "center";

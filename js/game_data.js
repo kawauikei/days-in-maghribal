@@ -15,13 +15,13 @@ const HINT_AVG = "\n[Hint] 各地を巡り、全ステータスの「@average@�
 const getHintStat = (statKey) => `\n[Hint] この場所に関連する「@${statKey}@」をより高めると物語が進展します。`;
 
 const scenarios = [
-    { name: "王都", icon: "fa-city", file: "e01_royal_city", zoom: 2.2, security: 5, economy: 5 },
+    { name: "六角の王都", icon: "fa-city", file: "e01_royal_city", zoom: 2.2, security: 5, economy: 5 },
     { name: "賢者の塔", icon: "fa-tower-observation", file: "e02_sage_tower", zoom: 2.8, security: 4, economy: 2 },
     { name: "辺境の村", icon: "fa-house-chimney", file: "e03_frontier_village", zoom: 2.5, security: 2, economy: 1 },
     { name: "忘れられた古城", icon: "fa-landmark", file: "e04_old_castle", zoom: 2.5, security: 1, economy: 1 },
     { name: "賑わいの港町", icon: "fa-ship", file: "e05_port_town", zoom: 2.2, security: 3, economy: 5 },
     { name: "巨岩の要塞", icon: "fa-chess-rook", file: "e06_fortress", zoom: 2.3, security: 5, economy: 2 },
-    { name: "静謐な修道院", icon: "fa-church", file: "e07_monastery", zoom: 2.5, security: 4, economy: 2 },
+    { name: "静謐の聖堂", icon: "fa-church", file: "e07_monastery", zoom: 2.5, security: 4, economy: 2 },
     { name: "迷宮の入り口", icon: "fa-dungeon", file: "e08_dungeon_gate", zoom: 2.6, security: 2, economy: 1 },
     { name: "真鍮の荒野", icon: "fa-mountain-sun", file: "e09_brass_desert", zoom: 2.3, security: 2, economy: 4 },
     { name: "太古の墓地", icon: "fa-monument", file: "e10_ancient_cemetery", zoom: 2.5, security: 1, economy: 1 },

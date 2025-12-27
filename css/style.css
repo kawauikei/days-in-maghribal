@@ -469,3 +469,19 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: 
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* ブースト状態のクラス（JSで付与） */
+.map-spot.boost-mode .hint-text {
+    /* 文字色は変えず、下線のみ追加 */
+    
+    /* 3px幅の二重線。色は元のピンク(#ff66b2)を使用 */
+    /* ※色を変えたい場合はここを編集してください (例: 金色=#ffd700, 赤=#ff4444) */
+    border-bottom: 3px double #ff66b2; 
+
+    /* 文字と線との間隔 */
+    padding-bottom: 3px;
+
+    /* 【重要】もし下線が文字の幅ぴったりにならない（横に伸びすぎる）場合は、
+       以下のコメントアウト（/* ... */）を外して有効にしてください */
+    /* display: inline-block; */
+}
