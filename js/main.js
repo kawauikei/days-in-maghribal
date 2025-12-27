@@ -57,12 +57,16 @@ let activeImpacts = Array(12).fill(false);
 const gameAssets = { events: {}, heroines: {} };
 
 // --- 初期化処理 ---
+// --- 初期化処理 ---
 window.onload = async () => {
-    loadAudioSettings(); // ★追加: 音量設定をロード
-    const statusEl = document.getElementById("load-status"); const barFill = document.getElementById("load-bar-fill");
+    loadAudioSettings(); 
+    const statusEl = document.getElementById("load-status"); 
+    const barFill = document.getElementById("load-bar-fill");
+    
+    // 読み込むアセットのリスト作成
     const assetsToLoad = []; 
     
-    // イベントデータとヒロインデータのロード準備
+    // 1. JSONデータのロード予約
     scenarios.forEach(s => {
         for (let i = 1; i <= 3; i++) {
             assetsToLoad.push({ type: 'event', file: `${s.file}_${i}` });
@@ -70,25 +74,71 @@ window.onload = async () => {
     });
     heroines.forEach(h => assetsToLoad.push({ type: 'heroine', file: h.file }));
     
+    // 2. ★追加: 背景画像のロード予約
+    scenarios.forEach(s => {
+        for (let i = 1; i <= 3; i++) {
+            // ファイル名規則 (例: images/bg/e01_royal_city_01.png)
+            const numStr = String(i).padStart(2, '0');
+            const path = `images/bg/${s.file}_${numStr}.png`;
+            assetsToLoad.push({ type: 'image', path: path });
+        }
+    });
+
+    // 3. ★追加: ヒロイン立ち絵のロード予約
+    // heroinesデータの .file (例: "h01_hortensia") を利用して _01.png ～ _07.png を読み込む
+    heroines.forEach(h => {
+        for (let i = 1; i <= 7; i++) {
+            const numStr = String(i).padStart(2, '0');
+            const path = `images/chara/${h.file}_${numStr}.png`;
+            assetsToLoad.push({ type: 'image', path: path });
+        }
+    });
+    
     let loadedCount = 0;
+    
+    // ★重要: ここから下の「読み込み実行処理」を画像対応版に書き換えます
     const loadPromises = assetsToLoad.map(async (asset) => {
         try {
-            const res = await fetch(`data/${asset.type === 'event' ? 'events' : 'heroines'}/${asset.file}.json`);
-            const data = await res.json();
-            if (asset.type === 'event') { 
+            // 【画像の場合】
+            if (asset.type === 'image') {
+                await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = asset.path;
+                    img.onload = resolve;
+                    img.onerror = () => {
+                        console.warn(`Failed to load image: ${asset.path}`);
+                        resolve(); // エラーでも止まらないようにする
+                    };
+                });
+            } 
+            // 【イベントデータの場合】
+            else if (asset.type === 'event') { 
+                const res = await fetch(`data/events/${asset.file}.json`);
+                const data = await res.json();
                 gameAssets.events[asset.file] = data; 
             }
+            // 【ヒロインデータの場合】
             else if (asset.type === 'heroine') { 
-                gameAssets.heroines[asset.file] = await fetch(`data/heroines/${asset.file}.json`).then(r => r.json()); 
+                const res = await fetch(`data/heroines/${asset.file}.json`);
+                gameAssets.heroines[asset.file] = await res.json(); 
             }
+            
             loadedCount++; 
             const percent = (loadedCount / assetsToLoad.length) * 100; 
             barFill.style.width = percent + "%"; 
-            statusEl.innerText = `Loading: ${asset.file} (${Math.round(percent)}%)`;
-        } catch (e) { console.error(e); }
+            
+            // ログ表示（ファイル名だけ表示）
+            const dispName = asset.path ? asset.path.split('/').pop() : asset.file;
+            statusEl.innerText = `Loading: ${dispName} (${Math.round(percent)}%)`;
+            
+        } catch (e) { 
+            console.error(`Load Error (${asset.type}):`, e); 
+        }
     });
+
     await Promise.all(loadPromises);
     
+    // --- データロード（モノローグ等） ---
     try {
         const monoRes = await fetch('data/events/monologues.json');
         const monoJson = await monoRes.json();
@@ -98,6 +148,7 @@ window.onload = async () => {
         specialData = await specRes.json();
     } catch (e) { console.error("Data load failed", e); }
 
+    // --- インパクト・設定データの復元 ---
     heroineImpacts = heroines.map(h => {
         const conf = impactConfig[h.name];
         if (!conf) return { target: 0, sec: 0, eco: 0, name: "Unknown", btnLabel: "???" };

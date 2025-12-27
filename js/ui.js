@@ -345,3 +345,36 @@ function viewSpecificLog(idx) {
         logWindow.scrollTop = 0; 
     } 
 }
+
+// --- キャラクター表示システム (透過PNG対応版) ---
+
+/**
+ * キャラクター立ち絵を表示する
+ * @param {string} imagePath - 画像パス (例: 'images/chara/h01_hortensia_01.png')
+ */
+function showCharacter(imagePath) {
+    const layer = document.getElementById('character-layer');
+    
+    // 表示更新のため一度クリア
+    layer.innerHTML = ''; 
+
+    if (!imagePath) return;
+
+    const img = document.createElement('img');
+    img.src = imagePath;
+    
+    // 画像読み込みエラー時の処理
+    img.onerror = function() {
+        console.error("キャラクター画像の読み込みに失敗:", imagePath);
+        // エラー時は非表示にするなどの処理があればここに
+    };
+
+    layer.appendChild(img);
+}
+
+/**
+ * キャラクターを非表示にする
+ */
+function hideCharacter() {
+    document.getElementById('character-layer').innerHTML = '';
+}
