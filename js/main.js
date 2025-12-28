@@ -54,7 +54,7 @@ let currentGameLog = [];
 let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeImpacts = Array(12).fill(false);
-const gameAssets = { events: {}, heroines: {} };
+const gameAssets = { events: {}, heroines: {}, bgm_heroine: {} };
 
 // --- 初期化処理 ---
 window.onload = async () => {
@@ -72,6 +72,9 @@ window.onload = async () => {
         }
     });
     heroines.forEach(h => assetsToLoad.push({ type: 'heroine', file: h.file }));
+
+    // ★追加: ヒロインごとのBGMロード予約 (bgm/h01_hortensia.mp3 など)
+    heroines.forEach(h => assetsToLoad.push({ type: 'bgm_heroine', file: h.file, path: `bgm/${h.file}.mp3` }));
     
     // 2. ★追加: 背景画像のロード予約
     scenarios.forEach(s => {
@@ -117,9 +120,26 @@ window.onload = async () => {
                 gameAssets.events[asset.file] = data; 
             }
             // 【ヒロインデータの場合】
-            else if (asset.type === 'heroine') { 
+            else if (asset.type === 'heroine') {
                 const res = await fetch(`data/heroines/${asset.file}.json`);
-                gameAssets.heroines[asset.file] = await res.json(); 
+                gameAssets.heroines[asset.file] = await res.json();
+            }
+
+            // 【ヒロインBGMの場合】
+            else if (asset.type === 'bgm_heroine') {
+                await new Promise((resolve) => {
+                    const audio = new Audio(asset.path);
+                    audio.loop = true;
+                    const done = () => resolve();
+                    audio.addEventListener('canplaythrough', done, { once: true });
+                    audio.addEventListener('loadeddata', done, { once: true });
+                    audio.addEventListener('error', () => {
+                        console.warn(`Failed to load BGM: ${asset.path}`);
+                        resolve();
+                    }, { once: true });
+                    audio.load();
+                    gameAssets.bgm_heroine[asset.file] = audio;
+                });
             }
             
             loadedCount++; 

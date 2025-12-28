@@ -218,7 +218,20 @@ function handleSpotClick(el, idx) {
     }
 
     applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoostActive);
-    if (stopBgm) bgmMap.pause();
+
+    // BGM制御
+    // - ヒロインイベント: マップBGM → ヒロインBGMへクロスフェード
+    // - 通常イベント: ヒロインBGMが鳴っていれば止めてマップへ戻す
+    if (stopBgm) {
+        if (isH && h) {
+            // bgmMap.pause() はしない（クロスフェード側が止める）
+            playHeroineBgmByFile(h.file);
+        }
+    } else {
+        // 何かの理由でヒロインBGMが鳴っている場合は、マップへ戻す
+        if (typeof switchToMapBgm === 'function') switchToMapBgm();
+        else stopHeroineBgm();
+    }
 }
 
 // 余剰分を最小ステータスに振り分ける共通関数
@@ -319,10 +332,18 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     const locLabel = `<i class="fa-solid ${s.icon}"></i> ${s.name}`; 
     
     // ログ保存
-    currentGameLog.push(`<div class="log-entry"><div class="log-header">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class="log-body">${formatGameText(typeof msg === 'string' ? msg : msg.join('')).replace(/\n/g, '<br>')}</div></div>`); 
-    document.getElementById("log-content").innerHTML = currentGameLog.join(''); 
-    
-    // 背景演出
+// 画面表示側(TextEngine)と同じ分割・改行ルールで「通しログ」用HTMLを生成し、
+// 改ページ境界に付く先頭 <br> による“無駄な空白行”を防ぐ。
+const fullTextForLog = Array.isArray(msg) ? msg.join('') : msg;
+const logHtml = (TextEngine && typeof TextEngine.buildLogHtml === 'function')
+    ? TextEngine.buildLogHtml(fullTextForLog)
+    : fullTextForLog;
+
+currentGameLog.push(
+    `<div class="log-entry"><div class="log-header">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class="log-body">${formatGameText(logHtml)}</div></div>`
+);
+document.getElementById("log-content").innerHTML = currentGameLog.join(''); 
+// 背景演出
     const bgLayer = document.getElementById("background-layer");
     bgLayer.style.transformOrigin = `${spotAssignments[idx].l}% ${spotAssignments[idx].t}%`; 
     bgLayer.style.transform = `scale(${s.zoom || 2.5})`; 
@@ -428,7 +449,16 @@ function closeEvent() {
     document.getElementById("click-overlay").classList.remove("active"); 
     document.getElementById("page-cursor").classList.remove("active"); 
     
-    if (bgmMap.paused) bgmMap.play();
+    // マップに戻ったら必ず「ヒロインBGM → マップBGM」へ戻す
+    // （通常イベントでも、何らかの理由でヒロインBGMが鳴りっぱなしになるのを防ぐ）
+    if (typeof switchToMapBgm === 'function') {
+        switchToMapBgm();
+    } else {
+        // フォールバック
+        try { if (!bgmMap.paused) bgmMap.volume = currentBgmVol; } catch (_) {}
+        try { if (bgmMap.paused) bgmMap.play(); } catch (_) {}
+        try { if (typeof stopHeroineBgm === 'function') stopHeroineBgm(); } catch (_) {}
+    }
   
     if (turn < maxTurn) { 
         turn++; 

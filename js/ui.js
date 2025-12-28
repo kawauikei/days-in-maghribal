@@ -347,7 +347,10 @@ function viewSpecificLog(idx) {
     const rec = records[idx]; 
     if (rec) { 
         const logWindow = document.getElementById("log-window"); 
-        document.getElementById("log-content").innerHTML = rec.log; 
+        // 過去ログは保存時点の仕様のまま残るため、表示時に軽く正規化して
+        // 改ページ境界に付いた先頭 <br> 由来の“無駄な空白行”を除去する
+        const cleaned = String(rec.log || '').replace(/(<div class="log-body">)\s*(<br>\s*)+/g, '$1');
+        document.getElementById("log-content").innerHTML = cleaned; 
         toggleLog(); 
         logWindow.scrollTop = 0; 
     } 
