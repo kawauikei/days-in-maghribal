@@ -3,7 +3,7 @@ const TextEngine = {
     queue: [],
     
     config: {
-        maxLines: 2,
+        maxLines: 3,
         minLength: 15,
         lineHeight: 30,
         padding: 40,

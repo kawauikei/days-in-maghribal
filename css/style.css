@@ -47,59 +47,251 @@ body {
 }
 #background-layer.visible { opacity: 1; }
 #background-layer.blur-bg { filter: blur(5px); }
-/* --- スチル表示用レイヤー（アニメーション強化版） --- */
+/* --- スチル表示レイヤー（Still FX） --- */
+/* デバッグツール（stl.html）と同系統の見た目を、ゲーム側は CSS 側に集約 */
+/* --- style.css : #event-still-layer 関連の定義をこれに置き換え --- */
+
+/* 1. ベース設定 (位置・アニメーション・共通動作) */
 #event-still-layer {
-    /* ▼▼▼ 変更点1：display:none を廃止し、visibility で制御 ▼▼▼ */
-    /* display: none; だとアニメーションしないため */
-    visibility: hidden;
-    
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    
-    /* ▼▼▼ 変更点2：初期位置とサイズ ▼▼▼ */
-    /* 少し下(-45%)にずらし、わずかに縮小(0.95)させておく */
-    /* これにより、表示時に「浮き上がりながら迫ってくる」演出になります */
-    transform: translate(-50%, -45%) scale(0.95);
-    
-    width: 585px;
-    height: 390px;
+  visibility: hidden;
+  position: absolute;
+  /* 画面中央配置 */
+  left: 50%;
+  top: calc(50% + var(--still-offset-y, 0px));
+  transform: translate(-50%, calc(-50% + var(--still-offset-y, 0px)));
 
-    background-repeat: no-repeat;
-    background-size: cover; 
-    background-position: center;
-    z-index: 150;
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
 
-    opacity: 0;
-    pointer-events: none;
-    
-    /* ▼▼▼ 変更点3：トランジション設定 ▼▼▼ */
-    /* transform（移動・拡大）もアニメーションさせる */
-    /* 時間を0.6sにして、ウィンドウより少しゆったりと余韻を持たせています */
-    transition: 
-        opacity 0.6s ease-out, 
-        transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
-        visibility 0.6s;
+  /* フェードイン・アウトのアニメーション定義 */
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0.6s;
 
-    /* エフェクト・枠線（前回決定分） */
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.8)) blur(2px) brightness(1.1) contrast(0.95);
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 
-        0 0 30px rgba(0,0,0,0.8), 
-        inset 0 0 20px rgba(0,0,0,0.6);
-        
-    overflow: hidden;
+  /* 共通の影 */
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  border-radius: 8px;
 }
 
+/* 表示状態 (opacity:1 にする) */
 #event-still-layer.active {
-    /* ▼▼▼ 変更点4：表示状態 ▼▼▼ */
-    visibility: visible; /* 見えるようにする */
-    opacity: 1;
-    
-    /* 定位置(-50%)に戻し、サイズも等倍(1)へ */
-    transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+  opacity: 1;
+  transform: translate(-50%, calc(-50% + var(--still-offset-y, 0px)));
 }
+
+/* --- style.css : ヒロイン用（枠強調版） --- */
+#event-still-layer.type-heroine {
+  width: min(1024px, 92vw);
+  aspect-ratio: 2 / 1;
+  height: auto;
+  background: #000;
+
+  /* 内側の白い枠 */
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  /* 外側の金色の枠（これで二重枠になり豪華になります） */
+  outline: 4px solid #b08d55;
+  
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.9),
+    inset 0 0 20px rgba(0,0,0,0.6);
+    
+  overflow: hidden;
+}
+
+/* --- css/style.css : 通常イベント用 (パス解決・修正版) --- */
+
+#event-still-layer.type-normal {
+  width: 582px;
+  height: 390px;
+  max-width: 85vw;
+  max-height: 70vh;
+  
+  background-color: #000;
+  
+  /* ★修正ポイント1: 親要素の画像は見えないように潰す */
+  /* 画像自体はJSでセットされていますが、ここでは表示せず、擬似要素に引き継がせます */
+  background-size: 0 0; 
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* 額縁デザイン */
+  border: 6px ridge #b08d55; 
+  
+  box-shadow: 
+    0 0 0 1px #000, 
+    0 0 50px rgba(0, 0, 0, 0.9);
+
+  overflow: hidden;
+  position: relative; 
+}
+
+/* --- style.css : 通常イベント用（ぼかし弱め調整） --- */
+
+/* 中身の画像だけをぼかすためのレイヤー */
+#event-still-layer.type-normal::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  
+  /* 親の背景画像(JSでセット)を継承 */
+  background-image: inherit;
+  
+  /* 画像全体を枠内に収める */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  /* ぼかし処理: 5px -> 3px に変更 */
+  filter: blur(3px);
+  
+  z-index: 0;
+}
+
+/* 中身（FXコンテナ） */
+#event-still-layer .stillfx{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+
+  /* CSS変数（JSから更新） */
+  --x: 50%;
+  --y: 50%;
+  --blur: 0px;
+  --distort: 0;
+  --vignette: 0.0;
+  --size: 15%;
+  --sepia: 0%;
+  --saturate: 100%;
+  --texture: 0.0;
+  --zoom: 1;
+  --cx: 50%;
+  --cy: 50%;
+}
+
+/* --- style.css : ヒロインスチル用アニメーション定義 --- */
+
+#event-still-layer .stillfx .layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+
+  /* 変数で制御 */
+  transform-origin: var(--cx) var(--cy);
+  transform: scale(var(--zoom));
+
+  /* ★修正: transition は削除します（JS制御と競合するため） */
+  /* transition: ... (削除) */
+  
+  /* ただし、マスク画像（レイヤー合成）のフェードだけはCSSでやってもOKですが、
+     念のため全てJSに任せるなら transition はナシでいくのが最も安全です */
+}
+
+#event-still-layer .stillfx .layer-bg{
+  filter: url(#oil-paint-filter) blur(var(--blur)) sepia(var(--sepia)) saturate(var(--saturate));
+}
+
+#event-still-layer .stillfx .layer-focus{
+  -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), black var(--size), transparent calc(var(--size) + 30%));
+  mask-image: radial-gradient(circle at var(--x) var(--y), black var(--size), transparent calc(var(--size) + 30%));
+  z-index: 10;
+}
+
+#event-still-layer .stillfx .layer-vignette{
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at var(--x) var(--y), transparent var(--size), rgba(0,0,0, var(--vignette)) 120%);
+  z-index: 20;
+  transition: background 900ms ease;
+}
+
+#event-still-layer .stillfx .layer-texture{
+  position:absolute;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: var(--texture);
+  mix-blend-mode: overlay;
+  z-index: 30;
+  transition: opacity 900ms ease;
+}
+
+/* SVGフィルタはDOMに埋め込む（event.js側） */
+#event-still-layer .stillfx .svg-filters{ position:absolute; width:0; height:0; pointer-events:none; }
+
+/* --- style.css : ヒント演出用 (抽象グリッド) --- */
+
+/* ヒント用のコンテナ: 背景なし、中央配置 */
+#event-still-layer.type-hint {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+/* 2x2 グリッドレイアウト */
+.hint-grid {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  grid-template-rows: 100px 100px;
+  gap: 15px;
+  
+  /* 枠線: JSで設定される変数を使用 */
+  border: 3px solid var(--hint-border-color, rgba(255, 255, 255, 0.8));
+  border-radius: 16px;
+  padding: 15px;
+  
+  /* ★追加: 本当に薄い灰色の背景 */
+  /* 黒背景の上に乗るので、白(255)を薄く(0.1)乗せることで「薄いグレー」に見せます */
+  background: rgba(255, 255, 255, 0.1);
+  
+  /* 少しだけすりガラス効果を入れて高級感を出す */
+  backdrop-filter: blur(2px);
+
+  /* 枠自体の光彩 */
+  box-shadow: 0 0 20px var(--hint-border-color, rgba(255, 255, 255, 0.4));
+
+  transform: scale(1); 
+}
+/* 各セルの共通設定 */
+.hint-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  
+  /* ふんわり出現するアニメーション */
+  animation: hintPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* アイコン用セル (文字色白 + 光彩) */
+.hint-cell.icon-cell {
+  font-size: 48px;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.3); /* 薄い黒背景で視認性確保 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* カラーブロック用セル (パラメータ色) */
+.hint-cell.color-cell {
+  box-shadow: 0 0 20px currentColor; /* 自身の色で発光 */
+  opacity: 0.8;
+}
+
+@keyframes hintPop {
+  0% { opacity: 0; transform: scale(0.5); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+
 /* マップスポット */
 .map-spot { 
     position: absolute; width: 80px; height: 80px; 
@@ -481,7 +673,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: 
     /* 文字と線との間隔 */
     padding-bottom: 3px;
 
-    /* 【重要】もし下線が文字の幅ぴったりにならない（横に伸びすぎる）場合は、
-       以下のコメントアウト（/* ... */）を外して有効にしてください */
-    /* display: inline-block; */
+    /* 下線が横に伸びすぎる場合に使用 */
+     /* display: inline-block; */
+
 }

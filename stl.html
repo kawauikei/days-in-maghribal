@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スチル演出管理ツール v13 (Style.css Integration)</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+  /* --- ツール用オーバーライドCSS (style.cssより優先) --- */
+  
+  body {
+    /* ゲームの全画面固定を解除してツールとして表示 */
+    position: static; width: auto; height: auto; overflow: auto;
+    background-color: #1a1a1a; color: #eee;
+    font-family: "Consolas", "Monaco", sans-serif;
+    display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+  }
+
+  /* パネル周り */
+  .controls {
+    background: #2d2d2d; padding: 10px; width: 100%; box-sizing: border-box;
+    border-bottom: 1px solid #444; display: flex; gap: 15px;
+    align-items: flex-start; justify-content: center; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+  .panel-section {
+    background: #383838; padding: 8px; border-radius: 4px; border: 1px solid #444;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .panel-title { font-size: 11px; color: #aaa; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+
+  .selector-grid { display: grid; grid-template-columns: auto auto; gap: 5px; align-items: center; }
+  select, input[type="text"] { background: #222; border: 1px solid #555; color: #fff; padding: 4px; font-size: 12px; }
+  .filename-preview { grid-column: 1 / -1; display: flex; gap: 5px; margin-top: 5px; }
+  .filename-preview input { width: 100%; color: #4f9; font-weight: bold; }
+
+  .slider-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px 15px; }
+  .slider-row { display: flex; align-items: center; gap: 5px; }
+  label { font-size: 11px; width: 50px; text-align: right; color: #ccc; }
+  input[type="range"] { width: 80px; cursor: pointer; }
+  .val-disp { font-size: 11px; font-weight: bold; width: 25px; text-align: right; color: #4f9; }
+
+  button { padding: 4px 12px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 3px; font-size: 12px; font-weight: bold; }
+  button:hover { background: #0056b3; }
+  button.accent { background: #28a745; }
+
+  /* メイン表示エリア */
+  .main-area {
+    padding: 40px; flex-grow: 1; display: flex; justify-content: center; align-items: center; width: 100%;
+    background: #111;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ★ゲームレイヤーの強制表示設定 */
+  #event-still-layer {
+    /* ゲーム側の fixed/absolute 配置を無効化 */
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    
+    /* 強制表示 */
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+
+    margin: 0 auto;
+    cursor: crosshair;
+    transition: none !important; /* 操作ラグをなくす */
+  }
+
+  /* ★ツール独自調整: Normalでも1024pxサイズで作業できるようにする */
+  /* style.cssの .type-normal は 582px だが、ツール上では上書きして大きく表示 */
+  #event-still-layer.type-normal {
+    width: 1024px !important;
+    height: 512px !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  
+  /* JSONエリア */
+  .json-manager { width: 100%; background: #222; border-top: 1px solid #444; padding: 15px; box-sizing: border-box; display: flex; gap: 20px; justify-content: center; }
+  .json-col { display: flex; flex-direction: column; gap: 5px; width: 45%; max-width: 500px; }
+  textarea { width: 100%; height: 100px; background: #111; color: #4f9; border: 1px solid #444; font-family: monospace; font-size: 11px; padding: 5px; }
+  
+  .toast { position: fixed; bottom: 150px; left: 50%; transform: translateX(-50%); background: #28a745; color: #fff; padding: 8px 20px; border-radius: 20px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  .toast.show { opacity: 1; } .toast.warn { background: #d08b00; }
+</style>
+</head>
+<body>
+
+  <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0; pointer-events:none;">
+    <defs>
+      <filter id="oil-paint-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" id="svg-distort-scale" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="controls">
+    <div class="panel-section">
+      <div class="panel-title">Image Selector</div>
+      <div class="selector-grid">
+        <select id="js-sel-heroine" title="ヒロイン選択"></select>
+        <select id="js-sel-type" title="イベント種別">
+          <option value="normal">Normal (00_normal)</option>
+          <option value="special">Special (01_special)</option>
+        </select>
+        <select id="js-sel-num" title="番号選択"></select>
+        <button id="js-load-gen-btn" class="accent">LOAD</button>
+      </div>
+      <div class="filename-preview">
+        <input type="text" id="js-filename-preview" placeholder="File Path">
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">Visual Settings</div>
+      <div class="slider-grid">
+        <div class="slider-row"><label>Distort</label><input type="range" id="js-distort" min="0" max="100"><span class="val-disp" id="val-distort"></span></div>
+        <div class="slider-row"><label>Blur</label><input type="range" id="js-blur" min="0" max="20"><span class="val-disp" id="val-blur"></span></div>
+        <div class="slider-row"><label>Sepia</label><input type="range" id="js-sepia" min="0" max="100"><span class="val-disp" id="val-sepia"></span></div>
+        <div class="slider-row"><label>Saturate</label><input type="range" id="js-saturate" min="0" max="200"><span class="val-disp" id="val-saturate"></span></div>
+        <div class="slider-row"><label>Texture</label><input type="range" id="js-texture" min="0" max="100"><span class="val-disp" id="val-texture"></span></div>
+        <div class="slider-row"><label>Darkness</label><input type="range" id="js-vignette" min="0" max="100"><span class="val-disp" id="val-vignette"></span></div>
+        <div class="slider-row"><label>Focus</label><input type="range" id="js-size" min="0" max="50"><span class="val-disp" id="val-size"></span></div>
+      </div>
+      <div style="font-size:11px;color:#aaa;line-height:1.3">
+        CSS: Linked style.css<br>
+        Normal: .type-normal (Overrides to 1024px) / Special: .type-heroine
+      </div>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <div id="event-still-layer" class="active">
+      <div class="stillfx">
+        <img class="layer layer-bg" id="js-img-bg">
+        <img class="layer layer-focus" id="js-img-focus">
+        <div class="layer layer-vignette" id="js-layer-vignette"></div>
+        <div class="layer layer-texture" id="js-layer-texture"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="json-manager">
+    <div class="json-col">
+      <div class="panel-title">OUTPUT JSON</div>
+      <textarea id="js-json-out" readonly></textarea>
+      <button id="js-copy-btn" class="accent">Copy to Clipboard</button>
+    </div>
+    <div class="json-col">
+      <div class="panel-title">IMPORT JSON</div>
+      <textarea id="js-json-in" placeholder='Paste JSON here'></textarea>
+      <button id="js-import-btn">Import JSON Data</button>
+    </div>
+  </div>
+  <div class="toast" id="js-toast">Copied!</div>
+
+<script>
+  // --- Config ---
+  const heroines = [
+    { id: "h01", name: "hortensia" }, { id: "h02", name: "lunaris" }, { id: "h03", name: "erna" },
+    { id: "h04", name: "sylphiette" }, { id: "h05", name: "marina" }, { id: "h06", name: "katarina" },
+    { id: "h07", name: "elisferia" }, { id: "h08", name: "legrina" }, { id: "h09", name: "zephyr" },
+    { id: "h10", name: "necroa" }, { id: "h11", name: "merle" }, { id: "h12", name: "elvira" }
+  ];
+
+  const FOLDER_NORMAL = "00_normal";
+  const FOLDER_SPECIAL = "01_special";
+
+  let database = {};
+  const DEFAULT_PARAMS = { x: 50, y: 50, distort: 40, blur: 5, size: 15, vignette: 30, sepia: 30, saturate: 80, texture: 30, zoom: 1.00, cx: 50, cy: 50 };
+  let currentParams = { ...DEFAULT_PARAMS };
+  let currentMeta = { filename: "", heroineId: "h01", heroineName: "hortensia", type: "normal", num: "00" };
+
+  // Elements
+  const els = {
+    container: document.getElementById('event-still-layer'),
+    svgDistort: document.getElementById('svg-distort-scale'),
+    imgBg: document.getElementById('js-img-bg'),
+    imgFocus: document.getElementById('js-img-focus'),
+    vignette: document.getElementById('js-layer-vignette'),
+    texture: document.getElementById('js-layer-texture'),
+    jsonOut: document.getElementById('js-json-out'),
+    jsonIn: document.getElementById('js-json-in'),
+    selectors: {
+      heroine: document.getElementById('js-sel-heroine'),
+      type: document.getElementById('js-sel-type'),
+      num: document.getElementById('js-sel-num'),
+      filename: document.getElementById('js-filename-preview'),
+      loadBtn: document.getElementById('js-load-gen-btn')
+    },
+    sliders: {
+      distort: document.getElementById('js-distort'),
+      blur: document.getElementById('js-blur'),
+      size: document.getElementById('js-size'),
+      vignette: document.getElementById('js-vignette'),
+      sepia: document.getElementById('js-sepia'),
+      saturate: document.getElementById('js-saturate'),
+      texture: document.getElementById('js-texture'),
+    },
+    copyBtn: document.getElementById('js-copy-btn'),
+    importBtn: document.getElementById('js-import-btn'),
+    toast: document.getElementById('js-toast'),
+  };
+
+  // Noise Texture
+  const svgNoiseUrl = "data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E";
+  els.texture.style.backgroundImage = `url("${svgNoiseUrl}")`;
+
+  // History
+  const HISTORY_LIMIT = 50; let history = []; let historyIndex = -1;
+  function shouldIgnoreHotkeys() { const ae = document.activeElement; if (!ae) return false; const tag = (ae.tagName || '').toLowerCase(); return tag === 'input' || tag === 'textarea' || ae.isContentEditable; }
+  function shallowEqualParams(a, b) { const keys = Object.keys(a); if (keys.length !== Object.keys(b).length) return false; for (const k of keys) { if (a[k] !== b[k]) return false; } return true; }
+  function pushHistory() {
+    if (!currentMeta.filename) return;
+    const snap = { filename: currentMeta.filename, meta: { ...currentMeta }, params: { ...currentParams } };
+    const prev = history[historyIndex];
+    if (prev && prev.filename === snap.filename && shallowEqualParams(prev.params, snap.params)) return;
+    if (historyIndex < history.length - 1) history = history.slice(0, historyIndex + 1);
+    history.push(snap); if (history.length > HISTORY_LIMIT) history.shift(); historyIndex = history.length - 1;
+  }
+  function restoreSnapshot(snap) {
+    if (!snap) return;
+    els.selectors.heroine.value = snap.meta.heroineId;
+    els.selectors.type.value = snap.meta.type;
+    updateNumOptions();
+    els.selectors.num.value = snap.meta.num;
+    updateFilenamePreview();
+    currentMeta = { ...snap.meta };
+    els.imgBg.src = currentMeta.filename; els.imgFocus.src = currentMeta.filename;
+    currentParams = { ...snap.params };
+    applyParamsToUI(); updateView();
+  }
+  function undo() { if (historyIndex > 0) { historyIndex--; restoreSnapshot(history[historyIndex]); } }
+  function redo() { if (historyIndex < history.length - 1) { historyIndex++; restoreSnapshot(history[historyIndex]); } }
+  window.addEventListener('keydown', (e) => {
+    if (shouldIgnoreHotkeys()) return;
+    const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform); const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+    if (ctrlOrCmd && !e.shiftKey && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); }
+    if (ctrlOrCmd && (e.key === 'y' || e.key === 'Y')) { e.preventDefault(); redo(); }
+    if (ctrlOrCmd && e.shiftKey && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); redo(); }
+  });
+
+  // --- Logic ---
+  function initSelectors() {
+    heroines.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h.id; opt.textContent = `${h.id}. ${h.name}`;
+      els.selectors.heroine.appendChild(opt);
+    });
+    updateNumOptions();
+    Object.keys(els.sliders).forEach(k => {
+      els.sliders[k].value = currentParams[k];
+      updateValDisp(k, currentParams[k]);
+    });
+    updateFilenamePreview(); updateJsonOut();
+  }
+
+  function updateNumOptions() {
+    const type = els.selectors.type.value;
+    const max = (type === 'normal') ? 6 : 8;
+    const currentVal = els.selectors.num.value || "00";
+    els.selectors.num.innerHTML = '';
+    for(let i=0; i<=max; i++) {
+      const val = i.toString().padStart(2, '0');
+      const opt = document.createElement('option');
+      opt.value = val; opt.textContent = val;
+      els.selectors.num.appendChild(opt);
+    }
+    if(parseInt(currentVal) <= max) els.selectors.num.value = currentVal;
+    
+    // ★ style.css のクラスを適用。NormalもSpecialもここで切り替え
+    const typeClass = (type === 'special') ? 'type-heroine' : 'type-normal';
+    els.container.className = `active ${typeClass}`;
+  }
+
+  function getHeroineName(hid) { return heroines.find(x => x.id === hid)?.name || 'unknown'; }
+  function buildFilename(meta) {
+    const folder = (meta.type === 'normal') ? FOLDER_NORMAL : FOLDER_SPECIAL;
+    return `images/chara/${folder}/${meta.heroineId}_${meta.heroineName}_${meta.num}.png`;
+  }
+  function updateFilenamePreview() {
+    currentMeta.heroineId = els.selectors.heroine.value;
+    currentMeta.heroineName = getHeroineName(currentMeta.heroineId);
+    currentMeta.type = els.selectors.type.value;
+    currentMeta.num = els.selectors.num.value;
+    els.selectors.filename.value = buildFilename(currentMeta);
+    
+    // クラス更新
+    const typeClass = (currentMeta.type === 'special') ? 'type-heroine' : 'type-normal';
+    els.container.className = `active ${typeClass}`;
+  }
+
+  els.selectors.heroine.addEventListener('change', () => updateFilenamePreview());
+  els.selectors.type.addEventListener('change', () => { updateNumOptions(); updateFilenamePreview(); });
+  els.selectors.num.addEventListener('change', () => updateFilenamePreview());
+
+  // --- DB Helpers ---
+  function ensureHeroineNode(hid) {
+    if (!database[hid]) database[hid] = { heroineName: getHeroineName(hid), events: {} };
+    else if (!database[hid].events) database[hid].events = {};
+    return database[hid];
+  }
+  function getEntry(hid, eventId, type) {
+    const h = database[hid];
+    if (!h || !h.events || !h.events[eventId] || !h.events[eventId][type]) return null;
+    return h.events[eventId][type];
+  }
+  function setEntry(hid, eventId, type, settings) {
+    const h = ensureHeroineNode(hid);
+    if (!h.events[eventId]) h.events[eventId] = {};
+    if (!h.events[eventId][type]) h.events[eventId][type] = {};
+    h.events[eventId][type].settings = { ...settings };
+  }
+
+  // --- Load/Update ---
+  els.selectors.loadBtn.addEventListener('click', () => {
+    updateFilenamePreview();
+    const filename = els.selectors.filename.value;
+    currentMeta.filename = filename;
+    els.imgBg.src = filename;
+    els.imgFocus.src = filename;
+    els.imgBg.onerror = () => console.warn("Image not found:", filename);
+
+    const found = getEntry(currentMeta.heroineId, currentMeta.num, currentMeta.type);
+    if (found && found.settings) {
+      currentParams = { ...DEFAULT_PARAMS, ...found.settings };
+    } else {
+      currentParams = { ...DEFAULT_PARAMS };
+    }
+    applyParamsToUI(); updateView(); pushHistory('load');
+  });
+
+  function applyParamsToUI() {
+    Object.keys(els.sliders).forEach(k => {
+      if (currentParams[k] !== undefined) {
+        els.sliders[k].value = currentParams[k];
+        updateValDisp(k, currentParams[k]);
+      }
+    });
+  }
+
+  function updateView() {
+    const s = currentParams;
+
+    // --- ゲーム(event.js)側の見た目に寄せる ---
+    // CSS変数（style.css互換）
+    const c = els.container;
+    c.style.setProperty('--x', s.x + '%');
+    c.style.setProperty('--y', s.y + '%');
+    c.style.setProperty('--blur', s.blur + 'px');
+    c.style.setProperty('--sepia', s.sepia + '%');
+    c.style.setProperty('--saturate', s.saturate + '%');
+    c.style.setProperty('--zoom', s.zoom);
+    c.style.setProperty('--cx', (s.cx ?? 50) + '%');
+    c.style.setProperty('--cy', (s.cy ?? 50) + '%');
+    c.style.setProperty('--size', s.size + '%');
+    c.style.setProperty('--vignette', (s.vignette / 100));
+    c.style.setProperty('--texture', (s.texture / 100));
+
+    // ★重要: filter の順序をゲーム(event.jsの最終定義)に合わせる
+    //  - まず blur/sepia/saturate
+    //  - distort は最後に url(#oil-paint-filter) を付け足す（SVG scale も同期）
+    let filterStr = `blur(${s.blur}px) sepia(${s.sepia}%) saturate(${s.saturate}%)`;
+
+    if (s.distort > 0) {
+        filterStr += ` url(#oil-paint-filter)`;
+        els.svgDistort.setAttribute('scale', String(s.distort));
+    } else {
+        els.svgDistort.setAttribute('scale', "0");
+    }
+
+    const transformStr = `scale(${s.zoom || 1})`;
+    const originStr = `${s.cx ?? 50}% ${s.cy ?? 50}%`;
+
+    if (els.imgBg) {
+        els.imgBg.style.filter = filterStr;
+        els.imgBg.style.transform = transformStr;
+        els.imgBg.style.transformOrigin = originStr;
+    }
+
+    // ★ゲーム側は layer-focus に色フィルタを掛けていない（style.cssでも未指定）
+    // ここでフィルタを掛けると「微妙に違う」原因になるので外す
+    if (els.imgFocus) {
+        els.imgFocus.style.transform = transformStr;
+        els.imgFocus.style.transformOrigin = originStr;
+
+        const maskStyle = `radial-gradient(circle at ${s.x}% ${s.y}%, black ${s.size}%, transparent calc(${s.size}% + 30%))`;
+        els.imgFocus.style.maskImage = maskStyle;
+        els.imgFocus.style.webkitMaskImage = maskStyle;
+
+        els.imgFocus.style.filter = 'none';
+    }
+
+    if (els.vignette) {
+        els.vignette.style.background = `radial-gradient(circle at ${s.x}% ${s.y}%, transparent ${s.size}%, rgba(0,0,0, ${s.vignette/100}) 120%)`;
+    }
+    if (els.texture) {
+        els.texture.style.opacity = (s.texture / 100).toFixed(2);
+    }
+
+    if (currentMeta.filename) {
+        setEntry(currentMeta.heroineId, currentMeta.num, currentMeta.type, currentParams);
+    }
+    updateJsonOut();
+}
+
+function updateJsonOut() { els.jsonOut.value = JSON.stringify(database, null, 2); }
+  function updateValDisp(key, val) { const el = document.getElementById('val-' + key); if(el) el.textContent = val; }
+
+  Object.keys(els.sliders).forEach(k => {
+    els.sliders[k].addEventListener('input', e => {
+      currentParams[k] = parseInt(e.target.value, 10);
+      updateValDisp(k, currentParams[k]);
+      updateView();
+    });
+    els.sliders[k].addEventListener('change', () => { updateView(); pushHistory('slider'); });
+  });
+
+  // Mouse Inputs
+  let isDrag = false; let dragMode = 'focus';
+  els.container.addEventListener('mousedown', (e) => {
+    isDrag = true; dragMode = e.shiftKey ? 'center' : 'focus';
+    calcCoords(e, dragMode); updateView();
+  });
+  window.addEventListener('mouseup', () => { if (!isDrag) return; isDrag = false; updateView(); pushHistory('drag'); });
+  els.container.addEventListener('mousemove', (e) => { if (!isDrag) return; calcCoords(e, dragMode); updateView(); });
+
+  function clamp01to100(v) { return Math.max(0, Math.min(100, v)); }
+  function calcCoords(e, mode) {
+    const r = els.container.getBoundingClientRect();
+    let x = ((e.clientX - r.left)/r.width)*100;
+    let y = ((e.clientY - r.top)/r.height)*100;
+    x = parseFloat(clamp01to100(x).toFixed(1));
+    y = parseFloat(clamp01to100(y).toFixed(1));
+    if (mode === 'center') { currentParams.cx = x; currentParams.cy = y; }
+    else { currentParams.x = x; currentParams.y = y; }
+  }
+
+  els.container.addEventListener('wheel', (e) => {
+    if (!e.altKey) return; e.preventDefault();
+    const delta = Math.sign(e.deltaY); const step = 0.08;
+    const z0 = (currentParams.zoom || 1);
+    const z1 = z0 + (delta > 0 ? -step : step);
+    currentParams.zoom = Math.max(1.0, Math.min(3.0, parseFloat(z1.toFixed(3))));
+    updateView(); scheduleWheelHistory();
+  }, { passive: false });
+  let wheelTimer = null;
+  function scheduleWheelHistory() {
+    if (wheelTimer) clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(() => { updateView(); pushHistory('zoom'); wheelTimer = null; }, 200);
+  }
+
+  // Import/Export
+  function showToast(msg, kind = 'ok') {
+    els.toast.textContent = msg; els.toast.classList.remove('show', 'warn');
+    if (kind === 'warn') els.toast.classList.add('warn');
+    els.toast.classList.add('show'); setTimeout(() => els.toast.classList.remove('show', 'warn'), 1500);
+  }
+  async function copyOutput() {
+    const txt = els.jsonOut.value; if(!txt) return;
+    try { await navigator.clipboard.writeText(txt); showToast('Copied!'); }
+    catch (e) { showToast('Copy failed.', 'warn'); }
+  }
+  function importJson() {
+    try {
+      const data = JSON.parse(els.jsonIn.value);
+      if (typeof data !== 'object' || data === null) throw new Error('Invalid root');
+      database = data; showToast('Imported!');
+      updateFilenamePreview();
+      const found = getEntry(currentMeta.heroineId, currentMeta.num, currentMeta.type);
+      if (found && found.settings) {
+        currentParams = { ...DEFAULT_PARAMS, ...found.settings };
+        applyParamsToUI(); updateView(); pushHistory('import-restore');
+      } else { updateJsonOut(); }
+    } catch (e) { showToast('Invalid JSON', 'warn'); }
+  }
+  els.copyBtn.addEventListener('click', copyOutput);
+  els.importBtn.addEventListener('click', importJson);
+
+  initSelectors();
+  updateView();
+</script>
+</body>
+</html>

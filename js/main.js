@@ -54,7 +54,9 @@ let currentGameLog = [];
 let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeImpacts = Array(12).fill(false);
-const gameAssets = { events: {}, heroines: {}, bgm_heroine: {} };
+// gameAssets: ゲーム中に参照する各種データ/アセット
+// - stl_db: 事前生成したスチル設定DB (data/heroines/stl_db.json)
+const gameAssets = { events: {}, heroines: {}, bgm_heroine: {}, stl_db: {} };
 
 // --- 初期化処理 ---
 window.onload = async () => {
@@ -91,7 +93,7 @@ window.onload = async () => {
     heroines.forEach(h => {
         for (let i = 0; i <= 6; i++) {
             const numStr = String(i).padStart(2, '0');
-            const path = `images/chara/${h.file}_${numStr}.png`;
+            const path = `images/chara/00_normal/${h.file}_${numStr}.png`;
             assetsToLoad.push({ type: 'image', path: path });
         }
     });
@@ -165,6 +167,19 @@ window.onload = async () => {
         heroineReactions = monoJson.heroines;
         const specRes = await fetch('data/events/special.json');
         specialData = await specRes.json();
+	        // スチル設定DB（存在しない場合もあるので、失敗しても止めない）
+	        try {
+	            const stlRes = await fetch('data/heroines/stl_db.json');
+	            if (stlRes.ok) {
+	                gameAssets.stl_db = await stlRes.json();
+	            } else {
+	                gameAssets.stl_db = {};
+	                console.warn('stl_db.json not found (ok for now).');
+	            }
+	        } catch (e) {
+	            gameAssets.stl_db = {};
+	            console.warn('Failed to load stl_db.json (ok for now).', e);
+	        }
     } catch (e) { console.error("Data load failed", e); }
 
     // --- インパクト・設定データの復元 ---
@@ -508,67 +523,51 @@ function showEnding() {
     document.getElementById("ed-screen").classList.remove("hidden-screen");
     bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
     
-    const activeIdx = activeImpacts.findIndex(Boolean);
-    if (activeIdx !== -1) {
-        // --- スイッチON時のエンディング（簡易表示） ---
-        // ※スイッチONでも親密度判定で解放は行われるようにしてあります
-        document.getElementById("ed-rank").innerText = "EPISODE CLEAR";
-        // ... (以下、既存のスイッチON時表示処理) ...
-        const h1 = heroines[activeIdx];
-        const tIdx = heroineImpacts[activeIdx].target;
-        const scene = scenarios[tIdx];
-        const h2 = heroines.find(h => h.file === scene.file) || heroines[tIdx];
-        const partnerHTML = `<span style="display:flex; align-items:center; gap:8px;"><i class="fa-solid ${h1.icon}"></i> ${h1.name} <span style="font-size:0.8em; opacity:0.7;">+</span> <i class="fa-solid ${scene.icon}"></i> ${scene.name} <span style="font-size:0.8em; opacity:0.7;">+</span> <i class="fa-solid ${h2.icon}"></i> ${h2.name}</span>`;
-        document.getElementById("ed-heroine").innerHTML = partnerHTML;
-        document.getElementById("ed-stats").innerHTML = ""; 
+    const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
+    let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
+    document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
+
+    // 画面表示用のベストパートナー選定（ここもaffection基準に統一します）
+    // 元コード: let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
+    let best = bestHeroine; // さっき計算したものを使う
+
+    let endingDisplay = "";
+    let finalMessage = "";
+
+    if (best && best.progress > 0) {
+        const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`;
+        let affinityIcon = (best.progress >= 5) ? `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>` : 
+                            (best.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
+                                                    `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
+        endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
+        finalMessage = best.finMsg[best.progress] || best.finMsg[best.finMsg.length - 1];
     } else {
-        // --- 通常エンディング ---
-        const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
-        let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
-        document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
-
-        // 画面表示用のベストパートナー選定（ここもaffection基準に統一します）
-        // 元コード: let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
-        let best = bestHeroine; // さっき計算したものを使う
-
-        let endingDisplay = "";
-        let finalMessage = "";
-
-        if (best && best.progress > 0) {
-            const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`;
-            let affinityIcon = (best.progress >= 5) ? `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>` : 
-                               (best.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
-                                                      `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
-            endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
-            finalMessage = best.finMsg[best.progress] || best.finMsg[best.finMsg.length - 1];
-        } else {
-            const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
-            endingDisplay = `称号: ${soloTitles[maxK]}`;
-            const randomH = heroines[Math.floor(Math.random() * heroines.length)];
-            finalMessage = randomH.finMsg[0];
-        }
-
-        document.getElementById("ed-heroine").innerHTML = endingDisplay;
-        
-        const statsContainer = document.getElementById("ed-stats");
-        const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 20px 0 40px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
-        
-        let statHTML = "";
-        statKeys.forEach(k => {
-            const val = Math.floor(stats[k]);
-            const isMax = val >= 50;
-            const color = statColors[k];
-            const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : "";
-            const iconStyle = isMax ? `color: ${color};` : "";
-            const maxLabel = isMax ? `<span class="max-label" style="color:${color}">MAX</span>` : "";
-            statHTML += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`;
-        });
-
-        statsContainer.innerHTML = msgHTML + statHTML;
-        statsContainer.style.display = "flex";
-        statsContainer.style.flexWrap = "wrap";
-        statsContainer.style.justifyContent = "center";
+        const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
+        endingDisplay = `称号: ${soloTitles[maxK]}`;
+        const randomH = heroines[Math.floor(Math.random() * heroines.length)];
+        finalMessage = randomH.finMsg[0];
     }
+
+    document.getElementById("ed-heroine").innerHTML = endingDisplay;
+    
+    const statsContainer = document.getElementById("ed-stats");
+    const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 20px 0 40px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
+    
+    let statHTML = "";
+    statKeys.forEach(k => {
+        const val = Math.floor(stats[k]);
+        const isMax = val >= 50;
+        const color = statColors[k];
+        const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : "";
+        const iconStyle = isMax ? `color: ${color};` : "";
+        const maxLabel = isMax ? `<span class="max-label" style="color:${color}">MAX</span>` : "";
+        statHTML += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`;
+    });
+
+    statsContainer.innerHTML = msgHTML + statHTML;
+    statsContainer.style.display = "flex";
+    statsContainer.style.flexWrap = "wrap";
+    statsContainer.style.justifyContent = "center";
     setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
 }
 
