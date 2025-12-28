@@ -76,33 +76,44 @@ function handleSpotClick(el, idx) {
         const isAvgOk = avgStat >= reqA;
         const isMainOk = stats[assign.main] >= reqM;
         const isSubOk = stats[assign.sub] >= reqS;
-
+        
         if (!isAvgOk || !isMainOk || !isSubOk) {
             isH = false; out = 'hint';
             
             let mIdx = (h.progress >= 4) ? 2 : (h.progress >= 1 ? 1 : 0);
             
+            // ヒント生成ロジック (event.jsに集約)
+            let dynamicHint = "";
+
             if (!isAvgOk) {
+                // ■平均値不足の場合
+                // heroines_data.js は純粋なテキストのみになったので、そのまま取得
                 dMsg = h.lockAvgMsgs[mIdx];
-            } else {
-                const baseStory = h.lockStatMsgs[mIdx].split('\n[Hint]')[0];
-                let dynamicHint = "";
                 
+                // ここでヒント文を生成
+                dynamicHint = `||[Hint] <br>各地を巡り、全ステータスの【<span style="color:${statColors.average}">平均値</span>】を上げると物語が進展します。`;
+            } else {
+                // ■個別ステータス不足の場合
+                dMsg = h.lockStatMsgs[mIdx];
+                
+                // 不足しているステータスに応じてヒントを分岐生成
                 if (!isMainOk && !isSubOk) {
                     const mainIcon = `<i class="fa-solid ${statConfig[assign.main].icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
                     const subIcon = `<i class="fa-solid ${statConfig[assign.sub].icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
-                    dynamicHint = `\n[Hint] この場所に関連する${mainIcon}<span style="color:${statColors[assign.main]}">${statConfig[assign.main].name}</span>や、${subIcon}<span style="color:${statColors[assign.sub]}">${statConfig[assign.sub].name}</span>をより高めると物語が進展します。`;
+                    dynamicHint = `||[Hint] <br>この場所に関連する${mainIcon}【<span style="color:${statColors[assign.main]}">${statConfig[assign.main].name}</span>】や、${subIcon}【<span style="color:${statColors[assign.sub]}">${statConfig[assign.sub].name}</span>】をより高めると物語が進展します。`;
                 } else if (!isMainOk) {
                     const config = statConfig[assign.main];
                     const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
-                    dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.main]}">${config.name}</span>がもう少しあれば、彼女の期待に応えられるかもしれない……。`;
+                    dynamicHint = `||[Hint] <br>${icon}【<span style="color:${statColors[assign.main]}">${config.name}</span>】がもう少しあれば、彼女の期待に応えられるかもしれない……。`;
                 } else {
                     const config = statConfig[assign.sub];
                     const icon = `<i class="fa-solid ${config.icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
-                    dynamicHint = `\n[Hint] ${icon}<span style="color:${statColors[assign.sub]}">${config.name}</span>を磨けば、彼女との距離が縮まるはずだ。`;
+                    dynamicHint = `||[Hint] <br>${icon}【<span style="color:${statColors[assign.sub]}">${config.name}</span>】を磨けば、彼女との距離が縮まるはずだ。`;
                 }
-                dMsg = baseStory + dynamicHint;
             }
+            
+            // 最後に物語とヒントを結合（改ページ付き）
+            dMsg = dMsg + dynamicHint;
             
             const buffBonus = isMotivationBuff ? 3 : 0;
             bCh[assign.main] = (tierNum * 2) + buffBonus;
@@ -294,7 +305,6 @@ function getResultHtml(changes) {
 // イベント画面の構築・表示
 function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoost) {
     if (typeof logEventResult === 'function') {
-        // ▼ logEventResult へ isBoost を渡す
         logEventResult(turn, out, isH, changes, statsBefore, statKeys, isMotivationBuff, overflowChanges, originalChanges, h, isRecommended, isBoost);
     }
 
@@ -308,7 +318,8 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     let logL = isH ? `(<i class="fa-solid ${h ? h.icon : ''}"></i> ${h ? h.name : ''})` : ""; 
     const locLabel = `<i class="fa-solid ${s.icon}"></i> ${s.name}`; 
     
-    currentGameLog.push(`<div class="log-entry"><div class="log-header">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class="log-body">${formatGameText(msg).replace(/\n/g, '<br>')}</div></div>`); 
+    // ログ保存
+    currentGameLog.push(`<div class="log-entry"><div class="log-header">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class="log-body">${formatGameText(typeof msg === 'string' ? msg : msg.join('')).replace(/\n/g, '<br>')}</div></div>`); 
     document.getElementById("log-content").innerHTML = currentGameLog.join(''); 
     
     // 背景演出
@@ -317,7 +328,7 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     bgLayer.style.transform = `scale(${s.zoom || 2.5})`; 
     bgLayer.classList.add("blur-bg"); 
     
-    // イベントスチル表示処理
+    // イベントスチル表示
     const stillLayer = document.getElementById("event-still-layer");
     stillLayer.innerHTML = ""; 
     stillLayer.classList.remove("zodiac-card");
@@ -327,59 +338,90 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.png')`;
         stillLayer.classList.add("active");
     } 
-    else if (isH && h.zodiac) {
-        console.log("ヒロインイベントルート");
-    }
     
-    if (typeof msg === 'string') {
-        messageQueue = msg.split('\n').filter(line => line.trim() !== "");
-    } else {
-        messageQueue = Array.isArray(msg) ? msg : [msg];
-    }
-    
+    // ▼▼▼ TextEngine 初期化 ▼▼▼
+    const fullText = Array.isArray(msg) ? msg.join('') : msg;
+    TextEngine.init(fullText);
+
     currentMsgIndex = 0; isResultDisplayed = false; pendingResultHtml = outcomeHtml + cLog; 
+    
     document.getElementById("loc-icon").innerHTML = `<i class="fa-solid ${s.icon}"></i>`; 
     document.getElementById("loc-name").innerText = s.name; 
     document.getElementById("loc-stats").innerHTML = getLocStatusHtml(idx); 
-    const cb = document.getElementById("char-name-badge"); if (isH && h) { cb.innerHTML = `<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name}`; cb.style.display = "flex"; } else cb.style.display = "none"; 
+    const cb = document.getElementById("char-name-badge"); 
+    if (isH && h) { 
+        cb.innerHTML = `<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name}`; 
+        cb.style.display = "flex"; 
+    } else {
+        cb.style.display = "none"; 
+    }
+    
+    // テキストエリアをクリア
     document.getElementById("message-text").innerHTML = ""; 
     document.getElementById("result-display").innerHTML = ""; 
     document.getElementById("result-display").style.opacity = "0"; 
     document.getElementById("page-cursor").classList.remove("active"); 
+    
     document.getElementById("message-window").classList.add("active"); 
     document.getElementById("click-overlay").classList.add("active"); 
-    setTimeout(advanceMessage, 300);
+    
+    // 最初の1文を表示
+    setTimeout(proceedText, 300);
 }
 
-// メッセージ送り
-function advanceMessage() { 
-    const cursor = document.getElementById("page-cursor"); 
-    if (isTyping) { finishTyping(); return; } 
-    if (currentMsgIndex < messageQueue.length) { 
+/* --- js/event.js --- */
+
+function proceedText() {
+    const textBox = document.getElementById("message-text");
+    const cursor = document.getElementById("page-cursor");
+
+    // 1. 演出中ならスキップ完了
+    if (isTyping) {
+        finishTyping();
+        return;
+    }
+    
+    // 2. 結果表示済みなら終了
+    if (isResultDisplayed) {
         cursor.classList.remove("active"); 
-        targetText = messageQueue[currentMsgIndex++]; 
-        typeWriter(document.getElementById("message-text"), targetText, 15); 
-    } else {
+        closeEvent();
+        return;
+    }
+
+    // 3. 次のテキスト取得
+    const currentHtml = textBox.innerHTML;
+    const result = TextEngine.getNext(currentHtml);
+
+    // 終了判定
+    if (result.isEnd) {
         if (isResultHidden) { 
             closeEvent(); 
-        } else if (!isResultDisplayed) { 
+        } else {
             cursor.classList.remove("active"); 
             showFinalResult(); 
             cursor.classList.add("active"); 
-        } else { 
-            cursor.classList.remove("active"); 
-            closeEvent(); 
         }
+        return;
     }
+
+    // リセット（改ページ）判定
+    if (result.reset) {
+        textBox.innerHTML = "";
+    } 
+    
+    // ★削除: ここにあった「endsWith("」") なら <br> を足す」処理は削除します。
+    // (TextEngine側で既に <br> が付いているため)
+
+    // 4. タイプライタ演出開始
+    const formattedText = formatGameText(result.text);
+    startTypeWriter(formattedText);
 }
 
-// イベント終了処理（スチル非表示・ターン経過など）
+// イベント終了処理（既存のまま）
 function closeEvent() { 
     const bgLayer = document.getElementById("background-layer");
     bgLayer.style.transform = "scale(1)"; 
     bgLayer.classList.remove("blur-bg"); 
-    
-    // スチルを非表示
     document.getElementById("event-still-layer").classList.remove("active");
     
     document.getElementById("message-window").classList.remove("active"); 
@@ -394,7 +436,6 @@ function closeEvent() {
         isEventActive = false; 
         updateMonologue(); 
         saveSessionData(); 
-        
         setTimeout(() => { 
              document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
         }, 250);

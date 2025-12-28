@@ -176,6 +176,17 @@ window.onload = async () => {
     const savedC = localStorage.getItem('maghribal_cleared_heroines'); if(savedC) clearedHeroines = JSON.parse(savedC);
     
     initUI(); displayPastRecords(); renderBoostButtons();
+
+    const clickOverlay = document.getElementById("click-overlay");
+    if (clickOverlay) {
+        clickOverlay.onclick = function() {
+            // イベント進行中のみ反応
+            if (isEventActive) {
+                proceedText();
+            }
+        };
+    }
+
     resizeGameContainer(); window.addEventListener('resize', resizeGameContainer);
     
     checkResumeData(); 

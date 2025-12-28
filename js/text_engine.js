@@ -1,14 +1,13 @@
 /* --- js/text_engine.js --- */
 const TextEngine = {
-    // データ構造: { text: "表示文字列", reset: true/false }
     queue: [],
     
-    // 設定（style.cssに合わせて調整）
     config: {
-        maxLines: 3,
-        lineHeight: 30, // px
-        padding: 40,    // px (上下余白合計)
-        containerWidth: 760 // px
+        maxLines: 2,
+        minLength: 15,
+        lineHeight: 30,
+        padding: 40,
+        containerWidth: 760
     },
 
     // ■初期化・解析処理
@@ -16,78 +15,107 @@ const TextEngine = {
         this.queue = [];
         if (!rawText) return;
 
-        // 1. まず「||」（手動改ページ記号）でブロックに分ける
         const blocks = rawText.split('||');
+        let bufferText = "";
+        let bufferReset = false;
 
         blocks.forEach((block, bIndex) => {
-            // 改行削除
             let cleanBlock = block.replace(/[\r\n\t]+/g, '');
             if (!cleanBlock) return;
 
-            // 2. 句読点や閉じカッコで細かく分割する（クリック待ちの単位）
-            // 区切り文字: 。 、 ？ ！ 」 ）
-            // ※「（ は区切り文字に含めない
-            const chunks = cleanBlock.match(/[^。、？！？」）]+[。、？！？」）]*/g);
-            
-            const sentences = chunks || [cleanBlock];
+            const atoms = cleanBlock.match(/[^。？！？」）]+[。？！？」）]*/g) || [cleanBlock];
 
-            sentences.forEach((sentence, sIndex) => {
-                // ■改ページ（リセット）判定
-                let shouldReset = false;
+            atoms.forEach((atom, aIndex) => {
+                const isBlockStart = (bIndex > 0 && aIndex === 0);
+                const isQuoteStart = atom.startsWith("「");
+                const isQuoteEnd = atom.endsWith("」");
+                const requiresReset = isBlockStart || isQuoteStart;
 
-                // 条件A: 「||」で区切られた新しいブロックの先頭である
-                if (sIndex === 0 && bIndex > 0) {
-                    shouldReset = true;
-                }
-                
-                // 条件B: 文の先頭が「（カギ括弧）で始まっている ★ここが重要
-                if (sentence.startsWith("「")) {
-                    shouldReset = true;
+                if (requiresReset) {
+                    if (bufferText.length > 0) {
+                        this.queue.push({ text: bufferText, reset: bufferReset });
+                    }
+                    bufferText = atom;
+                    bufferReset = true; 
+                } else {
+                    if (bufferText.length === 0) bufferReset = false;
+                    bufferText += atom;
                 }
 
-                this.queue.push({
-                    text: sentence,
-                    reset: shouldReset
-                });
+                if (this.getVisibleLength(bufferText) >= this.config.minLength || isQuoteEnd) {
+                    this.queue.push({ text: bufferText, reset: bufferReset });
+                    bufferText = "";
+                    bufferReset = false;
+                }
             });
         });
 
-        console.log("TextEngine Queue:", this.queue);
-    },
-
-    // ■次の表示内容を取得（main.jsから呼ばれる）
-    getNext: function(currentHtml) {
-        if (this.queue.length === 0) {
-            return { text: null, reset: false, isEnd: true };
+        if (bufferText.length > 0) {
+            this.queue.push({ text: bufferText, reset: bufferReset });
         }
 
-        const nextItem = this.queue[0];
-        let doReset = nextItem.reset;
+        // --- 後処理: 「」後の改行付与 (物理ガード版) ---
+        for (let i = 1; i < this.queue.length; i++) {
+            const prev = this.queue[i - 1];
+            const curr = this.queue[i];
 
-        // 強制リセットでない場合のみ、あふれ計算を行う
-        if (!doReset && currentHtml !== "") {
-            // 現在の画面 + 次のテキスト を合体させてあふれるかチェック
-            if (this.checkOverflow(currentHtml + nextItem.text)) {
-                doReset = true;
+            // 前が「」で終わり、かつ「今回の塊が改ページ(reset)ではない」時のみ改行を足す
+            // これにより Index 0 や reset:true の直後には絶対に <br> が入りません
+            if (prev.text.trim().endsWith("」") && !curr.reset) {
+                if (!curr.text.startsWith("<br>")) {
+                    curr.text = "<br>" + curr.text;
+                }
             }
         }
+        console.table(this.queue.map((x,i)=>({i, reset:x.reset, text:x.text})));
 
-        this.queue.shift(); // 先頭を削除
-
-        return {
-            text: nextItem.text,
-            reset: doReset,
-            isEnd: false
-        };
     },
 
-    // ■高さ計算（あふれ判定用）
+    // ■見た目の文字数をカウント（タグ無視）
+    getVisibleLength: function(text) {
+        return text.replace(/<[^>]*>/g, '').replace(/@\w+@/g, '').length;
+    },
+
+    // ■次の表示内容を取得
+    getNext: function(currentHtml) {
+    if (this.queue.length === 0) {
+        return { text: null, reset: false, isEnd: true };
+    }
+
+    const nextItem = this.queue[0];
+    let doReset = nextItem.reset;
+
+    if (!doReset && currentHtml !== "") {
+        if (this.checkOverflow(currentHtml + nextItem.text)) {
+            // 自動改ページ（オーバーフロー）
+            doReset = true;
+
+            // 次ページ先頭が <br> だと空行になるので除去
+            nextItem.text = nextItem.text.replace(/^(\s*<br>\s*)+/i, '');
+        }
+    }
+
+    // 明示改ページ(reset:true)でも安全のため先頭 <br> を除去
+    if (doReset) {
+        nextItem.text = nextItem.text.replace(/^(\s*<br>\s*)+/i, '');
+    }
+
+    this.queue.shift();
+
+    return {
+        text: nextItem.text,
+        reset: doReset,
+        isEnd: false
+    };
+},
+
+
+    // ■高さ計算
     checkOverflow: function(text) {
         let dummy = document.getElementById('te-dummy-measure');
         if (!dummy) {
             dummy = document.createElement('div');
             dummy.id = 'te-dummy-measure';
-            // style.cssの #event-text と同じ設定にする
             dummy.style.cssText = `
                 position: absolute; top: -9999px; left: -9999px; visibility: hidden;
                 width: ${this.config.containerWidth}px;

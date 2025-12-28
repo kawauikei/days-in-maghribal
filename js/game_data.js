@@ -10,10 +10,6 @@ const statConfig = {
 
 const statKeys = Object.keys(statConfig);
 
-// game_data.js の定数を変更
-const HINT_AVG = "\n[Hint] 各地を巡り、全ステータスの「@average@」を上げると物語が進展します。";
-const getHintStat = (statKey) => `\n[Hint] この場所に関連する「@${statKey}@」をより高めると物語が進展します。`;
-
 const scenarios = [
     { name: "六角の王都", icon: "fa-city", file: "e01_royal_city", zoom: 2.2, security: 5, economy: 5 },
     { name: "賢者の塔", icon: "fa-tower-observation", file: "e02_sage_tower", zoom: 2.8, security: 4, economy: 2 },

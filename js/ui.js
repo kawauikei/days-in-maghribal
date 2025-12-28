@@ -131,49 +131,48 @@ function getLocStatusHtml(idx) {
     return `<span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-shield-halved" style="color:#aaa; margin-right:4px;"></i> ${stars(sec)}</span><span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-scale-balanced" style="color:#d4af37; margin-right:4px;"></i> ${stars(eco)}</span>`;
 }
 
-// タイプライター演出（HTMLタグ・ゲームタグ完全対応版）
-function typeWriter(el, text, speed) { 
-    let i = 0; el.innerHTML = ""; isTyping = true; 
-    targetText = text; 
+// ▼▼▼ 新規追加: テキスト進行関数 (TextEngine連携版) ▼▼▼
+function proceedText() {
+    const textBox = document.getElementById("message-text");
+    const cursor = document.getElementById("page-cursor");
     
-    typeInterval = setInterval(() => { 
-        if (i < text.length) { 
-            // 1. ゲーム固有タグ (@stat@) のスキップ
-            if (text[i] === '@') {
-                const match = text.substring(i).match(/^@(\w+)@/);
-                if (match) {
-                    i += match[0].length; // タグの終端まで進める
-                }
-            } 
-            // 2. HTMLタグ (<...>) のスキップ
-            else if (text[i] === '<') {
-                const tagEnd = text.indexOf('>', i);
-                if (tagEnd !== -1) {
-                    i = tagEnd + 1; // タグの終わりまで一気に進める
-                } else {
-                    i++;
-                }
-            } 
-            // 通常文字の処理
-            else {
-                i++;
-            }
-            
-            // 現在の i までの文字列を整形して一気に流し込む
-            el.innerHTML = formatGameText(text.substring(0, i)); 
-            
-        } else { 
-            finishTyping(); 
-        } 
-    }, speed); 
-}
+    // 結果が表示済みなら、イベント終了処理へ
+    if (isResultDisplayed) {
+        cursor.classList.remove("active"); 
+        closeEvent();
+        return;
+    }
 
-// タイプライター強制終了
-function finishTyping() { 
-    clearInterval(typeInterval); 
-    isTyping = false; 
-    document.getElementById("message-text").innerHTML = formatGameText(targetText);
-    document.getElementById("page-cursor").classList.add("active"); 
+    // 現在のHTMLを取得（あふれ判定用）
+    const currentHtml = textBox.innerHTML;
+
+    // エンジンから次の塊を取得
+    const result = TextEngine.getNext(currentHtml);
+
+    // 1. テキスト切れ（本文終了）の場合
+    if (result.isEnd) {
+        // 結果（成功/失敗など）を表示する
+        if (isResultHidden) { 
+            closeEvent(); 
+        } else {
+            cursor.classList.remove("active"); 
+            showFinalResult(); 
+            cursor.classList.add("active"); 
+        }
+        return;
+    }
+
+    // 2. リセット（改ページ）指示がある場合
+    if (result.reset) {
+        textBox.innerHTML = "";
+    }
+
+    // 3. テキストを表示（タグ装飾を適用するため formatGameText を通す）
+    const formattedText = formatGameText(result.text);
+    textBox.innerHTML += formattedText;
+
+    // カーソル点滅開始
+    cursor.classList.add("active"); 
 }
 
 // 最終結果（成功/失敗など）の表示
@@ -385,4 +384,124 @@ function showCharacter(imagePath) {
  */
 function hideCharacter() {
     document.getElementById('character-layer').innerHTML = '';
+}
+
+/* --- js/ui.js : タイプライター関連（修正版） --- */
+
+// 演出用の変数を定義
+let typeSegments = []; // テキストとタグを分解した配列
+let typeCurrentIdx = 0;
+let typeBaseHtml = "";
+
+// ★修正: main.js で宣言済みの変数はここでは宣言しない（削除）
+// let typeInterval = null;  <-- 削除
+// let isTyping = false;     <-- 削除
+
+// タイプライタ開始処理
+function startTypeWriter(htmlText) {
+    const textBox = document.getElementById("message-text");
+    const cursor = document.getElementById("page-cursor");
+    
+    cursor.classList.remove("active");
+    isTyping = true; // グローバル変数(main.js)を使用
+    
+    // 現在の表示内容（追記前の状態）を保存
+    typeBaseHtml = textBox.innerHTML;
+    
+    // HTMLを分解
+    typeSegments = splitHtml(htmlText);
+    typeCurrentIdx = 0;
+    
+    if (typeInterval) clearInterval(typeInterval);
+
+    typeInterval = setInterval(() => {
+        // 完了判定
+        if (typeCurrentIdx >= typeSegments.length) {
+            finishTyping();
+            return;
+        }
+
+        // 描画ロジック（変更なし）
+        const segment = typeSegments[typeCurrentIdx];
+        
+        let currentHtml = typeBaseHtml;
+        for (let i = 0; i <= typeCurrentIdx; i++) {
+            currentHtml += typeSegments[i];
+        }
+        textBox.innerHTML = currentHtml;
+        
+        textBox.scrollTop = textBox.scrollHeight;
+
+        // 次へ
+        typeCurrentIdx++;
+
+        // タグなら即時反映して次へ（ウェイト無し）
+        while (
+            typeCurrentIdx < typeSegments.length && 
+            isTag(typeSegments[typeCurrentIdx])
+        ) {
+            currentHtml += typeSegments[typeCurrentIdx];
+            textBox.innerHTML = currentHtml;
+            typeCurrentIdx++;
+        }
+
+    }, 20); 
+}
+
+// ヘルパー: 文字列がHTMLタグかどうか判定
+function isTag(str) {
+    return str.startsWith('<') && str.endsWith('>');
+}
+
+// ヘルパー: HTML文字列をタグと文字に分解する
+function splitHtml(html) {
+    const segments = [];
+    let current = "";
+    let inTag = false;
+
+    for (let i = 0; i < html.length; i++) {
+        const char = html[i];
+
+        if (char === '<') {
+            if (current) {
+                segments.push(current);
+                current = "";
+            }
+            inTag = true;
+            current += char;
+        } else if (char === '>') {
+            current += char;
+            if (inTag) {
+                segments.push(current);
+                current = "";
+                inTag = false;
+            }
+        } else {
+            if (inTag) {
+                current += char;
+            } else {
+                segments.push(char);
+            }
+        }
+    }
+    if (current) segments.push(current);
+
+    return segments;
+}
+
+// タイプライタ強制終了
+function finishTyping() {
+    if (!isTyping) return;
+
+    clearInterval(typeInterval);
+    const textBox = document.getElementById("message-text");
+
+    // 全セグメントを結合して表示
+    textBox.innerHTML = typeBaseHtml + typeSegments.join("");
+
+    isTyping = false;
+    typeSegments = [];
+    typeBaseHtml = "";
+    
+    document.getElementById("page-cursor").classList.add("active");
 }
