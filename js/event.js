@@ -332,8 +332,8 @@ function getResultHtml(changes) {
 // }
 //
 // ▼ 画像パス規則（デバッグツールに合わせる）
-// images/chara/image/00_normal/h01_hortensia_00.png
-// images/chara/image/01_special/h01_hortensia_00.png
+// images/chara/image/00_normal/h01_hortensia_00.webp
+// images/chara/image/01_special/h01_hortensia_00.webp
 //
 // --- スチル演出用定数 ---
 const STILL_BASE_PATH = 'images/chara';
@@ -566,7 +566,7 @@ function getStillSettingsFromDb(heroineId, eventId, type) {
 
 function getStillImagePath(h, type, eventId) {
     const folder = STILL_FOLDER[type] || STILL_FOLDER.normal;
-    return `${STILL_BASE_PATH}/${folder}/${h.file}_${eventId}.png`;
+    return `${STILL_BASE_PATH}/${folder}/${h.file}_${eventId}.webp`;
 }
 
 /* --- js/event.js : showEventStillWithDb (定義ごと上書き) --- */
@@ -758,7 +758,7 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         stillLayer.innerHTML = "";
         
         // 直接スタイルにセット
-        stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.png')`;
+        stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.webp')`;
         stillLayer.style.removeProperty('--bg-img');
         
         stillLayer.style.transition = 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.6s';

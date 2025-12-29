@@ -283,7 +283,7 @@
   function getHeroineName(hid) { return heroines.find(x => x.id === hid)?.name || 'unknown'; }
   function buildFilename(meta) {
     const folder = (meta.type === 'normal') ? FOLDER_NORMAL : FOLDER_SPECIAL;
-    return `images/chara/${folder}/${meta.heroineId}_${meta.heroineName}_${meta.num}.png`;
+    return `images/chara/${folder}/${meta.heroineId}_${meta.heroineName}_${meta.num}.webp`;
   }
   function updateFilenamePreview() {
     currentMeta.heroineId = els.selectors.heroine.value;

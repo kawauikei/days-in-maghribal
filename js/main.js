@@ -81,19 +81,19 @@ window.onload = async () => {
     // 2. ★追加: 背景画像のロード予約
     scenarios.forEach(s => {
         for (let i = 1; i <= 3; i++) {
-            // ファイル名規則 (例: images/bg/e01_royal_city_01.png)
+            // ファイル名規則 (例: images/bg/e01_royal_city_01.webp)
             const numStr = String(i).padStart(2, '0');
-            const path = `images/bg/${s.file}_${numStr}.png`;
+            const path = `images/bg/${s.file}_${numStr}.webp`;
             assetsToLoad.push({ type: 'image', path: path });
         }
     });
 
     // 3. ★追加: ヒロイン立ち絵のロード予約
-    // heroinesデータの .file (例: "h01_hortensia") を利用して _01.png ～ _07.png を読み込む
+    // heroinesデータの .file (例: "h01_hortensia") を利用して _01.webp ～ _07.webp を読み込む
     heroines.forEach(h => {
         for (let i = 0; i <= 6; i++) {
             const numStr = String(i).padStart(2, '0');
-            const path = `images/chara/00_normal/${h.file}_${numStr}.png`;
+            const path = `images/chara/00_normal/${h.file}_${numStr}.webp`;
             assetsToLoad.push({ type: 'image', path: path });
         }
     });
@@ -224,6 +224,10 @@ window.onload = async () => {
 
     resizeGameContainer(); window.addEventListener('resize', resizeGameContainer);
     
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', resizeGameContainer);
+        window.visualViewport.addEventListener('scroll', resizeGameContainer);
+    }
     checkResumeData(); 
     
     // ロード完了時の演出
@@ -572,9 +576,74 @@ function showEnding() {
 }
 
 function retryGame() {
-    playSE(seFootstep); 
-    document.getElementById('fade-overlay').classList.add('active'); 
-    setTimeout(() => {
-        location.reload();
-    }, 1500);
+  playSE(seFootstep);
+  const fade = document.getElementById('fade-overlay');
+  fade.classList.add('active');
+
+  setTimeout(() => {
+    resetRunToTitle();        // ★追加
+    fade.classList.remove('active');
+  }, 800);
+}
+
+function resetRunToTitle() {
+  // --- 進行/フラグ類を初期化 ---
+  turn = 1;
+  isEventActive = false;
+  isGameStarted = false;
+  isTyping = false;
+  targetText = "";
+  messageQueue = [];
+  currentMsgIndex = 0;
+  pendingResultHtml = "";
+  consecutiveNormalEvents = 0;
+  lastEventWasHeroine = false;
+  isForcedHeroine = false;
+  isResultDisplayed = false;
+  lastEventContext = null;
+  lastEventResult = null;
+
+  // --- ステータス初期化（タイトル表示用。開始時は startOP が上書きする）---
+  stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
+  statKeys.forEach(k => updateUI(k));
+  const turnEl = document.getElementById("turn-count");
+  if (turnEl) turnEl.innerText = turn;
+
+  // --- ヒロイン進捗をリセット（周回の“今回プレイ分”だけ）---
+  heroines.forEach(h => { h.progress = 0; h.affection = 0; });
+
+  // --- ログ（今回プレイ分）をクリア。過去記録は localStorage 側なので残る ---
+  currentGameLog = [];
+  const log = document.getElementById("log-content");
+  if (log) log.innerHTML = "";
+
+  // --- セッション再開データは消す（showEnding と同じ挙動）---
+  localStorage.removeItem('maghribal_resume_data');
+  const contBtn = document.getElementById('continue-btn');
+  if (contBtn) contBtn.style.display = 'none';
+
+  // --- 画面をタイトル状態へ戻す ---
+  document.getElementById("ed-screen")?.classList.add("hidden-screen");
+  document.getElementById("op-screen")?.classList.add("hidden-screen");
+  document.getElementById("title-screen")?.classList.remove("hidden-screen");
+
+  const topUI = document.getElementById("top-ui-container");
+  if (topUI) topUI.style.display = "none";
+
+  document.getElementById("background-layer")?.classList.remove("visible");
+  document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
+
+  // --- オーバーレイ類を閉じる（開きっぱなし防止）---
+  const logOverlay = document.getElementById("log-overlay");
+  if (logOverlay) logOverlay.style.display = "none";
+  const resDiv = document.getElementById("result-display");
+  if (resDiv) { resDiv.style.opacity = "0"; resDiv.innerHTML = ""; }
+
+  // --- 音をタイトルへ ---
+  try { bgmEd.pause(); bgmEd.currentTime = 0; } catch {}
+  try { bgmMap.pause(); bgmMap.currentTime = 0; } catch {}
+  try { bgmOp.currentTime = 0; bgmOp.play(); } catch {}
+
+  // --- マップ表示などの再計算（必要なら）---
+  try { updateMapState(); } catch {}
 }

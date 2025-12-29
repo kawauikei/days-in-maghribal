@@ -39,7 +39,7 @@ body {
    ========================================= */
 #background-layer { 
     position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-    background-image: url('../images/all_map.PNG'); /* パス修正 */
+    background-image: url('../images/all_map.webp'); /* パス修正 */
     background-size: cover; background-position: center; background-repeat: no-repeat;
     opacity: 0; 
     transition: opacity 1s, transform 0.5s ease-out, filter 0.5s; 
@@ -461,7 +461,7 @@ body {
 
 #title-img-bg { 
     position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-    background-image: url('../images/title.png'); /* パス修正 */
+    background-image: url('../images/title.webp'); /* パス修正 */
     background-size: cover; background-position: center; 
     filter: url(#water-filter); z-index: 0; 
 }

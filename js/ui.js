@@ -360,7 +360,7 @@ function viewSpecificLog(idx) {
 
 /**
  * キャラクター立ち絵を表示する
- * @param {string} imagePath - 画像パス (例: 'images/chara/h01_hortensia_01.png')
+ * @param {string} imagePath - 画像パス (例: 'images/chara/h01_hortensia_01.webp')
  */
 function showCharacter(imagePath) {
     const layer = document.getElementById('character-layer');
