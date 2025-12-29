@@ -1439,5 +1439,136 @@
         }
       }
     }
+  },
+  "h12": {
+    "heroineName": "elvira",
+    "events": {
+      "00": {
+        "normal": {
+          "settings": {
+            "x": 50.6,
+            "y": 37.3,
+            "distort": 40,
+            "blur": 5,
+            "size": 15,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "01": {
+        "normal": {
+          "settings": {
+            "x": 48,
+            "y": 36.5,
+            "distort": 40,
+            "blur": 5,
+            "size": 35,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "02": {
+        "normal": {
+          "settings": {
+            "x": 53.1,
+            "y": 35.2,
+            "distort": 40,
+            "blur": 5,
+            "size": 41,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "03": {
+        "normal": {
+          "settings": {
+            "x": 49.2,
+            "y": 34.8,
+            "distort": 40,
+            "blur": 5,
+            "size": 34,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "04": {
+        "normal": {
+          "settings": {
+            "x": 50.2,
+            "y": 44.3,
+            "distort": 40,
+            "blur": 5,
+            "size": 31,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "05": {
+        "normal": {
+          "settings": {
+            "x": 48.8,
+            "y": 40.5,
+            "distort": 40,
+            "blur": 5,
+            "size": 34,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      },
+      "06": {
+        "normal": {
+          "settings": {
+            "x": 50,
+            "y": 50,
+            "distort": 40,
+            "blur": 5,
+            "size": 38,
+            "vignette": 30,
+            "sepia": 30,
+            "saturate": 80,
+            "texture": 30,
+            "zoom": 1,
+            "cx": 50,
+            "cy": 50
+          }
+        }
+      }
+    }
   }
 }
