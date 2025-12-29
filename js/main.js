@@ -517,8 +517,7 @@ function showEnding() {
     }
     // ▲▲▲ 追加ここまで ▲▲▲
 
-    if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
-    
+    saveCurrentGameLog();
     localStorage.removeItem('maghribal_resume_data');
 
     document.getElementById("ed-screen").classList.remove("hidden-screen");

@@ -298,9 +298,6 @@ function renderBoostButtons() {
 
 // ログ保存・表示系
 function saveCurrentGameLog() { 
-    const activeIdx = activeImpacts.findIndex(Boolean); 
-    if (activeIdx !== -1) return; 
-    
     const total = Object.values(stats).reduce((sum, v) => sum + v, 0); 
     const rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE")); 
     
