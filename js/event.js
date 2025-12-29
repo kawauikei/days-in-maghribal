@@ -311,7 +311,7 @@ function getResultHtml(changes) {
     
     // グローバル変数をそのまま参照して、trueなら炎を足す
     if (isMotivationBuff) {
-        html += `<i class="fa-solid fa-fire" style="color:#ffaa00; margin-left:8px; font-size:4px;"></i>`;
+        html += `<i class="fa-solid fa-fire" style="color:#ffaa00; margin-left:8px; font-size: 1.2em; flex-shrink: 0;"></i>`;
     }
     
     return html;
