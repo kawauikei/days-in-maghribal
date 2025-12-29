@@ -503,7 +503,6 @@ function processBoostUnlock() {
 
 function showEnding() {
     processBoostUnlock(); // 既存: ステータスブーストの解放処理
-    renderBoostButtons();
 
     // ▼▼▼ 追加: 親密度No.1ヒロインの地域解放処理 ▼▼▼
     // 親密度(affection)が最も高いヒロインを特定
@@ -574,6 +573,7 @@ function showEnding() {
     statsContainer.style.flexWrap = "wrap";
     statsContainer.style.justifyContent = "center";
     setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
+    renderBoostButtons();
 }
 
 function retryGame() {
