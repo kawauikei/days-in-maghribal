@@ -50,6 +50,7 @@ let stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
 let turn = 1, maxTurn = 20, isEventActive = false, isGameStarted = false, isTyping = false, targetText = "";
 let messageQueue = [], currentMsgIndex = 0, pendingResultHtml = "", typeInterval;
 let consecutiveNormalEvents = 0, lastEventWasHeroine = false, isForcedHeroine = false, isResultDisplayed = false;
+let isProcessingTurn = false;
 let currentGameLog = [];
 let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
@@ -210,10 +211,24 @@ window.onload = async () => {
 
 
     const clickOverlay = document.getElementById("click-overlay");
-    if (clickOverlay) {
+if (clickOverlay) {
         clickOverlay.onclick = function() {
             // イベント進行中のみ反応
             if (isEventActive) {
+                
+                // ★追加：処理中（連打）なら無視して終了
+                if (isProcessingTurn) return;
+
+                // ★追加：結果画面（イベント終了時）ならロックをかける
+                if (isResultDisplayed) {
+                    isProcessingTurn = true;
+                    
+                    // 0.6秒後にロック解除（画面遷移のアニメーション時間を考慮）
+                    setTimeout(() => { 
+                        isProcessingTurn = false; 
+                    }, 600);
+                }
+
                 proceedText();
             }
         };
