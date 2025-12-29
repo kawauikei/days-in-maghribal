@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "廃墟の清掃を行い、静寂の中で心を整えた。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "古い壁画から微かな魔力を感じ取った。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "崩れた瓦礫を片付け、忘れられた通路を見つけた。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "夜通し見張りをし、暗闇への恐怖を克服した。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "古城の歴史書を読み、かつての栄華に思いを馳せた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "錆びついた武器を磨き、集中力を高めた。", "changes": { "mind": 2 } },
+      { "image": "01", "text": "亡霊の噂を調査し、ただの風音だと突き止めた。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "古びたオルガンを弾き、音色に癒やされた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "城内の地図を作成し、空間把握能力を養った。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "地下牢の探索を行い、精神的なタフさを鍛えた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "怪しげな薬草を採取し、魔力成分を抽出した。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "崩落しそうな場所を補強し、安全確保に務めた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "古い肖像画と目が合い、不思議なインスピレーションを得た。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "城に住み着くコウモリの世話をし、生態を学んだ。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "雨漏りの音を聞きながら瞑想し、雑念を払った。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "埃被った書庫を整理し、知的好奇心を満たした。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "壊れた魔導具の破片を集め、構造を推測した。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "城の周りの堀を掃除し、水面に映る月を眺めた。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "誰もいない玉座に座り、王の孤独を感じた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "古い日記を見つけ、過去の住人の心情を読み解いた。", "changes": { "mind": 1, "magic": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "城の不気味な雰囲気に呑まれ、精神的に疲弊した。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "床が抜けて落下し、軽い怪我をした。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "突然の物音に驚き、腰を抜かした。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "古い書物の呪いに触れ、悪夢にうなされた。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "迷路のような廊下で迷子になり、不安に襲われた。", "changes": { "mind": -2, "magic": -1 } },
+      { "image": "02", "text": "埃を吸い込んでしまい、咳が止まらなくなった。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "コウモリの大群に襲われ、パニックになった。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "幽霊を見たと思い込み、一晩中震えていた。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "冷たい風にさらされ、体調を崩した。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "古い罠を作動させてしまい、肝を冷やした。", "changes": { "mind": -1, "magic": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "隠し部屋を見つけ、強力な魔力場を体験した！", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "03", "text": "封印された宝箱を開け、魔力を帯びた装飾品を得た！", "changes": { "mind": 1 } },
+      { "image": "03", "text": "古の幽霊と対話し、有益な助言をもらった！", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "03", "text": "崩れかけた塔からの絶景を見て、心が洗われた！", "changes": { "mind": 1 } },
+      { "image": "03", "text": "偶然見つけた楽譜を奏で、城全体が光に包まれた！", "changes": { "mind": 1, "magic": 1 } }
+    ]
+  }
+}

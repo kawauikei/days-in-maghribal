@@ -1,0 +1,8 @@
+# --- Windowsが勝手に作るやつ ---
+desktop.ini
+Thumbs.db
+ehthumbs.db
+.DS_Store
+
+# --- OneDrive/Office系の一時ファイルが出ることもある ---
+~$*

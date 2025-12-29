@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "巡礼者の悩みを聞き、自らの内面も見つめ直した。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "修道院の薬草園を管理し、癒やしの知識を深めた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "難解な神学書を読破し、教えの本質を理解した。", "changes": { "mind": 3, "health": 2 } },
+      { "image": "01", "text": "怪我人の治療にあたり、的確な処置で快方へ向かわせた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "迷い込んだ旅人を保護し、安全な場所まで送り届けた。", "changes": { "mind": 1, "health": 2 } },
+      { "image": "01", "text": "悪霊に取り憑かれた人を介抱し、浄化の儀式を手伝った。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "修道院の防衛結界を補強し、魔物の侵入を防いだ。", "changes": { "mind": 3, "health": 2 } },
+      { "image": "01", "text": "聖歌隊の指揮を任され、美しいハーモニーを作り上げた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "新たな薬草の調合に成功し、特効薬を作った。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "村人たちの争いを仲裁し、平和をもたらした。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "古い聖遺物を磨き上げ、本来の輝きを取り戻した。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "精神修行の指導を行い、後輩たちの成長を促した。", "changes": { "mind": 2, "health": 1 } },
+      { "image": "01", "text": "大嵐の夜に祈りを捧げ、修道院の無事を守った。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "禁書庫の整理を行い、失われた知識に触れた。", "changes": { "mind": 1, "health": 1 } },
+      { "image": "01", "text": "聖なる泉の水を汲み、病人に分け与えた。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "神託を受け取る儀式に参加し、不思議な体験をした。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "暴れる患者を取り押さえ、怪我人を増やさずに済んだ。", "changes": { "mind": 2 } },
+      { "image": "01", "text": "寄付金を集め、修道院の修繕費用に充てた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "聖人伝を子供たちに読み聞かせ、夢を与えた。", "changes": { "mind": 3, "health": 1 } },
+      { "image": "01", "text": "断食修行を完遂し、強靭な精神力を得た。", "changes": { "mind": 1, "health": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "静寂に耐え切れず、心の均衡を崩してしまった。", "changes": { "mind": -2, "health": -1 } },
+      { "image": "02", "text": "治療の甲斐なく患者を救えず、無力感に苛まれた。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "神学論争で論破され、自信を喪失した。", "changes": { "mind": -3 } },
+      { "image": "02", "text": "薬草の調合をミスし、異臭騒ぎを起こした。", "changes": { "mind": -3 } },
+      { "image": "02", "text": "悪霊の力が強く、逆に取り憑かれそうになった。", "changes": { "mind": -1, "health": -1 } },
+      { "image": "02", "text": "結界の綻びを見逃し、小鬼の侵入を許してしまった。", "changes": { "mind": -3 } },
+      { "image": "02", "text": "聖歌隊の練習で喉を痛め、しばらく声が出なくなった。", "changes": { "mind": -2, "health": -2 } },
+      { "image": "02", "text": "仲裁に入ったはずが、余計に揉めさせてしまった。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "聖遺物を落としてしまい、ヒビを入れてしまった。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "禁書庫で禁忌の知識に触れ、頭痛に襲われた。", "changes": { "mind": -1, "health": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "歴史ある聖遺物の浄化に成功し、奇跡のような活力を得た！", "changes": { "mind": 4 } },
+      { "image": "03", "text": "難病に苦しむ人々を救い、聖女の再来と噂された！", "changes": { "mind": 2, "health": 1 } },
+      { "image": "03", "text": "神の啓示を受け、迷える村々を救う道を示した！", "changes": { "mind": 3, "health": 1 } },
+      { "image": "03", "text": "襲い来る魔物の群れを祈りの力だけで退けた！", "changes": { "mind": 3, "health": 1 } },
+      { "image": "03", "text": "枯れ果てた泉に祈りを捧げ、再び水を湧き出させた！", "changes": { "mind": 3, "health": 2 } }
+    ]
+  }
+}

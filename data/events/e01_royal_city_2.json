@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "ギルドの書類整理を完璧にこなし、事務能力を評価された。", "changes": { "fame": 2, "money": 2 } },
+      { "image": "01", "text": "商会の護衛任務を遂行し、盗賊を撃退した。", "changes": { "fame": 2, "money": 3 } },
+      { "image": "01", "text": "貴族のパーティーに同行し、社交辞令を学んだ。", "changes": { "fame": 3, "mind": 1 } },
+      { "image": "01", "text": "街の警備計画に参加し、治安維持に貢献した。", "changes": { "fame": 3, "money": 1 } },
+      { "image": "01", "text": "新商品のプロモーションを手伝い、流行を作り出した。", "changes": { "fame": 2, "money": 2 } },
+      { "image": "01", "text": "揉めている商人同士を仲裁し、丸く収めた。", "changes": { "fame": 3 } },
+      { "image": "01", "text": "古い文献を解読し、歴史的な発見をした。", "changes": { "fame": 3, "mind": 2 } },
+      { "image": "01", "text": "武術大会の運営を手伝い、達人の技を盗み見た。", "changes": { "fame": 2, "body": 2 } },
+      { "image": "01", "text": "魔法道具の実験台になり、不思議な現象を体験した。", "changes": { "money": 4, "magic": 1 } },
+      { "image": "01", "text": "密輸業者のアジトを突き止め、匿名で通報した。", "changes": { "fame": 2, "money": 2 } },
+      { "image": "01", "text": "有力者のペットの世話をし、コネクションを作った。", "changes": { "money": 3, "fame": 1 } },
+      { "image": "01", "text": "街の新聞に寄稿し、ちょっとした有名人になった。", "changes": { "fame": 4 } },
+      { "image": "01", "text": "料理コンテストの審査員を務め、舌を肥やした。", "changes": { "fame": 2, "health": 1 } },
+      { "image": "01", "text": "建築現場の監督を任され、頑丈な建物を完成させた。", "changes": { "fame": 2, "money": 2 } },
+      { "image": "01", "text": "劇団の公演を手伝い、舞台裏のドラマを目撃した。", "changes": { "fame": 3, "money": 1 } },
+      { "image": "01", "text": "税金の徴収を補佐し、公正な社会作りに貢献した。", "changes": { "fame": 2, "money": 2 } },
+      { "image": "01", "text": "孤児院への寄付を募り、子供たちの笑顔を守った。", "changes": { "fame": 3, "money": -1 } },
+      { "image": "01", "text": "難解な暗号を解き、秘密の抜け道を見つけた。", "changes": { "fame": 2, "mind": 2 } },
+      { "image": "01", "text": "外国の使節団を通訳し、異文化交流を成功させた。", "changes": { "fame": 3, "money": 2 } },
+      { "image": "01", "text": "疫病の予防キャンペーンを行い、市民の健康を守った。", "changes": { "fame": 3, "health": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "書類のミスが発覚し、上司から大目玉を食らった。", "changes": { "fame": -3, "money": -1 } },
+      { "image": "02", "text": "護衛対象に怪我をさせかけ、信用を失った。", "changes": { "fame": -4, "money": -2 } },
+      { "image": "02", "text": "パーティーで粗相をし、貴族の失笑を買った。", "changes": { "fame": -5 } },
+      { "image": "02", "text": "警備中に居眠りをし、不審者の侵入を許してしまった。", "changes": { "fame": -3, "money": -1 } },
+      { "image": "02", "text": "投資話に騙され、資金を失ってしまった。", "changes": { "money": -5 } },
+      { "image": "02", "text": "仲裁に入ったはずが、余計に火に油を注いでしまった。", "changes": { "fame": -3 } },
+      { "image": "02", "text": "重要な手紙を紛失し、配送網が大混乱に陥った。", "changes": { "fame": -4, "money": -1 } },
+      { "image": "02", "text": "実験に失敗し、アフロヘアーになってしまった。", "changes": { "fame": -2, "health": -1 } },
+      { "image": "02", "text": "誤報を流してしまい、街中をパニックに陥れた。", "changes": { "fame": -5 } },
+      { "image": "02", "text": "有力者の不興を買い、仕事を干されかけた。", "changes": { "fame": -3, "money": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "王都を揺るがす汚職事件の証拠を掴み、告発に成功した！", "changes": { "fame": 6, "money": 3 } },
+      { "image": "03", "text": "伝説の武具を発見し、国宝級の評価を受けた！", "changes": { "fame": 5, "money": 5 } },
+      { "image": "03", "text": "画期的な魔導具を発明し、特許を取得した！", "changes": { "fame": 4, "money": 6 } },
+      { "image": "03", "text": "襲撃された要人を単身で守り抜き、王家から勲章を授与された！", "changes": { "fame": 7, "money": 3 } },
+      { "image": "03", "text": "大商談を成立させ、街の経済に革命をもたらした！", "changes": { "money": 8, "fame": 2 } }
+    ]
+  }
+}

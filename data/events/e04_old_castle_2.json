@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "エルフの秘儀を授かり、魔力の根源に一歩近づいた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "精霊の泉での沐浴を繰り返し、不老不死に近い活力を得た。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "古城の魔力供給システムを一部復旧させた。", "changes": { "mind": 3 } },
+      { "image": "01", "text": "地下深くに眠る守護像を起動し、城の警備を強化した。", "changes": { "mind": 3, "magic": 1 } },
+      { "image": "01", "text": "呪われた武具を浄化し、精神力を高めた。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "古代文字の解読が進み、失われた魔法の一端を知った。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "城に迷い込んだ冒険者を救助し、感謝された。", "changes": { "mind": 2, "magic": 2 } },
+      { "image": "01", "text": "魔力の残滓を集め、自身の魔力容量を増やした。", "changes": { "mind": 1, "magic": 1 } },
+      { "image": "01", "text": "幻影を見せる魔物と対峙し、幻術への耐性を得た。", "changes": { "mind": 2, "magic": 2 } },
+      { "image": "01", "text": "崩れた礼拝堂を修復し、祈りを捧げて精神を安定させた。", "changes": { "mind": 1, "magic": 2 } },
+      { "image": "01", "text": "城の結界を再構成し、外部からの干渉を防いだ。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "古の王の霊廟を清掃し、静かな威厳を感じ取った。", "changes": { "mind": 3, "magic": 1 } },
+      { "image": "01", "text": "魔導図書館の閲覧権限を一部解除し、高度な知識を得た。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "城の庭園を再生させ、魔法植物を育てた。", "changes": { "mind": 3, "magic": 1 } },
+      { "image": "01", "text": "使い魔を使役して城内を巡回させ、管理能力を磨いた。", "changes": { "mind": 2, "magic": 2 } },
+      { "image": "01", "text": "古い錬金術の設備を再稼働させ、試作品を作った。", "changes": { "mind": 2, "magic": 1 } },
+      { "image": "01", "text": "鏡の間に映る自分の深層心理と向き合い、己を知った。", "changes": { "mind": 1 } },
+      { "image": "01", "text": "城の魔力を使って天候を微調整し、快適な環境を作った。", "changes": { "mind": 2, "magic": 2 } },
+      { "image": "01", "text": "夜会服を着て幻の舞踏会に参加し、優雅な所作を学んだ。", "changes": { "mind": 3, "magic": 1 } },
+      { "image": "01", "text": "時が止まった部屋に入り、魔力の流れを肌で感じた。", "changes": { "mind": 2, "magic": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "森の植物の毒に触れ、魔力回路が一時的に麻痺した。", "changes": { "mind": -3, "magic": -2 } },
+      { "image": "02", "text": "魔力供給装置が暴走し、衝撃で吹き飛ばされた。", "changes": { "mind": -2, "magic": -1 } },
+      { "image": "02", "text": "守護像が敵と誤認して攻撃してき、逃げ回った。", "changes": { "mind": -2 } },
+      { "image": "02", "text": "呪いの浄化に失敗し、一時的に性格が変わってしまった。", "changes": { "mind": -1 } },
+      { "image": "02", "text": "古代文字の解釈を誤り、変な効果の魔法を発動させた。", "changes": { "mind": -2, "magic": -1 } },
+      { "image": "02", "text": "幻術に惑わされ、現実に戻るのに苦労した。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "結界の綻びから魔物が侵入し、撃退に追われた。", "changes": { "mind": -2, "magic": -1 } },
+      { "image": "02", "text": "錬金術の実験で爆発を起こし、顔が真っ黒になった。", "changes": { "mind": -1, "magic": -2 } },
+      { "image": "02", "text": "深層心理の闇に飲み込まれそうになり、冷や汗をかいた。", "changes": { "mind": -1, "magic": -1 } },
+      { "image": "02", "text": "時が止まった部屋に閉じ込められかけ、焦った。", "changes": { "mind": -1, "magic": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "森の精霊王と交信し、溢れんばかりの生命力と魔力を得た！", "changes": { "mind": 3 } },
+      { "image": "03", "text": "王家の秘密の書庫を発見し、失伝した魔法を習得した！", "changes": { "mind": 2 } },
+      { "image": "03", "text": "城の主の間への扉を開き、王の資質を認められた！", "changes": { "mind": 3, "magic": 2 } },
+      { "image": "03", "text": "庭園の枯れた大樹を蘇らせ、自然の奇跡を目の当たりにした！", "changes": { "mind": 3, "magic": 2 } },
+      { "image": "03", "text": "鏡の中からもう一人の自分を受け入れ、精神的に大きく成長した！", "changes": { "mind": 2, "magic": 2 } }
+    ]
+  }
+}

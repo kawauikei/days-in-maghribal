@@ -2,145 +2,22 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no viewport-fit=cover"">
     <title>Days in Maghribal - Polish Ver</title>
     <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* 全体設定 */
-        * { -webkit-tap-highlight-color: transparent; outline: none; touch-action: manipulation; }
-        body { margin: 0; padding: 0; background-color: #000; width: 100vw; height: 100dvh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: fixed; }
-        
-        /* ゲームコンテナ */
-        #game-container { position: relative; width: 1280px; height: 720px; background: #000; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8); transform-origin: center center; flex-shrink: 0; user-select: none; -webkit-user-select: none; }
-
-        /* 背景 */
-        #background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/all_map.PNG'); background-size: cover; background-position: center; opacity: 0; transition: opacity 1s, transform 0.5s ease-out, filter 0.5s; z-index: 1; pointer-events: none; }
-        #background-layer.visible { opacity: 1; }
-        #background-layer.blur-bg { filter: blur(5px); }
-        #title-img-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('images/title.png'); background-size: cover; background-position: center; filter: url(#water-filter); z-index: 0; }
-
-        /* マップ要素 */
-        .map-spot { position: absolute; width: 80px; height: 80px; transform: translate(-50%, -50%); cursor: pointer; z-index: 100; opacity: 0; visibility: hidden; transition: 0.5s; }
-        .map-spot.spot-visible { opacity: 1; visibility: visible; }
-        .map-spot.spot-disabled { opacity: 0.3 !important; pointer-events: none !important; filter: grayscale(100%); }
-        
-        .spot-core { position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; top: 34px; left: 34px; box-shadow: 0 0 15px #fff, 0 0 30px #fff; z-index: 10; }
-        .orb { position: absolute; border-radius: 50%; opacity: 0.85; z-index: 5; filter: blur(6px); transition: 0.3s; }
-        .orb-main { width: 34px; height: 34px; top: 23px; left: 23px; animation: rotateMain 4.5s linear infinite; box-shadow: 0 0 25px currentColor, 0 0 50px currentColor, 0 0 70px currentColor; }
-        .orb-sub { width: 22px; height: 22px; top: 29px; left: 29px; animation: rotateSub 4.5s linear infinite; box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
-        @keyframes rotateMain { 0% { transform: rotate(0deg) translateX(30px); } 100% { transform: rotate(360deg) translateX(30px); } }
-        @keyframes rotateSub { 0% { transform: rotate(180deg) translateX(30px); } 100% { transform: rotate(540deg) translateX(30px); } }
-
-        /* 地名テキスト */
-        .hint-container { position: absolute; top: 32px; left: 50%; transform: translateX(-50%); width: 240px; text-align: center; pointer-events: none; z-index: 20; }
-        .hint-text { 
-            color: #fff; font-size: 16px; white-space: nowrap; font-family: 'Cinzel', serif; 
-            will-change: transform; backface-visibility: hidden; transition: 0.2s ease-out; 
-            font-weight: bold; letter-spacing: 1px; display: inline-block; 
-            background: rgba(0, 0, 0, 0.3); padding: 4px 12px; border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 15px; position: relative;
-        }
-        .map-spot:hover .hint-text { transform: scale(1.1); background: rgba(0, 0, 0, 0.85); border-color: rgba(176, 141, 85, 0.6); z-index: 30; }
-        .selected-yellow { color: #ffcc00 !important; background: rgba(0, 0, 0, 0.9) !important; border-color: #ffcc00 !important; transform: scale(1.1); }
-        .recommend-icon { position: absolute; top: -8px; right: -8px; color: #00ffff; font-size: 16px; text-shadow: 0 0 5px #000, 0 0 10px #00ffff; animation: floatRecommend 1s infinite alternate ease-in-out; display: none; z-index: 25; }
-        .recommend-icon.visible { display: block; }
-        @keyframes floatRecommend { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-5px); opacity: 1; } }
-
-        /* モノローグ（独り言）エリア */
-        #monologue-container {
-            position: absolute; bottom: 20px; left: 20px; 
-            width: 600px; min-height: 34px; 
-            background: rgba(250, 250, 250, 0.9); /* 白背景 */
-            border: 1px solid rgba(0, 0, 0, 0.3);
-            border-left: 4px solid #b08d55;
-            border-radius: 4px;
-            padding: 4px 14px;
-            z-index: 150;
-            display: none; 
-            flex-direction: column; justify-content: center;
-            opacity: 0; transform: translateY(5px);
-            transition: opacity 0.5s, transform 0.5s;
-            pointer-events: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        #monologue-container.visible { opacity: 1; transform: translateY(0); }
-        .monologue-text { 
-            color: #222; font-size: 15px; line-height: 1.2; 
-            font-family: "Yu Mincho", serif; font-weight: bold;
-            text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        #monologue-container::after {
-            content: ''; position: absolute; bottom: -6px; left: 15px;
-            width: 0; height: 0;
-            border-left: 6px solid transparent; border-right: 6px solid transparent;
-            border-top: 6px solid rgba(250, 250, 250, 0.9);
-        }
-
-        /* 右上UI */
-        #top-ui-container { position: absolute; top: 15px; right: 15px; display: none; align-items: center; gap: 10px; z-index: 1000; transform: scale(0.9); transform-origin: top right; }
-        .fullscreen-btn { background: rgba(0,0,0,0.6); border: 1px solid #b08d55; color: #b08d55; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; transition: 0.3s; }
-        .fullscreen-btn:hover { background: #b08d55; color: #000; }
-        #title-fullscreen-btn { position: absolute; top: 20px; right: 20px; z-index: 200; font-size: 18px; width: 40px; height: 40px; }
-
-        /* カーソル・バッジ */
-        #page-cursor { position: absolute !important; bottom: 15px !important; right: 25px !important; color: #b08d55 !important; font-size: 24px !important; z-index: 1000 !important; display: none; pointer-events: none; }
-        #page-cursor.active { display: block !important; animation: cursorBlink 0.8s infinite alternate ease-in-out !important; }
-        @keyframes cursorBlink { 0% { opacity: 0.2; transform: translateY(0); } 100% { opacity: 1; transform: translateY(6px); } }
-        .outcome-badge { margin-right: 8px; font-weight: bold; font-family: 'Cinzel', serif; font-size: 1.0em; display: inline-block; }
-        .outcome-badge.success { color: #8db055; text-shadow: 0 0 5px #8db055; }
-        .outcome-badge.great { color: #ffcc00; text-shadow: 0 0 10px #ffcc00; animation: pulse 1s infinite alternate; }
-        .outcome-badge.failure { color: #aaa; }
-        @keyframes pulse { from { opacity: 0.8; } to { opacity: 1.2; transform: scale(1.05); } }
-
-        /* ウィンドウ・ログ */
-        #message-window { position: absolute !important; bottom: 10px !important; left: 50% !important; width: 90%; max-width: 900px; z-index: 200; padding-bottom: 45px !important; transform: translateX(-50%) translateY(30px); opacity: 0; visibility: hidden; transition: transform 0.25s ease-out, opacity 0.25s ease-out, visibility 0.25s; }
-        #message-window.active { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
-        #result-display { position: absolute; bottom: 12px; left: 0; width: 100%; text-align: center; font-size: 0.85rem; pointer-events: none; z-index: 205; opacity: 0; transition: opacity 0.5s; }
-        #loc-stats { margin-left: 15px; font-size: 12px; border-left: 1px solid rgba(176, 141, 85, 0.4); padding-left: 15px; display: flex; align-items: center; gap: 12px; color: #fff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000; }
-        #log-window { padding: 20px; line-height: 1.6; }
-        .log-entry { margin-bottom: 25px; border-bottom: 1px solid rgba(176, 141, 85, 0.3); padding-bottom: 15px; }
-        .log-header { font-size: 13px; color: #b08d55; margin-bottom: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .log-body { user-select: text; -webkit-user-select: text; }
-        .monologue-log { font-style: italic; color: #aaa; font-size: 0.9em; margin-top: 5px; border-left: 2px solid #555; padding-left: 8px; font-family: "Yu Mincho", serif; }
-
-        /* エンディング・ブースト */
-        #ed-stats { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
-        .ed-stat-box { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 70px; height: 70px; background: rgba(0,0,0,0.8); border: 1px solid #444; border-radius: 4px; color: #fff; }
-        .ed-stat-box i { font-size: 20px; margin-bottom: 5px; color: #888; }
-        .ed-stat-val { font-size: 18px; font-weight: bold; }
-        .max-label { position: absolute; bottom: 2px; right: 4px; font-size: 9px; font-weight: bold; text-shadow: 0 0 3px #000; }
-        
-        #boost-container { display: flex; flex-direction: column; align-items: center; margin: 25px 0; width: 1050px; z-index: 110; position: relative; }
-        .boost-section { width: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 10px; }
-        .boost-divider { width: 100%; height: 1px; background: rgba(176,141,85,0.3); margin: 5px 0 10px; }
-        .boost-section-title { width: 100%; font-size: 10px; color: #888; text-align: center; margin-bottom: 5px; letter-spacing: 2px; }
-        .boost-btn { background: rgba(20, 20, 20, 0.9); border: 1px solid #333; color: #444; width: 150px; height: 32px; padding: 0 10px; font-size: 10px; cursor: default; font-family: 'Cinzel', serif; transition: 0.3s; border-radius: 4px; opacity: 0.3; pointer-events: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .boost-btn.unlocked { border: 1px solid #b08d55; color: #b08d55; cursor: pointer; pointer-events: auto; opacity: 1; }
-        .boost-btn.active { background: #b08d55 !important; color: #000 !important; box-shadow: 0 0 10px #b08d55; font-weight: bold; border-color: #fff; opacity: 1; }
-        
-        /* その他 */
-        #fade-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; pointer-events: none; opacity: 0; transition: opacity 1.5s ease-in-out; }
-        #fade-overlay.active { opacity: 1; pointer-events: auto; }
-        #loading-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #b08d55; font-family: 'Cinzel', serif; text-align: center; }
-        #load-bar-container { width: 300px; height: 4px; background: #222; margin-top: 20px; border-radius: 2px; overflow: hidden; }
-        #load-bar-fill { width: 0%; height: 100%; background: #b08d55; transition: width 0.2s; box-shadow: 0 0 10px #b08d55; }
-        #past-records-container { margin-top: 10px; width: 440px; background: rgba(0, 0, 0, 0.8); border: 1px solid #b08d55; padding: 12px; font-family: 'Cinzel', serif; max-height: 140px; overflow-y: auto; text-align: left; z-index: 105; position: relative; }
-        .record-item { font-size: 11px; color: #ccc; padding: 8px; border-bottom: 1px solid #222; cursor: pointer; transition: 0.2s; display: grid; grid-template-columns: 75px 1fr auto; align-items: center; gap: 10px; }
-        .record-item:hover { background: rgba(176, 141, 85, 0.2); }
-        .record-rank { text-align: left; font-weight: bold; } .record-partner { text-align: left; display: flex; align-items: center; gap: 6px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; } .record-date { text-align: right; opacity: 0.8; font-size: 0.9em; }
-        .affinity-leaf { color: #8db055 !important; } .affinity-seedling { color: #ffb7c5 !important; } .bouquet-icon { color: #ff69b4 !important; filter: drop-shadow(0 0 3px #ff69b4); animation: bouquetPulse 1.5s infinite alternate; }
-        #debug-panel { max-height: 90vh; overflow-y: auto; width: 220px; padding: 10px; font-size: 10px; z-index: 2000; }
-        .debug-row { display: flex; gap: 5px; margin-bottom: 5px; }
-        input[type=range] { width: 100%; -webkit-appearance: none; background: #444; height: 4px; border-radius: 2px; margin: 5px 0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: #ffcc00; width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-    </style>
     <script src="js/game_data.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/debug.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/event.js"></script>
+    <script src="js/text_engine.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/heroines_data.js"></script>
 </head>
 <body>
-
     <svg style="position:fixed; top:-100%; left:-100%; width:0; height:0;">
         <filter id="water-filter">
             <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="3" seed="1" result="noise">
@@ -159,29 +36,59 @@
     </div>
 
     <div id="debug-toggle-btn" onclick="toggleDebugPanel()"><i class="fa-solid fa-gear"></i></div>
-    <div id="debug-panel">
-        <div style="font-size: 10px; color: #ffcc00; margin-bottom: 5px; border-bottom: 1px solid #444;">DATA CONTROL</div>
-        <button class="debug-btn" onclick="debugResetAllData()" style="color: #ff4d4d;">↺ Reset All Data</button>
-        <button class="debug-btn" onclick="debugToggleBoosts()" id="debug-boost-btn">🔓 Unlock Boosts</button>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">TURN CONTROL</div>
-        <div class="debug-row">
-            <button class="debug-btn" onclick="debugModTurn(-5)">-5</button>
-            <button class="debug-btn" onclick="debugModTurn(-1)">-1</button>
-            <button class="debug-btn" onclick="debugModTurn(1)">+1</button>
-            <button class="debug-btn" onclick="debugModTurn(5)">+5</button>
+<div id="debug-panel" style="display:none;">
+        <h3>SETTINGS</h3>
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;">
+            <div style="font-size:12px; margin-bottom:2px;">BGM VOLUME</div>
+            <input type="range" id="bgm-slider" min="0" max="1" step="0.05" style="width:100%" 
+                   oninput="setBgmVolume(this.value)">
+            
+            <div style="font-size:12px; margin-bottom:2px; margin-top:8px;">SE VOLUME</div>
+            <input type="range" id="se-slider" min="0" max="1" step="0.05" style="width:100%" 
+                   oninput="setSeVolume(this.value)">
         </div>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">EVENT TESTER</div>
-        <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 5px;">
-            <select id="debug-map-select" onchange="updateDebugEventList()" style="background: #222; color: #fff; font-size: 10px; border: 1px solid #b08d55;"></select>
-            <select id="debug-event-select" style="background: #222; color: #fff; font-size: 10px; border: 1px solid #b08d55;"></select>
+
+        <h4>Debug Menu</h4>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">DATA CONTROL</div>
+        <button onclick="debugResetAllData()" style="background:#cc3333; color:white; width:100%; margin-bottom:5px;">
+            <i class="fa-solid fa-trash"></i> Reset All Data
+        </button>
+        
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <button onclick="debugToggleBoosts()" style="flex:1; background:#111; border: 1px solid #76ff03; color: #76ff03; font-weight:bold;">
+                <i class="fa-solid fa-unlock"></i> Unlock Boosts
+            </button>
+            <button onclick="debugMaxStats()" style="flex:1; background:#111; border: 1px solid #00e5ff; color: #00e5ff; font-weight:bold;">
+                <i class="fa-solid fa-bolt"></i> Status MAX
+            </button>
         </div>
-        <button class="debug-btn" onclick="launchDebugTestEvent()" style="width: 100%; background: #b08d55; color: #000;">⚡ Launch Test</button>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">HEROINE PROGRESS</div>
-        <div id="debug-heroine-sliders" style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px;"></div>
-        <div style="font-size: 10px; color: #ffcc00; margin: 10px 0 5px; border-bottom: 1px solid #444;">GAMEPLAY</div>
-        <button class="debug-btn" onclick="debugMaxStats()">★ Max</button>
-        <button class="debug-btn" onclick="debugFinishGame()">🏁 Finish</button>
-        <button id="force-heroine-btn" class="debug-btn" onclick="toggleForceHeroine()">♥ Force: OFF</button>
+        
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">TURN CONTROL</div>
+        <div style="display:flex; gap:5px; margin-bottom:15px;">
+            <button onclick="debugModTurn(-5)" style="flex:1;">-5</button>
+            <button onclick="debugModTurn(-1)" style="flex:1;">-1</button>
+            <button onclick="debugModTurn(1)" style="flex:1;">+1</button>
+            <button onclick="debugModTurn(5)" style="flex:1;">+5</button>
+        </div>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">EVENT TESTER</div>
+        <select id="debug-map-select" onchange="updateDebugEventList()" style="width:100%; margin-bottom:5px;"></select>
+        <select id="debug-event-select" style="width:100%; margin-bottom:5px;"></select>
+        <button onclick="launchDebugTestEvent()" style="width:100%; margin-bottom:15px;">
+            <i class="fa-solid fa-play"></i> Launch Test
+        </button>
+
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">HEROINE PROGRESS</div>
+        <div id="debug-heroine-sliders" style="margin-bottom:15px;"></div>
+        
+        <div style="margin-bottom:5px; font-size:12px; color:#aaa;">GAMEPLAY</div>
+        <button onclick="showEnding()" style="width:100%; margin-bottom:5px;">
+            <i class="fa-solid fa-flag-checkered"></i> Finish
+        </button>
+        <button id="force-heroine-btn" onclick="toggleForceHeroine()" style="width:100%;">
+            <i class="fa-solid fa-heart"></i> Force: OFF
+        </button>
     </div>
 
     <div id="game-container">
@@ -190,6 +97,8 @@
         <div id="monologue-container"><div class="monologue-text"></div></div>
 
         <div id="map-spots-container"></div>
+        <div id="event-still-layer"></div>
+        <div id="character-layer"></div>
         
         <div id="top-ui-container">
             <div id="turn-display"><span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">1</span>/20</div>
@@ -201,8 +110,8 @@
         <div id="stats-panel"><div id="stat-list"></div></div>
         <div id="log-overlay"><div id="log-window"><div id="log-content"></div></div><button class="ui-btn" onclick="toggleLog()">CLOSE</button></div>
         
-        <div id="click-overlay" onclick="advanceMessage()"></div>
-        <div id="message-window" onclick="advanceMessage()">
+        <div id="click-overlay" onclick="proceedText()"></div>
+        <div id="message-window" onclick="proceedText()">
             <div id="location-badge">
                 <span id="loc-icon"></span><span id="loc-name"></span>
                 <span id="loc-stats"></span>
@@ -214,14 +123,22 @@
         </div>
         
         <div id="title-screen" class="overlay-screen">
-            <div id="title-img-bg" style="background-image: url('images/title.png');"></div>
+            <div id="title-img-bg" style="background-image: url('images/title.webp');"></div>
             <button id="title-fullscreen-btn" class="fullscreen-btn" onclick="toggleFullScreen()"><i class="fa-solid fa-expand"></i></button>
-            <div class="title-logo-container">
-                <h1 class="size-days">DAYS</h1><h1 class="size-in">IN</h1><h1 class="size-magh">MAGHRIBAL</h1>
+            
+            <div class="title-logo-wrapper">
+                <div class="title-logo-container">
+                    <h1 class="size-days">DAYS</h1><h1 class="size-in">IN</h1><h1 class="size-magh">MAGHRIBAL</h1>
+                </div>
+                <div class="title-underline"></div>
+                <h2 class="jp-title">- マグリバルにて -</h2>
             </div>
-            <div class="title-underline"></div>
-            <h2>- マグリバルにて -</h2>
-            <button id="start-btn" onclick="startOP()">GAME START</button>
+
+            <div class="title-btn-container">
+                <button id="start-btn" onclick="startOP()">GAME START</button>
+                <button id="continue-btn" onclick="continueGame()">CONTINUE</button>
+            </div>
+
             <div id="boost-container"></div>
             <div id="past-records-container">
                 <div class="record-title"><i class="fa-solid fa-clock-rotate-left"></i> PAST RECORDS</div>
@@ -240,463 +157,9 @@
             <div id="ed-stats"></div>
             <div style="display:flex; gap:20px; align-items:center;">
                 <button id="ed-log-btn" onclick="toggleLog()">REVIEW LOG</button>
-                <button id="retry-btn" onclick="location.reload()">RETRY</button>
+                <button id="retry-btn" onclick="retryGame()">RETRY</button>
             </div>
         </div>
     </div>
-
-    <script>
-        const sePi = new Audio('se/pi.mp3'); const seOp = new Audio('se/op.mp3'); const seFootstep = new Audio('se/za.mp3'); const sePage = new Audio('se/pera.mp3');
-        const bgmOp = new Audio('bgm/op.mp3'); bgmOp.loop = true; bgmOp.volume = 0.3;
-        const bgmMap = new Audio('bgm/map.mp3'); bgmMap.loop = true; bgmMap.volume = 0.3;
-        const bgmEd = new Audio('bgm/ed.mp3'); bgmEd.loop = true; bgmEd.volume = 0.3;
-        
-        function playSE(audio) {
-            const clone = audio.cloneNode();
-            clone.volume = audio.volume;
-            clone.play();
-        }
-
-        const statColors = { health: '#ff4d4d', body: '#ffa500', mind: '#4da6ff', magic: '#b366ff', fame: '#ffff4d', money: '#33cc33' };
-        const rankColors = { LEGEND: '#ffcc00', GOLD: '#e6b422', SILVER: '#c0c0c0', BRONZE: '#cd7f32' };
-        const soloTitles = { health: "不滅の冒険者", body: "孤高の拳王", mind: "深淵の求道者", magic: "無窮の魔術師", fame: "名もなき伝説", money: "豪腕の大富豪" };
-        
-        // 【修正】整合性に合わせてターゲット先とテキストキーを修正
-        const impactConfig = {
-            "オルテンシア": { targetName: "辺境の村", sec: 1, eco: 1, name: "王家の配給" },
-            "エルナ": { targetName: "静謐な修道院", sec: 1, eco: 0, name: "収穫の祈り" },
-            "シルフィエット": { targetName: "賢者の塔", sec: 0, eco: 0, name: "古書の寄贈" },
-            "ルナリス": { targetName: "迷宮の入り口", sec: -1, eco: 1, name: "深淵の解明" },
-            "マリーナ": { targetName: "六角の王都", sec: -1, eco: 1, name: "闇市場" },
-            "カタリナ": { targetName: "賑わいの港町", sec: 1, eco: -1, name: "海賊狩り" },
-            "エリスフェリア": { targetName: "太古の墓地", sec: 1, eco: 1, name: "精霊祭" },
-            "レグリナ": { targetName: "喧騒の闘技場", sec: -1, eco: 1, name: "真夜中" },
-            "ゼファー": { targetName: "緑の隠れ里", sec: 1, eco: 1, name: "異文化" },
-            "メルル": { targetName: "巨岩の要塞", sec: 0, eco: 0, name: "傭兵団" },
-            "ネクロア": { targetName: "忘れられた古城", sec: -1, eco: 1, name: "幻影の祝宴" },
-            "エルヴィーラ": { targetName: "真鍮の荒野", sec: 1, eco: 0, name: "砂漠の花" }
-        };
-        
-        let heroineImpacts = []; 
-        let isResultHidden = false;
-        let lastEventContext = null; 
-        let lastEventResult = null;
-        let monologueInterval;
-        let specialData = []; 
-        let monologueData = {}; 
-        let heroineReactions = {}; 
-        let clearedHeroines = [];
-
-        // 【修正】special.jsonの並び順と一致させました
-        const heroineOPLines = [
-            ["王都の威光が辺境を照らす。", "王女の命により、貧しき村に物資が届けられた。", "希望の光が、人々の瞳に宿り始める。"], // H01 オルテンシア -> 辺境
-            ["賢者の叡智が、迷宮の深淵を照らす。", "封印が解かれ、冒険者たちが深層へと挑む。", "危険と隣り合わせの、富への扉が開かれた。"], // H02 ルナリス -> 迷宮
-            ["辺境の実りが、修道院の食卓を満たす。", "村人たちが届けた新鮮な糧が、祈りの場を支える。", "ささやかな幸福が、静かに満ちていく。"], // H03 エルナ -> 修道院
-            ["禁忌の知識が、塔の夜を怪しく照らす。", "古城から持ち込まれた古文書が、賢者たちを熱狂させる。", "知の交流が、新たな発見を生む。"], // H04 シルフィエット -> 塔
-            ["港の熱気が、王都の夜を彩る。", "海からの珍品が闇市場に溢れ、貴族たちを魅了する。", "欲望と金貨が、街の影で渦巻いている。"], // H05 マリーナ -> 王都
-            ["巨岩の盾が、港の波濤を鎮める。", "要塞の騎士たちが海賊を追い払い、交易路が開かれた。", "港町はかつてない賑わいを見せている。"], // H06 カタリナ -> 港
-            ["修道院の祈りが、太古の魂を慰める。", "聖女の浄化により、墓地は安らぎの地へと変わった。", "今宵、死者を偲ぶ静かな祭りが始まる。"], // H07 エリスフェリア -> 墓地
-            ["古城の闇が、闘技場の鮮血を求める。", "吸血鬼の戯れで、夜な夜な過激な殺し合いが行われる。", "観客の熱狂は、恐怖と共に最高潮へ達する。"], // H08 レグリナ -> 闘技場
-            ["荒野の情熱が、隠れ里の扉を開く。", "踊り子たちの情熱が、閉ざされたエルフの心を溶かす。", "森の奥深くで、種族を超えた宴が始まる。"], // H09 ゼファー -> 里
-            ["迷宮の探求者が、忘れられた城に挑む。", "亡霊の呼び声に応え、廃墟に幻の灯りがともる。", "かつての栄華が、一夜の夢として蘇る。"], // H10 ネクロア -> 古城
-            ["闘技場の狂騒が、要塞の静寂を破る。", "猛者たちが守備隊に加わり、鉄壁の守りが築かれた。", "しかし、その荒々しさに住民は怯えている。"], // H11 メルル -> 要塞
-            ["深緑の息吹が、荒野に潤いをもたらす。", "エルフの秘術により、砂漠の只中に泉が湧き出した。", "不毛の大地に、奇跡の花が咲き乱れる。"] // H12 エルヴィーラ -> 荒野
-        ];
-
-        const defaultRegionStats = [ { sec: 4, eco: 4 }, { sec: 5, eco: 2 }, { sec: 3, eco: 2 }, { sec: 1, eco: 1 }, { sec: 2, eco: 5 }, { sec: 2, eco: 4 }, { sec: 4, eco: 2 }, { sec: 1, eco: 2 }, { sec: 1, eco: 1 }, { sec: 3, eco: 1 }, { sec: 3, eco: 3 }, { sec: 1, eco: 3 } ];
-        let stats = { health: 0, body: 0, mind: 0, magic: 0, fame: 0, money: 0 };
-        let turn = 1, maxTurn = 20, isEventActive = false, isGameStarted = false, isTyping = false, targetText = "";
-        let messageQueue = [], currentMsgIndex = 0, pendingResultHtml = "", typeInterval;
-        let consecutiveNormalEvents = 0, lastEventWasHeroine = false, isForcedHeroine = false, isResultDisplayed = false;
-        let currentGameLog = [], isViewingPastLog = false;
-        let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
-        let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
-        let activeImpacts = Array(12).fill(false);
-        const gameAssets = { events: {}, heroines: {} };
-
-        window.onload = async () => {
-            const statusEl = document.getElementById("load-status"); const barFill = document.getElementById("load-bar-fill");
-            const assetsToLoad = []; scenarios.forEach(s => assetsToLoad.push({ type: 'event', file: s.file })); heroines.forEach(h => assetsToLoad.push({ type: 'heroine', file: h.file }));
-            let loadedCount = 0;
-            const loadPromises = assetsToLoad.map(async (asset) => {
-                try {
-                    if (asset.type === 'event') { gameAssets.events[asset.file] = await fetch(`data/events/${asset.file}.json`).then(r => r.json()); }
-                    else if (asset.type === 'heroine') { gameAssets.heroines[asset.file] = await fetch(`data/heroines/${asset.file}.json`).then(r => r.json()); }
-                    loadedCount++; const percent = (loadedCount / assetsToLoad.length) * 100; barFill.style.width = percent + "%"; statusEl.innerText = `Loading: ${asset.file} (${Math.round(percent)}%)`;
-                } catch (e) { console.error(e); }
-            });
-            await Promise.all(loadPromises);
-            
-            try {
-                const monoRes = await fetch('data/events/monologues.json');
-                const monoJson = await monoRes.json();
-                monologueData = monoJson.common;
-                heroineReactions = monoJson.heroines;
-
-                // 【修正】外部ファイルを読み込む形に戻しました
-                const specRes = await fetch('data/events/special.json');
-                specialData = await specRes.json();
-            } catch (e) { console.error("Data load failed", e); }
-
-            if (scenarios[0]) scenarios[0].name = "六角の王都";
-
-            heroineImpacts = heroines.map(h => {
-                const conf = impactConfig[h.name];
-                if (!conf) return { target: 0, sec: 0, eco: 0, name: "Unknown", btnLabel: "???" };
-                const targetIdx = scenarios.findIndex(s => s.name === conf.targetName);
-                return { 
-                    target: targetIdx !== -1 ? targetIdx : 0, 
-                    sec: conf.sec, eco: conf.eco, name: conf.name,
-                    btnLabel: `${conf.targetName} +`
-                };
-            });
-
-            const savedB = localStorage.getItem('maghribal_boosts'); if(savedB) unlockedBoosts = JSON.parse(savedB);
-            const savedA = localStorage.getItem('maghribal_active_boosts'); if(savedA) activeBoosts = JSON.parse(savedA);
-            const savedI = localStorage.getItem('maghribal_active_impacts'); if(savedI) activeImpacts = JSON.parse(savedI);
-            const savedC = localStorage.getItem('maghribal_cleared_heroines'); if(savedC) clearedHeroines = JSON.parse(savedC);
-
-            loadHeroineProgress();
-
-            initUI(); displayPastRecords(); renderBoostButtons();
-            resizeGameContainer(); window.addEventListener('resize', resizeGameContainer);
-            setTimeout(() => { document.getElementById("loading-screen").style.display = "none"; }, 800);
-        };
-
-        function saveHeroineProgress() { const progressData = heroines.map(h => h.progress); localStorage.setItem('maghribal_heroine_progress', JSON.stringify(progressData)); }
-        function loadHeroineProgress() { const saved = localStorage.getItem('maghribal_heroine_progress'); if (saved) { const progressData = JSON.parse(saved); heroines.forEach((h, i) => { if (progressData[i] !== undefined) h.progress = progressData[i]; }); } }
-        function resizeGameContainer() { const container = document.getElementById('game-container'); const targetW = 1280; const targetH = 720; const windowW = window.innerWidth; const windowH = window.innerHeight; const scaleW = windowW / targetW; const scaleH = windowH / targetH; const scale = Math.min(scaleW, scaleH); container.style.transform = `scale(${scale})`; }
-        function toggleFullScreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => { console.log(err); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } }
-        
-        function initUI() {
-            const list = document.getElementById("stat-list"); list.innerHTML = ""; statKeys.forEach(k => { list.innerHTML += `<div style="margin-bottom:10px;"><div style="display:flex; justify-content:space-between; font-size:14px;"><span class="stat-label" style="color:${statColors[k]};"><i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name}</span><span id="stat-${k}" style="color:${statColors[k]}; font-weight:bold;">Low</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" id="bar-${k}" style="background:${statColors[k]};"></div></div></div>`; });
-            const container = document.getElementById("map-spots-container"); container.innerHTML = ""; 
-            spotAssignments.forEach((assign, i) => { 
-                const spot = document.createElement("div"); spot.className = "map-spot"; spot.style.left = assign.l + "%"; spot.style.top = assign.t + "%"; spot.onclick = (e) => { e.stopPropagation(); handleSpotClick(spot, i); }; 
-                spot.innerHTML = `<div class="spot-core"></div><div class="orb orb-main" style="background:${statColors[assign.main]}; color:${statColors[assign.main]};"></div><div class="orb orb-sub" style="background:${statColors[assign.sub]}; color:${statColors[assign.sub]};"></div><div class="hint-container"><div class="hint-text"><i class="fa-solid ${scenarios[i].icon}" style="margin-right:5px; font-size:0.9em;"></i>${scenarios[i].name}<div class="recommend-icon"><i class="fa-solid fa-angles-up"></i></div></div></div>`; 
-                container.appendChild(spot); 
-            }); 
-            updateRecommend();
-        }
-
-        function updateMonologue(type = 'random') {
-            const container = document.getElementById('monologue-container');
-            const textEl = container.querySelector('.monologue-text');
-            
-            if (activeImpacts.findIndex(Boolean) !== -1) { container.style.display = 'none'; return; }
-
-            let text = "";
-            let pool = [];
-
-            if (type === 'start') {
-                pool = monologueData.start;
-            } else if (lastEventContext) { 
-                const { name, progress } = lastEventContext;
-                const stage = Math.min(progress - 1, 5); 
-                if (heroineReactions[name] && heroineReactions[name][stage]) {
-                    text = heroineReactions[name][stage];
-                } else {
-                    pool = monologueData.success; 
-                }
-                lastEventContext = null;
-            } else {
-                const maxStats = statKeys.filter(k => stats[k] >= 50);
-                if (maxStats.length > 0 && Math.random() < 0.3) { pool = monologueData.stat_max; } 
-                else if (lastEventResult && Math.random() < 0.7) {
-                    pool = (lastEventResult === 'success' || lastEventResult === 'great_success') ? monologueData.success : monologueData.failure;
-                    lastEventResult = null;
-                }
-                else if (Math.random() < 0.4) { 
-                    const unmetHeroines = heroines.filter(h => h.progress === 0);
-                    if (unmetHeroines.length > 0 && Math.random() < 0.5) {
-                        const target = unmetHeroines[Math.floor(Math.random() * unmetHeroines.length)];
-                        const originalIdx = heroines.indexOf(target);
-                        if (originalIdx !== -1) {
-                            text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
-                        }
-                    } else {
-                        pool = monologueData.hint_weak;
-                    }
-                }
-                else {
-                    if (turn < 5) pool = monologueData.progress_low;
-                    else if (turn < 15) pool = monologueData.progress_mid;
-                    else pool = monologueData.progress_high;
-                }
-            }
-            if (!text) {
-                if (!pool || pool.length === 0) pool = monologueData.progress_mid;
-                text = pool[Math.floor(Math.random() * pool.length)];
-            }
-
-            currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
-            const logContent = document.getElementById("log-content");
-            if (logContent) {
-                logContent.innerHTML = currentGameLog.join('');
-            }
-
-            textEl.innerHTML = "";
-            container.style.display = 'flex';
-            container.classList.remove('visible');
-            void container.offsetWidth; 
-            container.classList.add('visible');
-            
-            clearInterval(monologueInterval);
-            let i = 0;
-            monologueInterval = setInterval(() => {
-                textEl.textContent += text.charAt(i);
-                i++;
-                if (i >= text.length) clearInterval(monologueInterval);
-            }, 50);
-        }
-
-        function updateMapState() {
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            const spots = document.querySelectorAll('.map-spot');
-            
-            spots.forEach((spot, i) => {
-                spot.classList.remove('spot-disabled');
-                if (activeIdx !== -1) {
-                    const target = heroineImpacts[activeIdx].target;
-                    if (i !== target) spot.classList.add('spot-disabled');
-                }
-            });
-            
-            const displayEl = document.getElementById("turn-display");
-            if (!displayEl) return;
-
-            if (activeIdx !== -1) {
-                displayEl.innerHTML = `<span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">1</span>/1`;
-            } else {
-                displayEl.innerHTML = `<span style="margin-right:15px; font-weight:bold;"><i class="fa-solid fa-hourglass-start"></i> TURN</span><span id="turn-count">${turn}</span>/20`;
-            }
-        }
-
-        function updateRecommend() {
-            const vals = Object.values(stats); const minVal = Math.min(...vals); const weakStats = statKeys.filter(k => stats[k] === minVal);
-            spotAssignments.forEach((assign, i) => { const isRec = weakStats.includes(assign.main) || weakStats.includes(assign.sub); const spot = document.querySelectorAll('.map-spot')[i]; if(spot) { const icon = spot.querySelector('.recommend-icon'); if(icon) { if (isRec) icon.classList.add('visible'); else icon.classList.remove('visible'); } } });
-        }
-        function updateUI(k) { const v = stats[k]; const bar = document.getElementById(`bar-${k}`); if(bar) bar.style.width = (v * 2) + "%"; const label = document.getElementById(`stat-${k}`); if(label) { const labs = ["Low", "Normal", "High", "Expert", "Master", "Legend"]; label.innerText = labs[Math.min(Math.floor(v/10),5)]; } updateRecommend(); }
-        
-        function handleSpotClick(el, idx) {
-            document.getElementById('monologue-container').classList.remove('visible');
-
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1 && idx !== heroineImpacts[activeIdx].target) return;
-
-            if (!isGameStarted || isEventActive || (activeIdx === -1 && turn > maxTurn)) return; 
-            isEventActive = true; isResultDisplayed = false; isResultHidden = false;
-            playSE(seFootstep); 
-            
-            let stopBgm = false;
-
-            el.querySelector('.hint-text').classList.add('selected-yellow'); document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
-            
-            const s = scenarios[idx], h = heroines[idx]; h.events = gameAssets.heroines[h.file].events; const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6, assign = spotAssignments[idx], anyM = heroines.some(hero => hero.progress >= 5);
-            const minVal = Math.min(...Object.values(stats)); const weakStats = statKeys.filter(k => stats[k] === minVal); const isRecommended = weakStats.includes(assign.main) || weakStats.includes(assign.sub);
-            let isH = false, dMsg = "", bCh = {}, out = 'success';
-
-            if (activeIdx !== -1) {
-                isH = false; isResultHidden = true; stopBgm = true;
-                if (specialData[activeIdx]) {
-                    dMsg = specialData[activeIdx].text;
-                    bCh = specialData[activeIdx].changes;
-                } else {
-                    dMsg = "イベントデータが見つかりません。";
-                    bCh = {};
-                }
-                out = 'exclusive'; 
-            } else {
-                let chance = isForcedHeroine ? 1.0 : (stats[assign.main] / 50) + (consecutiveNormalEvents * 0.1); if (chance < 0.05) chance = 0.05; if (lastEventWasHeroine && !isForcedHeroine) chance = 0;
-                
-                if (h.progress >= 5) { 
-                    isH = true; lastEventWasHeroine = true; isResultHidden = true; stopBgm = true;
-                    dMsg = "【後日談】\n" + (h.afterMsg || "穏やかな時間が流れた。"); bCh[assign.main] = 5; bCh[assign.sub] = 2; out = 'heroine'; 
-                    lastEventContext = { name: h.name, progress: 6 }; 
-                    
-                    if (!clearedHeroines.includes(h.name)) {
-                        clearedHeroines.push(h.name);
-                        localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-                    }
-                } 
-                else if (anyM && h.progress >= 1) { 
-                    isH = true; lastEventWasHeroine = true; stopBgm = true;
-                    dMsg = "【世間話】\n" + (h.chatMsg || "何気ない世間話をして別れた。"); bCh[assign.main] = 2; bCh[assign.sub] = 1; out = 'heroine'; 
-                } 
-                else if (Math.random() < chance) { 
-                    const reqA = h.minAvg[Math.min(h.progress, 4)] || 0, reqS = (h.progress + 1) * 8, mIdx = h.progress < 2 ? 0 : 1; 
-                    if (avgStat < reqA) { isH = false; lastEventWasHeroine = false; dMsg = h.lockAvgMsgs[mIdx]; bCh[assign.main] = 1; bCh[assign.sub] = 1; out = 'hint'; } 
-                    else if (stats[assign.main] < reqS) { isH = false; lastEventWasHeroine = false; dMsg = h.lockStatMsgs[mIdx]; bCh[assign.main] = 1; bCh[assign.sub] = 1; out = 'hint'; } 
-                    else { 
-                        isH = true; lastEventWasHeroine = true; consecutiveNormalEvents = 0; stopBgm = true;
-                        dMsg = h.events[Math.min(h.progress, 4)]; 
-                        h.progress++; h.affection++; 
-                        if (h.progress >= 3) isResultHidden = true; 
-                        bCh[assign.main] = 5; bCh[assign.sub] = 2; out = 'heroine'; 
-                        lastEventContext = { name: h.name, progress: h.progress };
-                        saveHeroineProgress(); 
-
-                        if (h.progress >= 5) {
-                            if (!clearedHeroines.includes(h.name)) {
-                                clearedHeroines.push(h.name);
-                                localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-                            }
-                        }
-                    } 
-                } 
-                else { 
-                    isH = false; lastEventWasHeroine = false; consecutiveNormalEvents++; 
-                    const tier = (turn / maxTurn <= 1/6) ? 'newcomer' : (turn / maxTurn <= 5/6 ? 'mid' : 'veteran'); 
-                    let pool = gameAssets.events[s.file].filter(e => e.tier === tier); 
-                    if (isRecommended) { const successPool = pool.filter(e => e.outcome !== 'failure'); if (successPool.length > 0) pool = successPool; } 
-                    const ev = pool[Math.floor(Math.random() * pool.length)] || {text:"静かな時が流れた。", changes:{}}; 
-                    dMsg = ev.text; bCh = {...(ev.changes || {})}; out = ev.outcome; 
-                    lastEventResult = out;
-                }
-                if (isRecommended) { for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } }
-            }
-            
-            if (stopBgm) bgmMap.pause();
-            applyEventView(dMsg, bCh, isH, h, s, out, idx);
-        }
-
-        function getLocStatusHtml(idx) {
-            let sec = defaultRegionStats[idx].sec; let eco = defaultRegionStats[idx].eco; activeImpacts.forEach((isActive, hId) => { if (isActive && heroineImpacts[hId].target === idx) { sec += heroineImpacts[hId].sec; eco += heroineImpacts[hId].eco; } }); sec = Math.max(1, Math.min(5, sec)); eco = Math.max(1, Math.min(5, eco)); const stars = (n) => '★'.repeat(n) + '<span style="opacity:0.3">★</span>'.repeat(5-n); return `<span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-shield-halved" style="color:#aaa; margin-right:4px;"></i> ${stars(sec)}</span><span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-scale-balanced" style="color:#d4af37; margin-right:4px;"></i> ${stars(eco)}</span>`;
-        }
-        function applyEventView(msg, changes, isH, h, s, out, idx) {
-            for (let k in changes) { stats[k] = Math.max(0, Math.min(stats[k] + (changes[k] || 0), 50)); updateUI(k); } checkRankUpdate(); 
-            let cLog = isResultHidden ? "" : getResultHtml(changes); 
-            let outcomeHtml = ""; 
-            if (!isH && out !== 'hint' && out !== 'heroine' && out !== 'exclusive') { if (out === 'great_success') outcomeHtml = `<span class="outcome-badge great">【大成功】</span>`; else if (out === 'success') outcomeHtml = `<span class="outcome-badge success">【成功】</span>`; else if (out === 'failure') outcomeHtml = `<span class="outcome-badge failure">【失敗】</span>`; } 
-            let logL = isH ? `(<i class="fa-solid ${h ? h.icon : ''}"></i> ${h ? h.name : ''})` : ""; const locLabel = `<i class="fa-solid ${s.icon}"></i> ${s.name}`; currentGameLog.push(`<div class="log-entry"><div class="log-header">Turn ${turn} : ${locLabel} ${logL} ${outcomeHtml} ${getResultHtml(changes)}</div><div class="log-body">${formatGameText(msg).replace(/\n/g, '<br>')}</div></div>`); document.getElementById("log-content").innerHTML = currentGameLog.join(''); document.getElementById("background-layer").style.transformOrigin = `${spotAssignments[idx].l}% ${spotAssignments[idx].t}%`; document.getElementById("background-layer").style.transform = `scale(${s.zoom || 2.5})`; document.getElementById("background-layer").classList.add("blur-bg"); messageQueue = msg.split('\n').filter(line => line.trim() !== ""); currentMsgIndex = 0; isResultDisplayed = false; pendingResultHtml = outcomeHtml + cLog; document.getElementById("loc-icon").innerHTML = `<i class="fa-solid ${s.icon}"></i>`; document.getElementById("loc-name").innerText = s.name; document.getElementById("loc-stats").innerHTML = getLocStatusHtml(idx); const cb = document.getElementById("char-name-badge"); if (isH && h) { cb.innerHTML = `<i class="fa-solid ${h.icon}"></i> ${h.title} ${h.name}`; cb.style.display = "flex"; } else cb.style.display = "none"; document.getElementById("message-text").innerHTML = ""; document.getElementById("result-display").innerHTML = ""; document.getElementById("result-display").style.opacity = "0"; document.getElementById("page-cursor").classList.remove("active"); document.getElementById("message-window").classList.add("active"); document.getElementById("click-overlay").classList.add("active"); setTimeout(advanceMessage, 300);
-        }
-        function advanceMessage() { 
-            const cursor = document.getElementById("page-cursor"); 
-            if (isTyping) { finishTyping(); return; } 
-            if (currentMsgIndex < messageQueue.length) { 
-                cursor.classList.remove("active"); targetText = messageQueue[currentMsgIndex++]; typeWriter(document.getElementById("message-text"), targetText, 15); 
-            } else {
-                if (isResultHidden) { closeEvent(); } else if (!isResultDisplayed) { cursor.classList.remove("active"); showFinalResult(); cursor.classList.add("active"); } else { cursor.classList.remove("active"); closeEvent(); }
-            }
-        }
-        function typeWriter(el, text, speed) { let i = 0; el.innerHTML = ""; isTyping = true; typeInterval = setInterval(() => { if (i < text.length) { el.innerHTML = formatGameText(text.substring(0, i + 1)); i++; } else { finishTyping(); } }, speed); }
-        function finishTyping() { clearInterval(typeInterval); isTyping = false; document.getElementById("message-text").innerHTML = formatGameText(targetText); document.getElementById("page-cursor").classList.add("active"); }
-        function showFinalResult() { playSE(sePage); const resDiv = document.getElementById("result-display"); resDiv.innerHTML = pendingResultHtml; resDiv.style.opacity = "1"; isResultDisplayed = true; document.getElementById("page-cursor").classList.add("active"); }
-        function getResultHtml(changes) { let h = ''; for (let k in changes) { if (changes[k] !== 0) { const arrow = changes[k] > 0 ? `<span style="color:#76ff03; font-size:0.8em;">▲</span>` : `<span style="color:#ea80fc; font-size:0.8em;">▼</span>`; h += `<span style="color:${statColors[k]}; margin:0 8px; font-weight:bold; white-space:nowrap;"><i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name}${arrow}</span>`; } } return h; }
-        
-        function closeEvent() { 
-            document.getElementById("background-layer").style.transform = "scale(1)"; document.getElementById("background-layer").classList.remove("blur-bg"); document.getElementById("message-window").classList.remove("active"); document.getElementById("click-overlay").classList.remove("active"); document.getElementById("page-cursor").classList.remove("active"); 
-            if (bgmMap.paused && activeImpacts.findIndex(Boolean) === -1) bgmMap.play();
-
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) { 
-                document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 1500); 
-                return; 
-            }
-
-            setTimeout(() => { 
-                if (turn >= maxTurn) { 
-                    updateMonologue(); 
-                    setTimeout(() => { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 3000); }, 3000);
-                } 
-                else { 
-                    turn++; document.getElementById("turn-count").innerText = turn; isEventActive = false; 
-                    updateMonologue(); 
-                    document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
-                } 
-            }, 250); 
-        }
-        function formatGameText(text) { return text.replace(/@(\w+)@/g, (m, k) => `<span style="color:${statColors[k]}">${statConfig[k].name}</span>`); }
-        function toggleStats() { playSE(sePi); const p = document.getElementById("stats-panel"); p.style.display = p.style.display === "block" ? "none" : "block"; }
-        function toggleLog() { playSE(sePi); const l = document.getElementById("log-overlay"); l.style.display = l.style.display === "flex" ? "none" : "flex"; if(l.style.display === "flex") { document.getElementById("log-window").scrollTop = document.getElementById("log-window").scrollHeight; } }
-        function checkRankUpdate() { const total = Object.values(stats).reduce((sum, v) => sum + v, 0), btn = document.getElementById("status-toggle-btn"); let rank = total >= 150 ? "legend" : (total >= 100 ? "gold" : (total >= 50 ? "silver" : "bronze")); [btn, document.getElementById("stats-panel")].forEach(el => { if(el) { el.classList.remove("rank-silver", "rank-gold", "rank-legend"); if (rank !== "bronze") el.classList.add("rank-" + rank); } }); }
-        
-        // 【復元】以下、欠落していた関数群です
-        function renderBoostButtons() { 
-            const container = document.getElementById("boost-container"); if(!container) return; container.innerHTML = ""; 
-            const statSection = document.createElement("div"); statSection.className = "boost-section"; statSection.innerHTML = `<div class="boost-section-title">- START BONUS -</div>`; container.appendChild(statSection);
-            statKeys.forEach(k => { const btn = document.createElement("button"); btn.className = `boost-btn ${unlockedBoosts[k] ? 'unlocked' : ''} ${activeBoosts[k] ? 'active' : ''}`; btn.innerHTML = `<i class="fa-solid ${statConfig[k].icon}"></i> ${statConfig[k].name} +10`; btn.onclick = (e) => { e.stopPropagation(); if(!unlockedBoosts[k]) return; activeBoosts[k] = !activeBoosts[k]; localStorage.setItem('maghribal_active_boosts', JSON.stringify(activeBoosts)); playSE(sePi); renderBoostButtons(); }; statSection.appendChild(btn); });
-            const impactSection = document.createElement("div"); impactSection.className = "boost-section"; impactSection.innerHTML = `<div class="boost-divider"></div><div class="boost-section-title">- WORLD INFLUENCE -</div>`; container.appendChild(impactSection);
-            heroines.forEach((h, i) => { const impact = heroineImpacts[i]; const targetScene = scenarios[impact.target]; const isActive = activeImpacts[i]; 
-            
-            const isUnlocked = clearedHeroines.includes(h.name); 
-
-            const btn = document.createElement("button"); btn.className = `boost-btn ${isUnlocked ? 'unlocked' : ''} ${isActive ? 'active' : ''}`; 
-            btn.innerHTML = `<i class="fa-solid ${targetScene.icon}"></i> ${impact.btnLabel}`; 
-            btn.onclick = (e) => { e.stopPropagation(); if (!isUnlocked) return; const wasActive = activeImpacts[i]; activeImpacts.fill(false); if (!wasActive) activeImpacts[i] = true; localStorage.setItem('maghribal_active_impacts', JSON.stringify(activeImpacts)); playSE(sePi); renderBoostButtons(); }; impactSection.appendChild(btn); });
-        }
-        
-        function saveCurrentGameLog() { 
-            const activeIdx = activeImpacts.findIndex(Boolean); if (activeIdx !== -1) return; 
-            const total = Object.values(stats).reduce((sum, v) => sum + v, 0); const rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE")); const best = heroines.reduce((a, b) => a.affection > b.affection ? a : b); let partnerStr = "None", partnerHTML = ""; if (best && best.affection > 0) { partnerStr = best.name; const hIcon = `<i class="fa-solid ${best.icon}" style="font-size:0.9em; opacity:0.8;"></i> `; let affinityHTML = ""; if (best.progress >= 5) affinityHTML = ` <i class="fa-solid fa-mound bouquet-icon" style="font-size:0.8em;"></i>`; else if (best.progress >= 3) affinityHTML = ` <i class="fa-solid fa-seedling affinity-seedling" style="font-size:0.8em;"></i>`; else affinityHTML = ` <i class="fa-solid fa-leaf affinity-leaf" style="font-size:0.8em;"></i>`; partnerHTML = `${hIcon}${best.name}${affinityHTML}`; } else { const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0]; partnerStr = soloTitles[maxK]; partnerHTML = partnerStr; } const now = new Date(); const dateStr = (now.getMonth()+1) + "/" + now.getDate() + " " + now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0'); const newRecord = { date: dateStr, rank: rank, partner: partnerStr, partnerHTML: partnerHTML, log: currentGameLog.join('') }; let records = JSON.parse(localStorage.getItem('maghribal_logs') || "[]"); records.push(newRecord); if (records.length > 10) records.shift(); localStorage.setItem('maghribal_logs', JSON.stringify(records)); displayPastRecords(); 
-        }
-        function showEnding() { 
-            processBoostUnlock(); 
-            if (activeImpacts.findIndex(Boolean) === -1) saveCurrentGameLog();
-            
-            localStorage.removeItem('maghribal_heroine_progress'); 
-
-            document.getElementById("ed-screen").classList.remove("hidden-screen"); 
-            bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
-            
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) {
-                document.getElementById("ed-rank").innerText = "SPECIAL EPISODE CLEAR";
-                const h1 = heroines[activeIdx];
-                const tIdx = heroineImpacts[activeIdx].target;
-                const scene = scenarios[tIdx];
-                const h2 = heroines.find(h => h.file === scene.file) || heroines[tIdx];
-                const partnerHTML = `<span style="display:flex; align-items:center; gap:8px;"><i class="fa-solid ${h1.icon}"></i> ${h1.name} <span style="font-size:0.8em; opacity:0.7;">+</span> <i class="fa-solid ${scene.icon}"></i> ${scene.name} <span style="font-size:0.8em; opacity:0.7;">+</span> <i class="fa-solid ${h2.icon}"></i> ${h2.name}</span>`;
-                document.getElementById("ed-heroine").innerHTML = partnerHTML;
-                document.getElementById("ed-stats").innerHTML = ""; 
-            } else {
-                const total = Object.values(stats).reduce((sum, v) => sum + v, 0); let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE")); document.getElementById("ed-rank").innerText = `Rank: ${rank}`; let best = heroines.reduce((a, b) => a.affection > b.affection ? a : b); let endingDisplay = ""; if (best && best.affection > 0) { const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`; let affinityIcon = ""; if (best.progress >= 5) affinityIcon = `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>`; else if (best.progress >= 3) affinityIcon = `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>`; else affinityIcon = `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`; endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`; } else { const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0]; endingDisplay = `称号: ${soloTitles[maxK]}`; } document.getElementById("ed-heroine").innerHTML = endingDisplay; let h = ""; statKeys.forEach(k => { const val = Math.floor(stats[k]); const isMax = val >= 50; const color = statColors[k]; const borderStyle = isMax ? `border: 2px solid ${color}; box-shadow: 0 0 10px ${color};` : ""; const iconStyle = isMax ? `color: ${color};` : ""; const maxLabel = isMax ? `<span class="max-label" style="color:${color}">MAX</span>` : ""; h += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`; }); document.getElementById("ed-stats").innerHTML = h; 
-            }
-            document.getElementById("boost-container").style.display = "none"; renderBoostButtons(); 
-            setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
-        }
-        function displayPastRecords() { const records = JSON.parse(localStorage.getItem('maghribal_logs') || "[]"); const container = document.getElementById("past-records-list"); if (!container) return; if (records.length === 0) { container.innerHTML = "<div style='font-size:10px; color:#666; padding:10px; text-align:center;'>NO RECORDS YET.</div>"; return; } container.innerHTML = records.slice().reverse().map((rec, idx) => `<div class="record-item" onclick="viewSpecificLog(${records.length - 1 - idx})"><span class="record-rank" style="color:${rankColors[rec.rank] || '#fff'}">[${rec.rank}]</span><span class="record-partner">${rec.partnerHTML || rec.partner}</span><span class="record-date">${rec.date}</span></div>`).join(''); }
-        function startOP() { 
-            seOp.currentTime = 0; seOp.play(); 
-            resizeGameContainer(); currentGameLog = []; document.getElementById("log-content").innerHTML = ""; document.getElementById("boost-container").style.display = "none"; document.getElementById("top-ui-container").style.display = "none"; 
-            const activeIdx = activeImpacts.findIndex(Boolean);
-            if (activeIdx !== -1) { statKeys.forEach(k => { stats[k] = 0; updateUI(k); }); } else { statKeys.forEach(k => { stats[k] = activeBoosts[k] ? 10 : 0; updateUI(k); }); }
-            bgmOp.pause(); bgmOp.currentTime = 0; bgmOp.play(); 
-            document.getElementById("title-screen").classList.add("hidden-screen"); 
-            setTimeout(() => { document.getElementById("op-screen").classList.remove("hidden-screen"); 
-            const opLines = (activeIdx !== -1) ? heroineOPLines[activeIdx] : ["陽が沈む西の地、マグリバル。", "ここには名声、富、知識、そして力が眠っている。", "残された時間は、そう長くはない。", "どの道を歩み、何者となるか。", "全ては汝の選択に委ねられている。"];
-            updateMapState(); 
-            
-            let idx = 0; const opDiv = document.getElementById("op-text"); const showLine = () => { opDiv.style.opacity = 0; setTimeout(() => { opDiv.innerHTML = opLines[idx]; opDiv.style.opacity = 1; }, 400); }; showLine(); window.nextOP = () => { idx++; if (idx < opLines.length) showLine(); else { 
-                document.getElementById("op-screen").classList.add("hidden-screen"); document.getElementById("top-ui-container").style.display = "flex"; document.getElementById("background-layer").classList.add("visible"); 
-                bgmOp.pause(); bgmMap.currentTime = 0; bgmMap.play();
-                setTimeout(() => { 
-                    document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
-                    updateMonologue('start');
-                    isGameStarted = true; 
-                }, 1000); 
-            } }; }, 500); 
-        }
-        function processBoostUnlock() { const sortedKeys = [...statKeys].sort((a, b) => stats[b] - stats[a]); for (let key of sortedKeys) { if (!unlockedBoosts[key]) { unlockedBoosts[key] = true; localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); break; } } }
-        function viewSpecificLog(idx) { const records = JSON.parse(localStorage.getItem('maghribal_logs') || "[]"); const rec = records[idx]; if (rec) { isViewingPastLog = true; const logWindow = document.getElementById("log-window"); document.getElementById("log-content").innerHTML = rec.log; toggleLog(); logWindow.scrollTop = 0; } }
-        function toggleDebugPanel() { const p = document.getElementById("debug-panel"); p.style.display = p.style.display === "block" ? "none" : "block"; if(p.style.display === "block") { renderHeroineSliders(); initDebugEventTester(); } }
-        function debugModTurn(amount) { turn = Math.max(1, Math.min(maxTurn, turn + amount)); updateMapState(); }
-        function initDebugEventTester() { const m = document.getElementById("debug-map-select"); if (m.options.length > 0) return; scenarios.forEach((s, i) => { const o = document.createElement("option"); o.value = i; o.innerText = s.name; m.appendChild(o); }); updateDebugEventList(); }
-        function updateDebugEventList() { const mIdx = document.getElementById("debug-map-select").value; const eS = document.getElementById("debug-event-select"); const pool = gameAssets.events[scenarios[mIdx].file]; eS.innerHTML = ""; if (!pool) return; pool.forEach((ev, i) => { const o = document.createElement("option"); o.value = i; o.innerText = `[${ev.tier}] ${ev.text.substring(0, 10)}...`; eS.appendChild(o); }); }
-        function launchDebugTestEvent() { const mIdx = document.getElementById("debug-map-select").value; const eIdx = document.getElementById("debug-event-select").value; const s = scenarios[mIdx]; const ev = gameAssets.events[s.file][eIdx]; if(!ev) return; isEventActive = true; isResultDisplayed = false; applyEventView(ev.text, ev.changes||{}, false, null, s, ev.outcome, mIdx); }
-        function renderHeroineSliders() { const c = document.getElementById("debug-heroine-sliders"); c.innerHTML = ""; heroines.forEach((h, i) => { const d = document.createElement("div"); d.innerHTML = `<div style="font-size:9px;">${h.title} ${h.name} Lv.${h.progress}</div><input type="range" min="0" max="5" value="${h.progress}" oninput="heroines[${i}].progress=parseInt(this.value); heroines[${i}].affection=parseInt(this.value); this.previousSibling.innerText='${h.title} ${h.name} Lv.'+this.value">`; c.appendChild(d); }); }
-        function debugResetAllData() { if(confirm("全消去しますか？")) { localStorage.clear(); location.reload(); } }
-        function debugMaxStats() { statKeys.forEach(k => { stats[k] = 50; updateUI(k); }); checkRankUpdate(); }
-        function debugFinishGame() { document.getElementById('fade-overlay').classList.add('active'); bgmMap.pause(); setTimeout(showEnding, 1500); }
-        function debugToggleBoosts() { 
-            const isL = statKeys.some(k => !unlockedBoosts[k]); 
-            statKeys.forEach(k => { unlockedBoosts[k] = isL; }); 
-            if (isL) { clearedHeroines = heroines.map(h => h.name); } else { clearedHeroines = []; }
-            localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); 
-            localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines)); 
-            renderBoostButtons(); 
-        }
-        function toggleForceHeroine() { isForcedHeroine = !isForcedHeroine; document.getElementById("force-heroine-btn").innerText = isForcedHeroine ? "♥ Force: ON" : "♥ Force: OFF"; document.getElementById("force-heroine-btn").classList.toggle("active", isForcedHeroine); }
-    </script>
 </body>
 </html>

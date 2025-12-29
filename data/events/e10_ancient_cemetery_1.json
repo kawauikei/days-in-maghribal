@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "墓石の清掃を行い、死者への敬意を払った。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "漂う霊気から、魔術的な影響を学んだ。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "供え物を整え、遺族から感謝された。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "夜通し見張りをし、肝試しのような度胸をつけた。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "古い碑文を解読し、この地の歴史を知った。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "墓地の地図を作成し、迷わないようにした。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "崩れた石垣を直し、基礎工事の知識を得た。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "野良犬を追い払い、静寂を守った。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "墓守の手伝いをし、仕事の責任感を学んだ。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "不思議な光を目撃し、魔力の存在を肌で感じた。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "枯れた花を取り替え、美化に努めた。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "迷い込んだ子供を保護し、親元へ送り届けた。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "錆びた門扉の油を差し、スムーズに動くようにした。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "線香の香りに包まれ、心が落ち着いた。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "カラスの群れを観察し、不吉な予兆を察知した。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "苔むした石畳を掃除し、足元を確保した。", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "01", "text": "墓地を照らすカンテラの火を絶やさず守った。", "changes": { "fame": 2 } },
+      { "image": "01", "text": "古い道具の手入れをし、物を大切にする心を養った。", "changes": { "fame": 2, "magic": 1 } },
+      { "image": "01", "text": "静かな場所で瞑想し、魔力制御の基礎を固めた。", "changes": { "fame": 1 } },
+      { "image": "01", "text": "墓石に刻まれた名前を記録し、名簿を整理した。", "changes": { "fame": 1, "magic": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "悪霊に憑りつかれ、活力を吸い取られた。", "changes": { "fame": -2, "magic": -1 } },
+      { "image": "02", "text": "墓石につまずいて転び、足を挫いた。", "changes": { "fame": -1, "magic": -1 } },
+      { "image": "02", "text": "不気味な声を聞き、怖くて逃げ出した。", "changes": { "fame": -2 } },
+      { "image": "02", "text": "供え物をカラスに荒らされ、叱られた。", "changes": { "fame": -1 } },
+      { "image": "02", "text": "迷路のような通路で迷子になり、泣きそうになった。", "changes": { "fame": -2, "magic": -1 } },
+      { "image": "02", "text": "急な雨に降られ、風邪をひいてしまった。", "changes": { "fame": -1, "magic": -1 } },
+      { "image": "02", "text": "作業中に居眠りをして、悪夢を見た。", "changes": { "fame": -2 } },
+      { "image": "02", "text": "大切な道具を失くしてしまい、弁償させられた。", "changes": { "fame": -1 } },
+      { "image": "02", "text": "線香の煙でむせてしまい、苦しかった。", "changes": { "fame": -1, "magic": -1 } },
+      { "image": "02", "text": "野良犬に追いかけられ、服が破けた。", "changes": { "fame": -1, "magic": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "名もなき英雄の墓を修復し、天からの祝福を得た！", "changes": { "fame": 1 } },
+      { "image": "03", "text": "地下の隠し部屋を見つけ、古い魔導書を手に入れた！", "changes": { "fame": 2 } },
+      { "image": "03", "text": "さまよう霊魂を成仏させ、感謝の光を受けた！", "changes": { "fame": 1, "magic": 1 } },
+      { "image": "03", "text": "墓地に咲く幻の花を見つけ、幸運が訪れた！", "changes": { "fame": 1 } },
+      { "image": "03", "text": "伝説の墓守から秘伝の技を教わった！", "changes": { "fame": 1 } }
+    ]
+  }
+}

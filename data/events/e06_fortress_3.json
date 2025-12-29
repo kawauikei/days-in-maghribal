@@ -1,0 +1,45 @@
+{
+  "veteran": {
+    "success": [
+      { "image": "01", "text": "要塞司令官として全軍を指揮し、難攻不落の防衛線を築いた。", "changes": { "health": 6, "body": 4 } },
+      { "image": "01", "text": "数万の敵軍を前に一歩も退かず、その姿は兵士たちの心の支えとなった。", "changes": { "health": 6 } },
+      { "image": "01", "text": "かつての敵国と同盟を結び、平和的な解決をもたらした。", "changes": { "health": 5, "body": 2 } },
+      { "image": "01", "text": "要塞都市を建設し、軍事と経済の両立を図った。", "changes": { "health": 4, "body": 2 } },
+      { "image": "01", "text": "若き王を補佐し、国の軍事力を再編した。", "changes": { "health": 2 } },
+      { "image": "01", "text": "伝説の魔獣を単身で狩り、その素材で最強の鎧を作った。", "changes": { "health": 5, "body": 2 } },
+      { "image": "01", "text": "敵の策略を全て見抜き、完全勝利を収めた。", "changes": { "health": 5, "body": 4 } },
+      { "image": "01", "text": "戦場を駆け抜ける姿は死神と恐れられ、敵兵を戦わずして敗走させた。", "changes": { "health": 6 } },
+      { "image": "01", "text": "古の闘技場でチャンピオンとなり、武の頂点を極めた。", "changes": { "health": 3, "body": 4 } },
+      { "image": "01", "text": "異民族の侵攻を食い止め、国境の守護神と呼ばれた。", "changes": { "health": 5, "body": 1 } },
+      { "image": "01", "text": "部下たちからの信頼は厚く、彼らのためなら命も惜しまない覚悟を示した。", "changes": { "health": 3, "body": 2 } },
+      { "image": "01", "text": "戦災孤児を引き取り、次世代の英雄として育てた。", "changes": { "health": 5, "body": 1 } },
+      { "image": "01", "text": "老朽化した要塞を最新鋭の技術で改修し、鉄壁の守りを完成させた。", "changes": { "health": 3 } },
+      { "image": "01", "text": "敵国の将軍と酒を酌み交わし、互いの健闘を称え合った。", "changes": { "health": 6, "body": 2 } },
+      { "image": "01", "text": "兵法書を執筆し、後世に戦術を伝えた。", "changes": { "health": 6 } },
+      { "image": "01", "text": "自身の銅像が要塞の入り口に建てられ、象徴となった。", "changes": { "health": 6 } },
+      { "image": "01", "text": "不死身の噂が流れるほど、幾多の死線をくぐり抜けた。", "changes": { "health": 4, "body": 2 } },
+      { "image": "01", "text": "王から最高位の勲章を授与され、名誉を極めた。", "changes": { "health": 6 } },
+      { "image": "01", "text": "引退後は後進の育成に励み、多くの優秀な指揮官を輩出した。", "changes": { "health": 6 } },
+      { "image": "01", "text": "その肉体は老いてなお衰えず、岩をも砕く剛力を維持した。", "changes": { "health": 5 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "過去の古傷が痛み、前線指揮に支障をきたした。", "changes": { "health": -4 } },
+      { "image": "02", "text": "政治的な陰謀に巻き込まれ、一時的に指揮権を剥奪された。", "changes": { "health": -5 } },
+      { "image": "02", "text": "敵の新兵器に対応できず、苦戦を強いられた。", "changes": { "health": -4, "body": -4 } },
+      { "image": "02", "text": "同盟交渉が決裂し、再び戦火に巻き込まれた。", "changes": { "health": -5 } },
+      { "image": "02", "text": "育てた弟子が敵に寝返り、心に深い傷を負った。", "changes": { "health": -5 } },
+      { "image": "02", "text": "無理な遠征が祟って、病に倒れかけた。", "changes": { "health": -3 } },
+      { "image": "02", "text": "自身の過信から部下を危険に晒してしまった。", "changes": { "health": -3 } },
+      { "image": "02", "text": "兵法書の解釈を巡って論争になり、批判を受けた。", "changes": { "health": -2, "body": -3 } },
+      { "image": "02", "text": "勲章の重圧に押しつぶされそうになった。", "changes": { "health": -6, "body": -3 } },
+      { "image": "02", "text": "老いを感じ、引退の時期を悟った。", "changes": { "health": -6, "body": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "国を救うため単身で敵の大軍に突撃し、奇跡的な勝利をもたらした！", "changes": { "health": 8, "body": 2 } },
+      { "image": "03", "text": "軍神の加護を受け、戦場において無敵の存在となった！", "changes": { "health": 4, "body": 4 } },
+      { "image": "03", "text": "大陸全土を巻き込む大戦を終結させ、平和の象徴となった！", "changes": { "health": 5, "body": 2 } },
+      { "image": "03", "text": "新たな武術の流派を創設し、武神として崇められた！", "changes": { "health": 8, "body": 4 } },
+      { "image": "03", "text": "王位を継承し、武力による統治で国を繁栄させた！", "changes": { "health": 5, "body": 4 } }
+    ]
+  }
+}

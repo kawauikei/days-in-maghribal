@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "魔導書の整理を行い、基礎的な術式を学んだ。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "静かな部屋で瞑想し、集中力を高めた。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "薬草の調合を手伝い、魔法薬の知識を得た。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "先輩魔導師の実験を見学し、魔力制御のコツを掴んだ。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "塔の掃除中に不思議な文字を見つけ、古代語を少し覚えた。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "使い魔の世話をし、魔法生物との接し方を学んだ。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "初級魔法の練習を行い、小さな光を灯せるようになった。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "魔法陣の修復を手伝い、幾何学的な美しさに触れた。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "夜通し星を観察し、天体の運行と魔力の関係を知った。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "古い巻物を巻き直し、歴史の一端に触れた。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "魔法道具の磨き上げを行い、魔力の通りを良くした。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "元素の講義を受け、世界の構成要素について理解を深めた。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "精神統一の訓練を行い、雑念を払う術を身につけた。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "魔力計の数値を記録し、データの重要性を学んだ。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "図書館の司書を手伝い、希少な本を閲覧する機会を得た。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "魔法触媒の素材を集め、自然の中の魔力を感じた。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "結界の点検に同行し、防衛魔法の基礎を知った。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "ルーン文字の練習をし、魔力を込める感覚を養った。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "瞑想中に不思議な声を聞き、直感が鋭くなった気がした。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "朝露を集める仕事をし、浄化の作用について学んだ。", "changes": { "magic": 1, "mind": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "魔力酔いを起こし、ひどい頭痛に襲われた。", "changes": { "magic": -2, "mind": -1 } },
+      { "image": "02", "text": "瞑想中に居眠りをしてしまい、教官に叱られた。", "changes": { "magic": -2, "mind": -1 } },
+      { "image": "02", "text": "調合を間違え、実験室に悪臭を充満させてしまった。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "呪文を噛んでしまい、恥ずかしい思いをした。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "古い本を破いてしまい、修復に追われた。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "使い魔に逃げられ、塔中を走り回った。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "魔法陣を書き間違え、ボヤ騒ぎを起こしかけた。", "changes": { "magic": -2, "mind": -1 } },
+      { "image": "02", "text": "集中力が続かず、何も得られないまま時間が過ぎた。", "changes": { "magic": -1, "mind": -1 } },
+      { "image": "02", "text": "夜更かしが祟って、講義中に寝てしまった。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "魔力枯渇を起こし、しばらく動けなくなった。", "changes": { "magic": -2, "mind": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "古い文献から忘れられた呪文の一節を発見した！", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "03", "text": "瞑想中に深いトランス状態に入り、魔力の奔流を感じた！", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "03", "text": "実験が大成功し、予期せぬ新しい効果を発見した！", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "03", "text": "使い魔と心が通じ合い、言葉を使わずに意思疎通できた！", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "03", "text": "難解な古代語を直感的に解読し、周囲を驚かせた！", "changes": { "magic": 1, "mind": 1 } }
+    ]
+  }
+}

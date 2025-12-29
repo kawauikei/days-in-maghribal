@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "下位の試合に出場し、実戦経験を積んだ。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "観客を沸かせる戦いを見せ、注目を浴びた。", "changes": { "body": 2, "fame": 1 } },
+      { "image": "01", "text": "武器の整備を念入りに行い、万全の状態で挑んだ。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "対戦相手の研究をし、弱点を見抜いた。", "changes": { "body": 2 } },
+      { "image": "01", "text": "控え室で精神統一を行い、プレッシャーに打ち勝った。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "負傷した闘士に応急処置をし、感謝された。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "観客席のゴミ拾いをし、運営から褒められた。", "changes": { "body": 1 } },
+      { "image": "01", "text": "先輩闘士のスパーリングパートナーを務め、技を盗んだ。", "changes": { "body": 2 } },
+      { "image": "01", "text": "賭け試合の誘いを断り、潔白を示した。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "勝利者インタビューで謙虚に答え、好感度を上げた。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "闘技場の歴史を学び、誇りを持った。", "changes": { "body": 1 } },
+      { "image": "01", "text": "リングの感触を確かめ、足運びを調整した。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "対戦相手と健闘を称え合い、友情が芽生えた。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "野次にも動じず、冷静さを保った。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "自分のファイトマネーで新しい武具を買った。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "子供たちにサインを求められ、快く応じた。", "changes": { "body": 1 } },
+      { "image": "01", "text": "勝利の祝杯を挙げ、仲間と喜びを分かち合った。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "敗北から学び、新たな戦法を考案した。", "changes": { "body": 2 } },
+      { "image": "01", "text": "怪我の回復に専念し、体を休めた。", "changes": { "body": 1, "fame": 1 } },
+      { "image": "01", "text": "朝のロードワークを欠かさず行い、スタミナをつけた。", "changes": { "body": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "惨敗を喫し、観客から罵声を浴びた。", "changes": { "body": -2, "fame": -1 } },
+      { "image": "02", "text": "試合中に足がつり、無様な姿を晒した。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "武器の手入れを怠り、試合中に破損させてしまった。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "相手の挑発に乗り、冷静さを欠いた。", "changes": { "body": -1 } },
+      { "image": "02", "text": "賭け試合の八百長を疑われ、審問を受けた。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "怪我が完治しないまま出場し、悪化させてしまった。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "緊張で体が動かず、一方的に攻撃された。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "ルール違反をしてしまい、反則負けになった。", "changes": { "body": -1, "fame": -1 } },
+      { "image": "02", "text": "対戦相手を侮り、足元をすくわれた。", "changes": { "body": -1 } },
+      { "image": "02", "text": "勝利に驕り、練習をサボってしまった。", "changes": { "body": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "強敵相手に奇跡的な逆転勝利を収めた！", "changes": { "body": 1, "fame": 1 } },
+      { "image": "03", "text": "観客総立ちの熱戦を演じ、多額のチップをもらった！", "changes": { "body": 1, "fame": 1 } },
+      { "image": "03", "text": "卑怯な手を使う相手を正々堂々と打ち破った！", "changes": { "body": 1, "fame": 1 } },
+      { "image": "03", "text": "新人王トーナメントで優勝し、トロフィーを得た！", "changes": { "body": 1, "fame": 1 } },
+      { "image": "03", "text": "伝説の闘士から才能を認められ、弟子入りを許された！", "changes": { "body": 1 } }
+    ]
+  }
+}

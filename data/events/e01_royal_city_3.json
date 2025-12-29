@@ -1,0 +1,45 @@
+{
+  "veteran": {
+    "success": [
+      { "image": "01", "text": "王女の相談役として、的確な助言を行った。", "changes": { "fame": 5, "money": 3 } },
+      { "image": "01", "text": "各国の要人が集まる会議で議長を務め、停戦協定を結んだ。", "changes": { "fame": 6, "money": 2 } },
+      { "image": "01", "text": "大規模な都市開発プロジェクトを指揮し、街の景観を一変させた。", "changes": { "fame": 4, "money": 4 } },
+      { "image": "01", "text": "騎士団の演習を監修し、国軍の精強化に貢献した。", "changes": { "fame": 5, "body": 2 } },
+      { "image": "01", "text": "古代の遺跡調査を率い、失われた文明の技術を持ち帰った。", "changes": { "fame": 5, "money": 4 } },
+      { "image": "01", "text": "王立アカデミーで特別講義を行い、後進の育成に励んだ。", "changes": { "fame": 4, "mind": 3 } },
+      { "image": "01", "text": "国庫の危機を救うための経済政策を立案し、実行に移した。", "changes": { "fame": 5, "money": 3 } },
+      { "image": "01", "text": "隣国との同盟交渉をまとめ上げ、平和の礎を築いた。", "changes": { "fame": 6, "money": 2 } },
+      { "image": "01", "text": "凶悪な犯罪組織を壊滅させ、裏社会の英雄となった。", "changes": { "fame": 5, "money": 4 } },
+      { "image": "01", "text": "竜の襲撃から都を守り、守護者として崇められた。", "changes": { "fame": 7, "money": 2 } },
+      { "image": "01", "text": "最高裁判所の判事として、難解な事件に判決を下した。", "changes": { "fame": 5, "mind": 2 } },
+      { "image": "01", "text": "王宮の舞踏会で主役を務め、社交界の華となった。", "changes": { "fame": 6, "money": 1 } },
+      { "image": "01", "text": "新航路を開拓し、貿易による莫大な利益をもたらした。", "changes": { "fame": 5, "money": 6 } },
+      { "image": "01", "text": "聖女と共に祈りを捧げ、国中に希望を与えた。", "changes": { "fame": 7, "mind": 1 } },
+      { "image": "01", "text": "伝説の鍛冶師と協力し、国宝級の武具を修復した。", "changes": { "fame": 4, "money": 4 } },
+      { "image": "01", "text": "大洪水の危機に際し、的確な避難指示で多くの民を救った。", "changes": { "fame": 6, "mind": 2 } },
+      { "image": "01", "text": "魔王軍の残党を掃討し、国境の安全を確保した。", "changes": { "fame": 5, "body": 3 } },
+      { "image": "01", "text": "私財を投じて学校を建設し、教育の普及に貢献した。", "changes": { "fame": 8, "money": -5 } },
+      { "image": "01", "text": "王位継承問題に介入し、正当な後継者を支持した。", "changes": { "fame": 7, "money": 3 } },
+      { "image": "01", "text": "自らの銅像が広場に建てられ、市民から喝采を浴びた。", "changes": { "fame": 8 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "政策の失敗により、市民の暴動を招いてしまった。", "changes": { "fame": -8, "money": -3 } },
+      { "image": "02", "text": "重要な同盟を破棄され、国際的な孤立を招いた。", "changes": { "fame": -7, "money": -4 } },
+      { "image": "02", "text": "強大な魔物の封印を解いてしまい、都に危機をもたらした。", "changes": { "fame": -9, "money": -2 } },
+      { "image": "02", "text": "政敵の罠にはまり、一時的に失脚した。", "changes": { "fame": -6, "money": -5 } },
+      { "image": "02", "text": "慢心から油断し、若手の台頭を許してしまった。", "changes": { "fame": -5 } },
+      { "image": "02", "text": "過去のスキャンダルが露見し、名声に傷がついた。", "changes": { "fame": -7 } },
+      { "image": "02", "text": "無理な改革を強行し、貴族たちの反感を買った。", "changes": { "fame": -6, "money": -3 } },
+      { "image": "02", "text": "予言の解釈を間違え、無駄な備えをしてしまった。", "changes": { "fame": -4, "money": -5 } },
+      { "image": "02", "text": "愛弟子に裏切られ、心に深い傷を負った。", "changes": { "fame": -5, "mind": -3 } },
+      { "image": "02", "text": "老いを感じ、引退を考えるようになった。", "changes": { "fame": -3, "body": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "歴史に残る大偉業を成し遂げ、生ける伝説となった！", "changes": { "fame": 10, "money": 5 } },
+      { "image": "03", "text": "宰相への就任を打診され、国の実権を握る立場となった！", "changes": { "fame": 10, "money": 8 } },
+      { "image": "03", "text": "全世界を巻き込む危機を救い、救世主として歴史に名を刻んだ！", "changes": { "fame": 12, "money": 3 } },
+      { "image": "03", "text": "一代で財閥を築き上げ、経済界の王として君臨した！", "changes": { "fame": 8, "money": 15 } },
+      { "image": "03", "text": "長年の宿敵と和解し、真の平和をもたらした！", "changes": { "fame": 10, "mind": 5 } }
+    ]
+  }
+}

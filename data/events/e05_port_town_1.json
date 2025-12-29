@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "港の荷揚げを手伝い、日銭を稼いだ。", "changes": { "money": 1 } },
+      { "image": "01", "text": "船乗りたちの武勇伝を聞き、見聞を広めた。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "市場で新鮮な魚を仕入れ、安く手に入れた。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "異国の言葉を少し覚え、簡単な挨拶ができるようになった。", "changes": { "money": 2 } },
+      { "image": "01", "text": "壊れた漁網を修繕し、漁師から感謝された。", "changes": { "money": 1 } },
+      { "image": "01", "text": "酒場の給仕を手伝い、酔っ払いの相手をした。", "changes": { "money": 1 } },
+      { "image": "01", "text": "倉庫の在庫管理を行い、几帳面さを評価された。", "changes": { "money": 2 } },
+      { "image": "01", "text": "迷子のカモメを保護し、海辺に放した。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "潮の満ち引きを観察し、天候の変化を予測した。", "changes": { "money": 2 } },
+      { "image": "01", "text": "古い地図を模写し、地理に詳しくなった。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "船の甲板掃除をし、ピカピカに磨き上げた。", "changes": { "money": 2 } },
+      { "image": "01", "text": "貝殻を集めてアクセサリーを作り、露店で売った。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "波止場で釣り糸を垂れ、のんびりとした時間を過ごした。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "灯台守の手伝いをし、遠くの海を見渡した。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "密航者を見つけ出し、警備兵に通報した。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "腐りかけた木箱を運び出し、衛生環境を改善した。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "船の出港を見送り、旅への憧れを抱いた。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "珍しい香辛料の香りを嗅ぎ、異国情緒を感じた。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "海賊の話を聞き、冒険心を刺激された。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "夕日が海に沈むのを見て、明日への活力を得た。", "changes": { "money": 1, "fame": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "偽物の金貨を掴まされ、損失を出した。", "changes": { "money": -1 } },
+      { "image": "02", "text": "船酔いしてしまい、甲板でダウンした。", "changes": { "money": -1 } },
+      { "image": "02", "text": "魚の生臭さが服に染みつき、取れなくなった。", "changes": { "money": -1 } },
+      { "image": "02", "text": "酔っ払いに絡まれ、喧嘩沙汰になった。", "changes": { "money": -1 } },
+      { "image": "02", "text": "重い荷物を足に落とし、痛い思いをした。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "カモメに弁当を盗られ、お腹を空かせた。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "潮が満ちてきて、足元が濡れてしまった。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "地図を読み間違え、倉庫街で迷子になった。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "灯台の階段を踏み外し、転げ落ちそうになった。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "怪しい商人の儲け話に乗り、騙されかけた。", "changes": { "money": -2, "fame": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "沈没船から引き揚げられた宝の鑑定を任された！", "changes": { "money": 1, "fame": 1 } },
+      { "image": "03", "text": "市場で掘り出し物を見つけ、高値で売れた！", "changes": { "money": 1, "fame": 1 } },
+      { "image": "03", "text": "船長に気に入られ、次回の航海に誘われた！", "changes": { "money": 1, "fame": 1 } },
+      { "image": "03", "text": "異国の要人を助け、礼金を貰った！", "changes": { "money": 1 } },
+      { "image": "03", "text": "巨大なカジキを釣り上げ、港中の話題になった！", "changes": { "money": 1 } }
+    ]
+  }
+}

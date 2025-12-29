@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "実戦形式の魔法演習を行い、詠唱速度を短縮した。", "changes": { "magic": 3, "mind": 2 } },
+      { "image": "01", "text": "後輩の指導役を任され、教えることで基礎を見直した。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "中級魔法薬の調合に成功し、ギルドに納品した。", "changes": { "magic": 2, "mind": 2 } },
+      { "image": "01", "text": "塔の外壁補修に参加し、物理干渉魔法の腕を磨いた。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "夜間の警備当番を務め、微細な魔力の揺らぎを感知した。", "changes": { "magic": 3, "mind": 1 } },
+      { "image": "01", "text": "古い魔道具の修理を依頼され、構造を解析して直した。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "属性魔法の相性について研究し、応用力を高めた。", "changes": { "magic": 3, "mind": 1 } },
+      { "image": "01", "text": "召喚術の基礎訓練を行い、小動物型の使い魔と契約した。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "魔力枯渇からの回復訓練を行い、持久力を向上させたた。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "他部門との合同実験に参加し、視野を広げた。", "changes": { "magic": 3 } },
+      { "image": "01", "text": "野外調査に同行し、自然界の魔力スポットを採取した。", "changes": { "magic": 1, "mind": 2 } },
+      { "image": "01", "text": "対抗呪文（カウンター）の練習をし、防御技術を高めた。", "changes": { "magic": 2, "mind": 2 } },
+      { "image": "01", "text": "魔導書の写本を作成し、知識を定着させた。", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "01", "text": "精神感応の実験に参加し、非言語コミュニケーションを学んだ。", "changes": { "magic": 1 } },
+      { "image": "01", "text": "簡易結界の展開訓練を行い、野営地の安全を確保した。", "changes": { "magic": 2, "mind": 2 } },
+      { "image": "01", "text": "魔法陣の設計図を引き、効率的な魔力回路を考案した。", "changes": { "magic": 1, "mind": 1 } },
+      { "image": "01", "text": "元素精霊との対話を試み、僅かな反応を得た。", "changes": { "magic": 3, "mind": 1 } },
+      { "image": "01", "text": "飛行魔法の制御訓練を行い、安定した浮遊が可能になった。", "changes": { "magic": 2 } },
+      { "image": "01", "text": "魔力を使った暗号通信を習得し、情報の秘匿性を学んだ。", "changes": { "magic": 3, "mind": 2 } },
+      { "image": "01", "text": "錬金術の基礎実験を行い、物質変化のプロセスを理解した。", "changes": { "magic": 3 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "演習中に呪文が暴発し、軽い火傷を負った。", "changes": { "magic": -2, "mind": -1 } },
+      { "image": "02", "text": "後輩への指導が上手くいかず、自信を喪失した。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "調合の分量を間違え、高価な素材を無駄にした。", "changes": { "magic": -3, "mind": -1 } },
+      { "image": "02", "text": "修理したはずの魔道具が、すぐにまた壊れてしまった。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "召喚した使い魔が言うことを聞かず、手を焼いた。", "changes": { "magic": -2 } },
+      { "image": "02", "text": "野外調査で道に迷い、無駄な体力を消耗した。", "changes": { "magic": -1 } },
+      { "image": "02", "text": "写本の文字を書き損じ、最初からやり直しになった。", "changes": { "magic": -1, "mind": -2 } },
+      { "image": "02", "text": "飛行魔法の制御を誤り、高いところから落ちかけた。", "changes": { "magic": -3, "mind": -1 } },
+      { "image": "02", "text": "暗号の解読に失敗し、重要な連絡を見落とした。", "changes": { "magic": -3, "mind": -2 } },
+      { "image": "02", "text": "錬金術の実験で異臭騒ぎを起こし、部屋を封鎖された。", "changes": { "magic": -2, "mind": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "複雑な術式を一瞬で構築し、教官から絶賛された！", "changes": { "magic": 3 } },
+      { "image": "03", "text": "魔力消費を極限まで抑えた、効率的な魔法運用法を編み出した！", "changes": { "magic": 2, "mind": 1 } },
+      { "image": "03", "text": "野生の精霊に気に入られ、力を貸してくれるようになった！", "changes": { "magic": 3, "mind": 2 } },
+      { "image": "03", "text": "改良した魔道具が予想以上の性能を発揮し、表彰された！", "changes": { "magic": 3, "mind": 1 } },
+      { "image": "03", "text": "難解な魔導書の隠された意味を読み解き、新たな知見を得た！", "changes": { "magic": 4, "mind": 2 } }
+    ]
+  }
+}

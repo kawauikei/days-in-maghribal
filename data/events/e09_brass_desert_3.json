@@ -1,0 +1,45 @@
+{
+  "veteran": {
+    "success": [
+      { "image": "01", "text": "荒野の砂の中に隠された、古代王国の王墓から莫大な財宝を掘り出した。", "changes": { "money": 4, "mind": 3 } },
+      { "image": "01", "text": "地平線の果てに見える世界の真理を悟り、何事にも動じぬ孤独な精神を得た。", "changes": { "money": 2, "mind": 3 } },
+      { "image": "01", "text": "砂漠全土の交易を支配し、巨万の富を築いた。", "changes": { "money": 6, "mind": 2 } },
+      { "image": "01", "text": "砂漠の緑化計画を成功させ、不毛の大地を楽園に変えた。", "changes": { "money": 4 } },
+      { "image": "01", "text": "古代の超文明を復活させ、その技術を独占した。", "changes": { "money": 3, "mind": 2 } },
+      { "image": "01", "text": "砂漠の民を統一し、新たな王国を建国した。", "changes": { "money": 4, "mind": 2 } },
+      { "image": "01", "text": "伝説の魔神を封印し、砂漠の守護者となった。", "changes": { "money": 2, "mind": 2 } },
+      { "image": "01", "text": "宇宙から飛来した隕石を回収し、未知の素材を手に入れた。", "changes": { "money": 4, "mind": 2 } },
+      { "image": "01", "text": "砂漠の地下に眠る巨大な魔力源を制御下に置いた。", "changes": { "money": 2, "mind": 4 } },
+      { "image": "01", "text": "あらゆる毒や病気を無効化する完全な肉体を得た。", "changes": { "money": 3, "mind": 2 } },
+      { "image": "01", "text": "未来を予知する力を得て、あらゆる危機を回避した。", "changes": { "money": 6, "mind": 3 } },
+      { "image": "01", "text": "砂漠の気候を自在に操り、意のままに雨を降らせた。", "changes": { "money": 3, "mind": 1 } },
+      { "image": "01", "text": "不老不死の秘法を発見し、永遠の命を手に入れた。", "changes": { "money": 5 } },
+      { "image": "01", "text": "異界の商人と取引し、この世に存在しない品を入手した。", "changes": { "money": 6, "mind": 2 } },
+      { "image": "01", "text": "砂漠の地下迷宮を完全攻略し、その主となった。", "changes": { "money": 2, "mind": 3 } },
+      { "image": "01", "text": "自身の銅像が砂漠の各地に建てられ、神として崇められた。", "changes": { "money": 4 } },
+      { "image": "01", "text": "世界中の富豪が集まるオークションを主催し、莫大な手数料を得た。", "changes": { "money": 4, "mind": 1 } },
+      { "image": "01", "text": "砂漠のリゾート地を開発し、世界的な観光名所にした。", "changes": { "money": 2, "mind": 2 } },
+      { "image": "01", "text": "古代の叡智を記した書物を出版し、ベストセラーとなった。", "changes": { "money": 6 } },
+      { "image": "01", "text": "引退後は空中庭園で優雅に暮らし、世俗を見下ろした。", "changes": { "money": 3, "mind": 2 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "流砂に呑まれ、今まで蓄えてきた全財産と生きる希望を失いかけた。", "changes": { "money": -5, "mind": -4 } },
+      { "image": "02", "text": "王墓の呪いを受け、悪夢にうなされ続けた。", "changes": { "money": -3, "mind": -2 } },
+      { "image": "02", "text": "交易ルートが戦争で遮断され、莫大な損失を出した。", "changes": { "money": -2, "mind": -1 } },
+      { "image": "02", "text": "緑化計画が失敗し、投資家からの信用を失った。", "changes": { "money": -6, "mind": -2 } },
+      { "image": "02", "text": "超文明の暴走を止められず、都市一つを消滅させてしまった。", "changes": { "money": -3, "mind": -2 } },
+      { "image": "02", "text": "王国の反乱分子に命を狙われ、疑心暗鬼に陥った。", "changes": { "money": -6, "mind": -2 } },
+      { "image": "02", "text": "魔神の封印が解けかけ、必死の攻防を強いられた。", "changes": { "money": -3 } },
+      { "image": "02", "text": "隕石の放射能で体調を崩し、療養生活を送った。", "changes": { "money": -6, "mind": -4 } },
+      { "image": "02", "text": "魔力源の制御に失敗し、自らの魔力を失いかけた。", "changes": { "money": -3, "mind": -3 } },
+      { "image": "02", "text": "予知能力が狂い、誤った判断を下してしまった。", "changes": { "money": -5, "mind": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "砂漠の民の王として迎えられ、無限の泉と黄金の都を継承した！", "changes": { "money": 7, "mind": 3 } },
+      { "image": "03", "text": "世界経済を裏で操るフィクサーとなり、影の支配者として君臨した！", "changes": { "money": 5, "mind": 3 } },
+      { "image": "03", "text": "神の領域に達した精神力で、現実を書き換える奇跡を起こした！", "changes": { "money": 5 } },
+      { "image": "03", "text": "時空を超えた取引を行い、未来の技術を手に入れた！", "changes": { "money": 5, "mind": 4 } },
+      { "image": "03", "text": "星の意志と対話し、この星の管理者としての資格を得た！", "changes": { "money": 6, "mind": 4 } }
+    ]
+  }
+}

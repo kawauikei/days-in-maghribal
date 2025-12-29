@@ -1,0 +1,45 @@
+{
+  "newcomer": {
+    "success": [
+      { "image": "01", "text": "市場の活気に圧倒されながらも、荷運びの手伝いを完遂した。", "changes": { "fame": 1, "money": 1 } },
+      { "image": "01", "text": "道に迷った旅行者を案内し、笑顔で感謝された。", "changes": { "fame": 2 } },
+      { "image": "01", "text": "路地裏の猫を助け、近所の老婆から飴をもらった。", "changes": { "money": 1 } },
+      { "image": "01", "text": "衛兵の巡回ルートを覚え、少しだけ街に詳しくなった。", "changes": { "fame": 1, "mind": 1 } },
+      { "image": "01", "text": "酒場の喧嘩を遠巻きに眺め、世渡りの術を学んだ。", "changes": { "money": 2 } },
+      { "image": "01", "text": "広場の噴水を掃除し、市民の憩いの場を守った。", "changes": { "fame": 2 } },
+      { "image": "01", "text": "パン屋の売り子を手伝い、焼き立てのパンを報酬にもらった。", "changes": { "money": 1, "health": 1 } },
+      { "image": "01", "text": "壊れた看板を直し、店主から感謝の言葉をかけられた。", "changes": { "fame": 1, "money": 1 } },
+      { "image": "01", "text": "落とし物を交番に届け、正直者として褒められた。", "changes": { "fame": 2, "money": 1 } },
+      { "image": "01", "text": "大道芸人のサクラをして、観衆を盛り上げた。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "朝市で新鮮な野菜を見極め、安く手に入れた。", "changes": { "money": 2 } },
+      { "image": "01", "text": "下町の子供たちと遊び、地域の情報を仕入れた。", "changes": { "fame": 1, "mind": 1 } },
+      { "image": "01", "text": "教会の鐘突きを手伝い、敬虔な気持ちになった。", "changes": { "fame": 1, "mind": 1 } },
+      { "image": "01", "text": "迷子のペットを探し出し、飼い主から小遣いをもらった。", "changes": { "fame": 1, "money": 1 } },
+      { "image": "01", "text": "街の清掃ボランティアに参加し、顔を覚えられた。", "changes": { "fame": 2 } },
+      { "image": "01", "text": "露店の店番を頼まれ、見事に商品を売り切った。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "水路のゴミ拾いを行い、衛生環境の改善に貢献した。", "changes": { "fame": 1, "money": 1 } },
+      { "image": "01", "text": "古本屋の整理を手伝い、珍しい知識に触れた。", "changes": { "money": 1, "mind": 1 } },
+      { "image": "01", "text": "祭りの準備を手伝い、提灯の飾り付けを行った。", "changes": { "fame": 1, "money": 1 } },
+      { "image": "01", "text": "配達の仕事を引き受け、最短ルートで駆け抜けた。", "changes": { "money": 2 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "人混みに酔ってしまい、路地裏でうずくまった。", "changes": { "health": -1 } },
+      { "image": "02", "text": "スリに財布を狙われ、必死に逃げ回った。", "changes": { "money": -2 } },
+      { "image": "02", "text": "不審者と間違われ、衛兵に職務質問された。", "changes": { "fame": -2 } },
+      { "image": "02", "text": "ボッタクリの店に入ってしまい、高い授業料を払った。", "changes": { "money": -3 } },
+      { "image": "02", "text": "地図を読み間違え、スラム街に迷い込んでしまった。", "changes": { "fame": -1, "mind": -1 } },
+      { "image": "02", "text": "馬車に泥を跳ねられ、服が台無しになった。", "changes": { "fame": -1, "money": -1 } },
+      { "image": "02", "text": "露店の商品をうっかり壊し、弁償することになった。", "changes": { "money": -2 } },
+      { "image": "02", "text": "変な勧誘に捕まり、貴重な時間を無駄にした。", "changes": { "money": -1, "mind": -1 } },
+      { "image": "02", "text": "腐った果物を食べてしまい、お腹を壊した。", "changes": { "health": -2 } },
+      { "image": "02", "text": "野良犬に追いかけられ、無様に転倒した。", "changes": { "fame": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "暴走する馬車を華麗に避け、子供を救出した！", "changes": { "fame": 3, "money": 1 } },
+      { "image": "03", "text": "スリの現行犯を取り押さえ、衛兵から表彰された！", "changes": { "fame": 2, "money": 2 } },
+      { "image": "03", "text": "火事の初期消火に成功し、街の被害を最小限に食い止めた！", "changes": { "fame": 4 } },
+      { "image": "03", "text": "隠されていた地下水道の入り口を発見し、冒険者ギルドに報告した！", "changes": { "fame": 2, "money": 3 } },
+      { "image": "03", "text": "偶然買った宝くじが当たり、臨時収入を得た！", "changes": { "money": 5 } }
+    ]
+  }
+}

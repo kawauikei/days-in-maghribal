@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "最前線の守備隊に配属され、実戦の緊張感を味わった。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "小隊長として部下を率い、統率力を磨いた。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "敵の偵察部隊を撃退し、要塞の安全を守った。", "changes": { "health": 1, "body": 2 } },
+      { "image": "01", "text": "難攻不落と言われる崖を登り、奇襲ルートを確認した。", "changes": { "health": 2, "body": 1 } },
+      { "image": "01", "text": "攻城兵器の運用訓練を行い、破壊力の凄まじさを知った。", "changes": { "health": 1, "body": 1 } },
+      { "image": "01", "text": "負傷した戦友を背負って撤退し、無事に帰還した。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "敵将との一騎打ちを制し、武名を高めた。", "changes": { "health": 1 } },
+      { "image": "01", "text": "夜襲を警戒して罠を張り、敵を捕縛した。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "補給線の護衛任務を完遂し、物資を届けた。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "要塞の弱点を指摘し、補強工事を指揮した。", "changes": { "health": 2, "body": 2 } },
+      { "image": "01", "text": "特殊部隊の選抜試験に合格し、過酷な任務に就いた。", "changes": { "health": 3, "body": 2 } },
+      { "image": "01", "text": "敵の暗号を解読し、作戦を事前に察知した。", "changes": { "health": 2 } },
+      { "image": "01", "text": "毒矢の雨を盾で防ぎきり、鉄壁の守りを見せた。", "changes": { "health": 2 } },
+      { "image": "01", "text": "捕虜の尋問に立ち会い、敵の内情を探った。", "changes": { "health": 3, "body": 2 } },
+      { "image": "01", "text": "荒野でのサバイバル訓練を行い、極限状態を生き抜いた。", "changes": { "health": 1, "body": 2 } },
+      { "image": "01", "text": "味方の士気を鼓舞し、劣勢を覆した。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "敵の陣地に潜入し、情報を持ち帰った。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "要塞の地下通路を探索し、隠された部屋を見つけた。", "changes": { "health": 3, "body": 1 } },
+      { "image": "01", "text": "新兵器のテストパイロットを務め、性能を引き出した。", "changes": { "health": 1 } },
+      { "image": "01", "text": "歴戦の勇士から奥義を伝授され、技を磨いた。", "changes": { "health": 1, "body": 1 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "敵の罠にかかり、一時的に捕虜になってしまった。", "changes": { "health": -3 } },
+      { "image": "02", "text": "部下への指示を誤り、混乱を招いてしまった。", "changes": { "health": -3, "body": -1 } },
+      { "image": "02", "text": "偵察任務で敵に見つかり、這う這うの体で逃げ帰った。", "changes": { "health": -2, "body": -1 } },
+      { "image": "02", "text": "攻城兵器が暴発し、軽傷を負った。", "changes": { "health": -2, "body": -2 } },
+      { "image": "02", "text": "一騎打ちで敗れ、プライドを傷つけられた。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "夜襲を見逃し、小規模な被害を出してしまった。", "changes": { "health": -1, "body": -1 } },
+      { "image": "02", "text": "護衛対象を守りきれず、減給処分を受けた。", "changes": { "health": -3, "body": -1 } },
+      { "image": "02", "text": "選抜試験でライバルに負け、悔しい思いをした。", "changes": { "health": -1, "body": -2 } },
+      { "image": "02", "text": "潜入任務で正体がバレかけ、冷や汗をかいた。", "changes": { "health": -2, "body": -2 } },
+      { "image": "02", "text": "奥義の習得に失敗し、体を痛めてしまった。", "changes": { "health": -2 } }
+    ],
+    "great": [
+      { "image": "03", "text": "敵の大軍を少数の部隊で足止めし、本隊の到着まで持ちこたえた！", "changes": { "health": 4, "body": 1 } },
+      { "image": "03", "text": "敵の総大将を討ち取り、戦局を一気にひっくり返した！", "changes": { "health": 4, "body": 2 } },
+      { "image": "03", "text": "要塞の崩落から多くの兵士を救い出し、英雄と称えられた！", "changes": { "health": 2, "body": 2 } },
+      { "image": "03", "text": "伝説の武器を使いこなし、鬼神の如き強さを見せた！", "changes": { "health": 3, "body": 2 } },
+      { "image": "03", "text": "単身で敵陣を突破し、重要機密を奪取した！", "changes": { "health": 2, "body": 2 } }
+    ]
+  }
+}

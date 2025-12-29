@@ -1,0 +1,45 @@
+{
+  "mid": {
+    "success": [
+      { "image": "01", "text": "大型商船の積荷を管理し、多額の手数料を得た。", "changes": { "money": 3, "fame": 2 } },
+      { "image": "01", "text": "港の有力者と渡り合い、有利な契約をまとめた。", "changes": { "money": 2 } },
+      { "image": "01", "text": "独自の交易ルートを開拓し、安定した利益を生み出した。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "海賊船を撃退し、商船団を守り抜いた。", "changes": { "money": 3, "fame": 1 } },
+      { "image": "01", "text": "異国の商人を通訳し、スムーズな取引を実現した。", "changes": { "money": 1, "fame": 2 } },
+      { "image": "01", "text": "倉庫街の顔役として、トラブルを未然に防いだ。", "changes": { "money": 3 } },
+      { "image": "01", "text": "新しい特産品をプロデュースし、ブームを作った。", "changes": { "money": 1, "fame": 2 } },
+      { "image": "01", "text": "船の修理ドックを運営し、技術力を高めた。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "嵐の中での操船技術を評価され、船長代理を任された。", "changes": { "money": 1, "fame": 2 } },
+      { "image": "01", "text": "密輸組織の摘発に協力し、街の治安維持に貢献した。", "changes": { "money": 2, "fame": 2 } },
+      { "image": "01", "text": "海洋生物の調査隊に参加し、貴重なデータを得た。", "changes": { "money": 1 } },
+      { "image": "01", "text": "港の祭りを主催し、多くの観光客を集めた。", "changes": { "money": 2, "fame": 2 } },
+      { "image": "01", "text": "灯台の改修工事を指揮し、海の安全を守った。", "changes": { "money": 1, "fame": 1 } },
+      { "image": "01", "text": "難破船の生存者を救出し、感謝状を贈られた。", "changes": { "money": 1 } },
+      { "image": "01", "text": "高級食材のオークションに参加し、目利きを発揮した。", "changes": { "money": 1, "fame": 2 } },
+      { "image": "01", "text": "船員たちの揉め事を仲裁し、信頼を得た。", "changes": { "money": 3 } },
+      { "image": "01", "text": "海図の誤りを修正し、新たな航路を発見した。", "changes": { "money": 2 } },
+      { "image": "01", "text": "異国の文化を取り入れた店を開き、繁盛させた。", "changes": { "money": 3, "fame": 1 } },
+      { "image": "01", "text": "投資家から資金を集め、新しい船を建造した。", "changes": { "money": 2, "fame": 1 } },
+      { "image": "01", "text": "伝説の海賊の隠し財宝についての情報を得た。", "changes": { "money": 2 } }
+    ],
+    "failure": [
+      { "image": "02", "text": "荷役中に不注意で高価な壺を割り、賠償を負った。", "changes": { "money": -1 } },
+      { "image": "02", "text": "契約の内容に不備があり、損害を出してしまった。", "changes": { "money": -1 } },
+      { "image": "02", "text": "海賊の奇襲を受け、積荷の一部を奪われた。", "changes": { "money": -1, "fame": -2 } },
+      { "image": "02", "text": "通訳のミスで、商談が決裂してしまった。", "changes": { "money": -3, "fame": -1 } },
+      { "image": "02", "text": "プロデュースした商品が全く売れず、在庫を抱えた。", "changes": { "money": -3 } },
+      { "image": "02", "text": "ドックの設備が故障し、修理に時間がかかった。", "changes": { "money": -1, "fame": -1 } },
+      { "image": "02", "text": "操船ミスで座礁しかけ、肝を冷やした。", "changes": { "money": -3, "fame": -2 } },
+      { "image": "02", "text": "密輸組織に目をつけられ、脅迫を受けた。", "changes": { "money": -2 } },
+      { "image": "02", "text": "祭りの準備が間に合わず、一部のイベントを中止した。", "changes": { "money": -2, "fame": -1 } },
+      { "image": "02", "text": "投資に失敗し、借金を背負いかけた。", "changes": { "money": -3, "fame": -1 } }
+    ],
+    "great": [
+      { "image": "03", "text": "失踪していた伝説の商船を発見し、莫大な謝礼と名声を得た！", "changes": { "money": 3 } },
+      { "image": "03", "text": "投資した事業が大成功し、配当金で潤った！", "changes": { "money": 4, "fame": 2 } },
+      { "image": "03", "text": "海賊王の右腕を捕縛し、賞金首を手に入れた！", "changes": { "money": 2, "fame": 1 } },
+      { "image": "03", "text": "王家御用達の商人に認定され、地位が向上した！", "changes": { "money": 2 } },
+      { "image": "03", "text": "幻の島を発見し、命名権を得た！", "changes": { "money": 3 } }
+    ]
+  }
+}
