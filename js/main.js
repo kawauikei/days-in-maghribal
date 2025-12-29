@@ -205,12 +205,9 @@ window.onload = async () => {
         }
     });
 
-    const savedB = localStorage.getItem('maghribal_boosts'); if(savedB) unlockedBoosts = JSON.parse(savedB);
-    const savedA = localStorage.getItem('maghribal_active_boosts'); if(savedA) activeBoosts = JSON.parse(savedA);
-    const savedI = localStorage.getItem('maghribal_active_impacts'); if(savedI) activeImpacts = JSON.parse(savedI);
-    const savedC = localStorage.getItem('maghribal_cleared_heroines'); if(savedC) clearedHeroines = JSON.parse(savedC);
-    
+    syncPersistentUnlocksFromStorage();
     initUI(); displayPastRecords(); renderBoostButtons();
+
 
     const clickOverlay = document.getElementById("click-overlay");
     if (clickOverlay) {
@@ -573,78 +570,96 @@ function showEnding() {
     statsContainer.style.flexWrap = "wrap";
     statsContainer.style.justifyContent = "center";
     setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
-    renderBoostButtons();
 }
 
 function retryGame() {
-  playSE(seFootstep);
-  const fade = document.getElementById('fade-overlay');
-  fade.classList.add('active');
+    playSE(seFootstep);
+    const fade = document.getElementById('fade-overlay');
+    fade.classList.add('active');
 
-  setTimeout(() => {
+    setTimeout(() => {
     resetRunToTitle();        // ★追加
     fade.classList.remove('active');
-  }, 800);
+    }, 800);
+    syncPersistentUnlocksFromStorage();
+    renderBoostButtons();
 }
 
 function resetRunToTitle() {
-  // --- 進行/フラグ類を初期化 ---
-  turn = 1;
-  isEventActive = false;
-  isGameStarted = false;
-  isTyping = false;
-  targetText = "";
-  messageQueue = [];
-  currentMsgIndex = 0;
-  pendingResultHtml = "";
-  consecutiveNormalEvents = 0;
-  lastEventWasHeroine = false;
-  isForcedHeroine = false;
-  isResultDisplayed = false;
-  lastEventContext = null;
-  lastEventResult = null;
+    // --- 進行/フラグ類を初期化 ---
+    turn = 1;
+    isEventActive = false;
+    isGameStarted = false;
+    isTyping = false;
+    targetText = "";
+    messageQueue = [];
+    currentMsgIndex = 0;
+    pendingResultHtml = "";
+    consecutiveNormalEvents = 0;
+    lastEventWasHeroine = false;
+    isForcedHeroine = false;
+    isResultDisplayed = false;
+    lastEventContext = null;
+    lastEventResult = null;
 
-  // --- ステータス初期化（タイトル表示用。開始時は startOP が上書きする）---
-  stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
-  statKeys.forEach(k => updateUI(k));
-  const turnEl = document.getElementById("turn-count");
-  if (turnEl) turnEl.innerText = turn;
+    // --- ステータス初期化（タイトル表示用。開始時は startOP が上書きする）---
+    stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
+    statKeys.forEach(k => updateUI(k));
+    const turnEl = document.getElementById("turn-count");
+    if (turnEl) turnEl.innerText = turn;
 
-  // --- ヒロイン進捗をリセット（周回の“今回プレイ分”だけ）---
-  heroines.forEach(h => { h.progress = 0; h.affection = 0; });
+    // --- ヒロイン進捗をリセット（周回の“今回プレイ分”だけ）---
+    heroines.forEach(h => { h.progress = 0; h.affection = 0; });
 
-  // --- ログ（今回プレイ分）をクリア。過去記録は localStorage 側なので残る ---
-  currentGameLog = [];
-  const log = document.getElementById("log-content");
-  if (log) log.innerHTML = "";
+    // --- ログ（今回プレイ分）をクリア。過去記録は localStorage 側なので残る ---
+    currentGameLog = [];
+    const log = document.getElementById("log-content");
+    if (log) log.innerHTML = "";
 
-  // --- セッション再開データは消す（showEnding と同じ挙動）---
-  localStorage.removeItem('maghribal_resume_data');
-  const contBtn = document.getElementById('continue-btn');
-  if (contBtn) contBtn.style.display = 'none';
+    // --- セッション再開データは消す（showEnding と同じ挙動）---
+    localStorage.removeItem('maghribal_resume_data');
+    const contBtn = document.getElementById('continue-btn');
+    if (contBtn) contBtn.style.display = 'none';
 
-  // --- 画面をタイトル状態へ戻す ---
-  document.getElementById("ed-screen")?.classList.add("hidden-screen");
-  document.getElementById("op-screen")?.classList.add("hidden-screen");
-  document.getElementById("title-screen")?.classList.remove("hidden-screen");
+    // --- 画面をタイトル状態へ戻す ---
+    document.getElementById("ed-screen")?.classList.add("hidden-screen");
+    document.getElementById("op-screen")?.classList.add("hidden-screen");
+    document.getElementById("title-screen")?.classList.remove("hidden-screen");
 
-  const topUI = document.getElementById("top-ui-container");
-  if (topUI) topUI.style.display = "none";
+    const topUI = document.getElementById("top-ui-container");
+    if (topUI) topUI.style.display = "none";
 
-  document.getElementById("background-layer")?.classList.remove("visible");
-  document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
+    document.getElementById("background-layer")?.classList.remove("visible");
+    document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
 
-  // --- オーバーレイ類を閉じる（開きっぱなし防止）---
-  const logOverlay = document.getElementById("log-overlay");
-  if (logOverlay) logOverlay.style.display = "none";
-  const resDiv = document.getElementById("result-display");
-  if (resDiv) { resDiv.style.opacity = "0"; resDiv.innerHTML = ""; }
+    // --- オーバーレイ類を閉じる（開きっぱなし防止）---
+    const logOverlay = document.getElementById("log-overlay");
+    if (logOverlay) logOverlay.style.display = "none";
+    const resDiv = document.getElementById("result-display");
+    if (resDiv) { resDiv.style.opacity = "0"; resDiv.innerHTML = ""; }
 
-  // --- 音をタイトルへ ---
-  try { bgmEd.pause(); bgmEd.currentTime = 0; } catch {}
-  try { bgmMap.pause(); bgmMap.currentTime = 0; } catch {}
-  try { bgmOp.currentTime = 0; bgmOp.play(); } catch {}
+    // --- 音をタイトルへ ---
+    try { bgmEd.pause(); bgmEd.currentTime = 0; } catch {}
+    try { bgmMap.pause(); bgmMap.currentTime = 0; } catch {}
+    try { bgmOp.currentTime = 0; bgmOp.play(); } catch {}
 
-  // --- マップ表示などの再計算（必要なら）---
-  try { updateMapState(); } catch {}
+    // --- マップ表示などの再計算（必要なら）---
+    try { updateMapState(); } catch {}
+    }
+    function syncPersistentUnlocksFromStorage() {
+        try {
+        const savedB = localStorage.getItem('maghribal_boosts');
+        if (savedB) unlockedBoosts = JSON.parse(savedB);
+
+        const savedA = localStorage.getItem('maghribal_active_boosts');
+        if (savedA) activeBoosts = JSON.parse(savedA);
+
+        const savedI = localStorage.getItem('maghribal_active_impacts');
+        if (savedI) activeImpacts = JSON.parse(savedI);
+
+        const savedC = localStorage.getItem('maghribal_cleared_heroines');
+        if (savedC) clearedHeroines = JSON.parse(savedC);
+        } catch (e) {
+        console.warn("Failed to sync persistent unlocks:", e);
+    }
 }
