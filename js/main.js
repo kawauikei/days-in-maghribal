@@ -458,6 +458,7 @@ function startOP() {
         // ... (以降のアニメーション処理はそのまま) ...
         let idx = 0; 
         const opDiv = document.getElementById("op-text"); 
+        opDiv.innerHTML = "";
         const showLine = () => { 
             opDiv.style.opacity = 0; 
             setTimeout(() => { 
