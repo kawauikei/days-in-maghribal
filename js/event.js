@@ -9,16 +9,21 @@ let isClosingEvent = false;
 
 // マップスポットクリック時の処理
 function handleSpotClick(el, idx) {
+    // ★ガード最優先: コンソール出力よりも先に判定（無駄な処理を一切させない）
+    if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn > maxTurn || isProcessingTurn || isClosingEvent) {
+        return;
+    }
+    
     console.log("--- handleSpotClick Start --- idx:", idx); 
+
+    // ★有効クリック確定後に消去
     document.getElementById('monologue-container').classList.remove('visible');
 
-    // ★修正: 終了処理中(isClosingEvent)もガード条件に追加
-    if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn > maxTurn || isProcessingTurn || isClosingEvent) return;
-    
     isEventActive = true; 
     isResultDisplayed = false; 
     isResultHidden = false;
-    isClosingEvent = false; // フラグ初期化
+    
+    // isClosingEvent = false; // ←【削除】ここでリセットする必要はありません（ガード通過時点でfalse確定のため）
     
     playSE(seFootstep); 
     
@@ -31,11 +36,12 @@ function handleSpotClick(el, idx) {
     const h = heroines[idx]; 
     h.events = gameAssets.heroines[h.file].events; 
 
+    // ... (以下、元のコードのまま変更なし) ...
     const avgStat = Object.values(stats).reduce((a, b) => a + b, 0) / 6;
     const assign = spotAssignments[idx];
     const anyM = heroines.some(hero => hero.progress >= 5);
     
-    // UI判定条件 (おすすめ判定)
+    // UI判定条件
     const statsValues = Object.values(stats);
     const minVal = Math.min(...statsValues);
     const maxVal = Math.max(...statsValues);
@@ -52,13 +58,11 @@ function handleSpotClick(el, idx) {
     let imgId = null; 
 
     // --- イベント抽選ロジック ---
-    
     let chance = isForcedHeroine ? 1.0 : (stats[assign.main] / 50) + (consecutiveNormalEvents * 0.1); 
     if (chance < 0.05) chance = 0.05; 
     if (lastEventWasHeroine && !isForcedHeroine) chance = 0;
     
     if (h.progress >= 5) { 
-        // 後日談
         isH = true; lastEventWasHeroine = true; stopBgm = true;
         dMsg = h.events[5] || h.afterMsg || "穏やかな時間が流れた。"; 
         bCh[assign.main] = 5; bCh[assign.sub] = 2; 
@@ -70,7 +74,6 @@ function handleSpotClick(el, idx) {
             localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
         }
     } else if (anyM && h.progress >= 1) { 
-        // 世間話
         isH = true; lastEventWasHeroine = true; stopBgm = true;
         dMsg = h.events[6] || h.chatMsg || "互いの近況を語り合い、穏やかな時間を過ごした。"; 
         bCh[assign.main] = 2; bCh[assign.sub] = 1; 
@@ -78,7 +81,6 @@ function handleSpotClick(el, idx) {
         imgId = "06";
         lastEventContext = { name: h.name, progress: 7 };
     } else if (Math.random() < chance) { 
-        // ヒロイン本編イベント
         const reqA = h.minAvg[Math.min(h.progress, 4)] || 0;
         const reqM = (h.progress + 1) * 8; 
         const reqS = (h.progress + 1) * 4;
@@ -91,16 +93,12 @@ function handleSpotClick(el, idx) {
             isH = false; out = 'hint';
             
             let mIdx = (h.progress >= 4) ? 2 : (h.progress >= 1 ? 1 : 0);
-            
-            // ヒント生成ロジック
             let dynamicHint = "";
 
             if (!isAvgOk) {
-                // ■平均値不足の場合
                 dMsg = h.lockAvgMsgs[mIdx];
                 dynamicHint = `||[Hint] <br>各地を巡り、全ステータスの【<span style="color:${statColors.average}">平均値</span>】を上げると物語が進展します。`;
             } else {
-                // ■個別ステータス不足の場合
                 dMsg = h.lockStatMsgs[mIdx];
                 if (!isMainOk && !isSubOk) {
                     const mainIcon = `<i class="fa-solid ${statConfig[assign.main].icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
@@ -123,7 +121,6 @@ function handleSpotClick(el, idx) {
             bCh[assign.sub] = (tierNum * 1) + buffBonus;
             if(isMotivationBuff) isMotivationBuff = false;
         } else {
-            // ヒロインイベント成功
             isH = true; lastEventWasHeroine = true; consecutiveNormalEvents = 0; stopBgm = true;
             dMsg = h.events[Math.min(h.progress, 4)]; 
             h.progress++; h.affection++; 
@@ -140,7 +137,6 @@ function handleSpotClick(el, idx) {
             }
         } 
     } else { 
-        // 訓練（スポットイベント）
         isH = false; lastEventWasHeroine = false; consecutiveNormalEvents++; 
         
         let weights = { failure: 35, success: 55, great: 10 };
@@ -173,9 +169,7 @@ function handleSpotClick(el, idx) {
 
             const bonus = isRecommended ? 1 : 0; 
             const buffBonus = isMotivationBuff ? 2 : 0;
-            
             bCh = {}; 
-
             if (out === 'success' || out === 'great') {
                 bCh[assign.main] = (ev.changes[assign.main] || 0) + bonus + buffBonus;
                 bCh[assign.sub] = (ev.changes[assign.sub] || 0) + bonus + buffBonus;
@@ -197,30 +191,23 @@ function handleSpotClick(el, idx) {
         }
     }
     
-    // おすすめスポットでの成長ボーナス(+1)
     if (isRecommended) { 
         for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
     }
-
-    // 地域ブースト
     const isBoostActive = activeImpacts.some((isActive, i) => isActive && heroineImpacts[i].target === idx);
-
     if (isBoostActive) {
         bCh[assign.main] = (bCh[assign.main] || 0) + 1;
         bCh[assign.sub] = (bCh[assign.sub] || 0) + 1;
     }
-
     const statsBefore = { ...stats };
     const originalChanges = { ...bCh }; 
     const overflowChanges = updateStatsWithOverflow(bCh); 
-
     for (const [key, bonus] of Object.entries(overflowChanges)) {
         bCh[key] = (bCh[key] || 0) + bonus;
     }
 
     applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoostActive);
 
-    // BGM制御
     if (stopBgm) {
         if (isH && h) {
             playHeroineBgmByFile(h.file);
@@ -763,10 +750,10 @@ function proceedText() {
     startTypeWriter(formattedText);
 }
 
+
 function closeEvent() { 
-    // ★重要: 既に終了処理が走っている場合は、何もしない（連打ガード）
     if (isClosingEvent) return;
-    isClosingEvent = true;
+    isClosingEvent = true; 
 
     const bgLayer = document.getElementById("background-layer");
     bgLayer.style.transform = "scale(1)"; 
@@ -787,35 +774,50 @@ function closeEvent() {
     }
   
     if (turn < maxTurn) { 
+        // --- 通常ターンの処理 ---
         turn++; 
         document.getElementById("turn-count").innerText = turn; 
         
-        updateMonologue(); 
+        updateMonologue(); // Promise待機不要
+        
         saveSessionData(); 
-
-        // ★変更: 定数は既にGameConfigを参照しているため、コード自体は同じでも待機時間が短縮されます
         setTimeout(() => { 
              document.querySelectorAll('.map-spot').forEach(s => { 
                  s.classList.add('spot-visible'); 
                  s.querySelector('.hint-text').classList.remove('selected-yellow'); 
              }); 
-
-             // 状態復帰
              isEventActive = false; 
              currentStatus = GameStatus.MAP;
              isProcessingTurn = false; 
-             isClosingEvent = false; // ★ここで初めて次のイベント受付を許可
+             isClosingEvent = false; 
              updateDebugUIState();
-
         }, SCENE_TRANSITION_MS + TRANSITION_BUFFER); 
     } 
     else { 
-        updateMonologue(); 
-        saveSessionData(); 
-        setTimeout(() => { 
-            document.getElementById('fade-overlay').classList.add('active'); 
-            bgmMap.pause(); 
-            setTimeout(showEnding, 3000); 
-        }, 3000);
+        saveSessionData();
+
+        let ended = false;
+        const force = () => {
+            if (ended) return;
+            ended = true;
+            document.getElementById('fade-overlay')?.classList.add('active');
+            try { bgmMap.pause(); } catch(e) {}
+            setTimeout(() => showEnding(), SCENE_TRANSITION_MS);
+        };
+
+        // フェイルセーフ（例：6秒）
+        const failSafeTimer = setTimeout(force, 6000);
+
+        updateMonologue().then(() => {
+            clearTimeout(failSafeTimer);
+
+            const readingBuffer = GameConfig.tempo.stillAnimDuration + GameConfig.tempo.transitionBuffer;
+            setTimeout(() => {
+            force();
+            }, readingBuffer);
+        }).catch((e) => {
+            console.error("ending sequence failed:", e);
+            force();
+        });
     }
 }

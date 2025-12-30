@@ -281,13 +281,16 @@ function saveSessionData() {
     }
 }
 
+/* --- js/main.js --- */
+
 function continueGame() {
     playSE(seOp); 
     const saved = localStorage.getItem('maghribal_resume_data');
     if (!saved) return;
+    
     try {
         const data = JSON.parse(saved);
-
+        // ... (読み込み処理) ...
         turn = data.turn;
         stats = data.stats;
         activeImpacts = data.activeImpacts || Array(12).fill(false);
@@ -306,140 +309,170 @@ function continueGame() {
 
         document.getElementById("title-screen").classList.add("hidden-screen");
         document.getElementById("top-ui-container").style.display = "flex";
+        
+        const sysUI = document.getElementById("system-ui-container");
+        if(sysUI) sysUI.classList.remove("hidden-screen");
+
         document.getElementById("background-layer").classList.add("visible");
         document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible'));
 
         statKeys.forEach(k => updateUI(k));
         document.getElementById("turn-count").innerText = turn;
-        document.getElementById("log-content").innerHTML = currentGameLog.join('');
+        const logContent = document.getElementById("log-content");
+        if (logContent) logContent.innerHTML = currentGameLog.join('');
         
-        // ★状態を「MAP」に更新
-        currentStatus = GameStatus.MAP; updateDebugUIState();
-        
-        updateMapState();
-
-        bgmOp.pause();
         bgmMap.currentTime = 0;
         playBgmFadeIn(bgmMap);
-        isGameStarted = true;
         
-        updateMonologue('resume', false); 
+        // ★修正: GameConfigの設定値を使ってフェードイン待機
+        setTimeout(() => {
+            currentStatus = GameStatus.MAP; 
+            updateDebugUIState();
+            isEventActive = false; 
+            isTyping = false;
+            
+            // ★追加: 念のため連打ガード解除
+            if (typeof isClosingEvent !== 'undefined') isClosingEvent = false;
+
+            isGameStarted = true;
+            
+            updateMapState();
+            updateMonologue('resume', false); 
+        }, GameConfig.tempo.fade);
+
     } catch(e) {
         console.error("Load failed:", e);
         alert("セーブデータの読み込みに失敗しました。");
     }
 }
 
+/* --- js/main.js (updateMonologue部分のみ上書き) --- */
+
 // モノローグ更新（メインループの一部）
 const updateMonologue = (type = 'random', saveToLog = true) => { 
-    const container = document.getElementById('monologue-container');
-    const textEl = container.querySelector('.monologue-text');
-    
-    let text = "";
-    let pool = [];
+    // ★修正: 処理の完了を待てるように Promise を返す
+    return new Promise((resolve) => {
+        try {
+        const container = document.getElementById('monologue-container');
+        if (!container) { resolve(); return; }
 
-    if (type === 'resume') { 
-        text = "……さて、旅の続きを始めよう。"; 
-    } else if (type === 'start') {
-        pool = monologueData.start;
-    } else if (lastEventContext) { 
-        const { name, progress } = lastEventContext;
+        const textEl = container.querySelector('.monologue-text');
+        if (!textEl) { resolve(); return; }
         
-        let targetIndex = 0;
-        if (progress === 7) {
-            targetIndex = 6; // 世間話用モノローグ
-        } else if (progress === 6) {
-            targetIndex = 5; // 後日談用モノローグ
-        } else {
-            targetIndex = Math.min(progress - 1, 4); // 通常イベント(1-5回目)
-        }
+        let text = "";
+        let pool = [];
 
-        if (heroineReactions[name] && heroineReactions[name][targetIndex]) {
-            text = heroineReactions[name][targetIndex];
+        if (type === 'resume') { 
+            text = "……さて、旅の続きを始めよう。"; 
+        } else if (type === 'start') {
+            pool = monologueData.start;
+        } else if (lastEventContext) { 
+            const { name, progress } = lastEventContext;
+            let targetIndex = 0;
+            if (progress === 7) targetIndex = 6; 
+            else if (progress === 6) targetIndex = 5; 
+            else targetIndex = Math.min(progress - 1, 4); 
+
+            if (heroineReactions[name] && heroineReactions[name][targetIndex]) {
+                text = heroineReactions[name][targetIndex];
+            } else {
+                pool = monologueData.success;
+            }
+            lastEventContext = null;
         } else {
-            pool = monologueData.success;
-        }
-        lastEventContext = null;
-    } else {
-        // 汎用モノローグの抽選
-        const maxStats = statKeys.filter(k => stats[k] >= 50);
-        if (maxStats.length > 0 && Math.random() < 0.3) { 
-            pool = monologueData.stat_max; 
-        } 
-        else if (lastEventResult && Math.random() < 0.7) {
-            const resKey = (lastEventResult === 'great_success' || lastEventResult === 'great') ? 'great' : lastEventResult;
-            pool = monologueData[resKey] || monologueData.failure;
-            lastEventResult = null;
-        }
-        else if (Math.random() < 0.4) { 
-            const unmetHeroines = heroines.filter(h => h.progress === 0);
-            if (unmetHeroines.length > 0 && Math.random() < 0.5) {
-                const target = unmetHeroines[Math.floor(Math.random() * unmetHeroines.length)];
-                const originalIdx = heroines.indexOf(target);
-                if (originalIdx !== -1) {
-                    text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
+            // 汎用モノローグの抽選（変更なし）
+            const maxStats = statKeys.filter(k => stats[k] >= 50);
+            if (maxStats.length > 0 && Math.random() < 0.3) { 
+                pool = monologueData.stat_max; 
+            } else if (lastEventResult && Math.random() < 0.7) {
+                const resKey = (lastEventResult === 'great_success' || lastEventResult === 'great') ? 'great' : lastEventResult;
+                pool = monologueData[resKey] || monologueData.failure;
+                lastEventResult = null;
+            } else if (Math.random() < 0.4) { 
+                const unmetHeroines = heroines.filter(h => h.progress === 0);
+                if (unmetHeroines.length > 0 && Math.random() < 0.5) {
+                    const target = unmetHeroines[Math.floor(Math.random() * unmetHeroines.length)];
+                    const originalIdx = heroines.indexOf(target);
+                    if (originalIdx !== -1) text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
+                } else {
+                    pool = monologueData.hint_weak;
                 }
             } else {
-                pool = monologueData.hint_weak;
+                if (turn < 5) pool = monologueData.progress_low;
+                else if (turn < 15) pool = monologueData.progress_mid;
+                else pool = monologueData.progress_high;
             }
         }
-        else {
-            if (turn < 5) pool = monologueData.progress_low;
-            else if (turn < 15) pool = monologueData.progress_mid;
-            else pool = monologueData.progress_high;
-        }
-    }
 
-    if (!text) {
-        if (!pool || pool.length === 0) {
-            pool = monologueData.progress_mid;
+        if (!text) {
+            if (!pool || pool.length === 0) pool = monologueData.progress_mid;
+            text = pool[Math.floor(Math.random() * pool.length)];
         }
-        text = pool[Math.floor(Math.random() * pool.length)];
-    }
 
-    if (saveToLog) {
-        currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
-        const logContent = document.getElementById("log-content");
-        if (logContent) {
-            logContent.innerHTML = currentGameLog.join('');
+        if (saveToLog) {
+            currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
+            const logContent = document.getElementById("log-content");
+            if (logContent) logContent.innerHTML = currentGameLog.join('');
         }
-    }
 
-    textEl.innerHTML = "";
-    container.style.display = 'flex';
-    container.classList.remove('visible');
-    void container.offsetWidth; 
-    container.classList.add('visible');
-    
-    clearInterval(monologueInterval);
-    let i = 0;
-    monologueInterval = setInterval(() => {
-        textEl.textContent += text.charAt(i);
-        i++;
-        if (i >= text.length) clearInterval(monologueInterval);
-    }, 50);
+        textEl.innerHTML = "";
+        container.style.display = 'flex';
+        container.classList.remove('visible');
+        void container.offsetWidth; 
+        container.classList.add('visible');
+        
+        // ★修正: 文字送り完了後に resolve() を呼ぶ
+        if (monologueInterval) clearInterval(monologueInterval);
+
+        let i = 0;
+        monologueInterval = setInterval(() => {
+            textEl.textContent += text.charAt(i);
+            i++;
+            if (i >= text.length) {
+            clearInterval(monologueInterval);
+            resolve();
+            }
+        }, 50);
+
+        } catch (e) {
+        console.error("updateMonologue failed:", e);
+        resolve(); // ←これが重要（20ターン目で止まらない）
+        }
+    });
 };
+
 /**
  * ゲーム本編を開始する（タイトルボタンから呼び出し）
  */
+/* --- js/main.js --- */
+
 function startOP() { 
     // ★状態を「OP」に更新
-    currentStatus = GameStatus.OP; updateDebugUIState();
-    
+    currentStatus = GameStatus.OP; 
+    updateDebugUIState();
+
     seOp.currentTime = 0; seOp.play(); 
     resizeGameContainer(); 
     currentGameLog = []; 
-    document.getElementById("log-content").innerHTML = ""; 
+    const logContent = document.getElementById("log-content");
+    if (logContent) logContent.innerHTML = ""; 
     
+    // ステータス初期化
     statKeys.forEach(k => { 
-        // 初期値計算 (Boost適用なら18、そうでなければ3)
         stats[k] = activeBoosts[k] ? 18 : 3; 
         updateUI(k); 
     });
     
     bgmOp.pause(); bgmOp.currentTime = 0; bgmOp.play(); 
+    
     document.getElementById("title-screen").classList.add("hidden-screen"); 
     
+    // システムUI(ヘルプ等)もOP中は隠す
+    const sysUI = document.getElementById("system-ui-container");
+    if(sysUI) sysUI.classList.add("hidden-screen");
+    
+    // ★修正: GameConfig.tempo.fade (300ms) を使用してフェードインを待機
+    // 元の500ms(固定)を廃止
     setTimeout(() => { 
         document.getElementById("op-screen").classList.remove("hidden-screen"); 
 
@@ -462,7 +495,7 @@ function startOP() {
             setTimeout(() => { 
                 opDiv.innerHTML = opLines[idx]; 
                 opDiv.style.opacity = 1; 
-            }, 400); 
+            }, 400); // テキスト演出時間は一旦固定(演出意図として維持)
         }; 
         
         showLine(); 
@@ -473,25 +506,34 @@ function startOP() {
             if (idx < opLines.length) {
                 showLine(); 
             } else { 
+                // --- OP終了処理 ---
                 document.getElementById("op-screen").classList.add("hidden-screen"); 
+                
                 document.getElementById("top-ui-container").style.display = "flex"; 
+                if(sysUI) sysUI.classList.remove("hidden-screen");
+
                 document.getElementById("background-layer").classList.add("visible"); 
                 
                 bgmOp.pause(); 
                 bgmMap.currentTime = 0; 
                 playBgmFadeIn(bgmMap);
                 
+                // ★修正: GameConfig.tempo.fade (300ms) を使用して画面遷移を待機
+                // 元の1000ms(固定)を廃止し、設定値と同期させる
                 setTimeout(() => { 
-                    // ★状態を「MAP」に更新
-                    currentStatus = GameStatus.MAP;updateDebugUIState();
+                    currentStatus = GameStatus.MAP; 
+                    updateDebugUIState();
+                    
+                    isEventActive = false; 
+                    isTyping = false;
                     
                     document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
                     updateMonologue('start');
                     isGameStarted = true; 
-                }, 1000); 
+                }, GameConfig.tempo.fade); 
             } 
         }; 
-    }, 500); 
+    }, GameConfig.tempo.fade); 
 }
 
 /**
@@ -689,7 +731,7 @@ function retryGame() {
 /* --- js/main.js --- */
 
 function resetRunToTitle() {
-    currentStatus = GameStatus.TITLE; // 状態をリセット
+    currentStatus = GameStatus.TITLE; 
     
     // --- 進行/フラグ類を初期化 ---
     turn = 1;
@@ -706,6 +748,9 @@ function resetRunToTitle() {
     isResultDisplayed = false;
     lastEventContext = null;
     lastEventResult = null;
+    
+    // ★追加: 2周目のために連打ガードフラグをここで確実に解除
+    if (typeof isClosingEvent !== 'undefined') isClosingEvent = false;
 
     // --- ステータス初期化 ---
     stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
@@ -733,22 +778,30 @@ function resetRunToTitle() {
     const topUI = document.getElementById("top-ui-container");
     if (topUI) topUI.style.display = "none";
 
-    // ★修正: モノローグの残留処理（クラスも削除して完全初期化）---
+    // --- モノローグ初期化 ---
     const monoContainer = document.getElementById("monologue-container");
     if (monoContainer) {
-        monoContainer.style.opacity = ""; // スタイル属性のリセット
-        monoContainer.className = "";     // ★追加: 付着したクラスを全て剥ぎ取る
+        monoContainer.style.opacity = ""; 
+        monoContainer.className = "";     
     }
-
     const monoText = document.querySelector(".monologue-text");
-    if (monoText) monoText.innerHTML = ""; // テキスト削除
+    if (monoText) monoText.innerHTML = ""; 
 
     // --- ヘルプ画面が開いたままなら閉じる ---
     const helpOverlay = document.getElementById("help-overlay");
     if (helpOverlay) helpOverlay.style.display = "none";
 
     document.getElementById("background-layer")?.classList.remove("visible");
-    document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
+    
+    // ★追加: マップスポットの「色（selected-yellow）」を確実に消す
+    document.querySelectorAll('.map-spot').forEach(s => {
+        s.classList.remove('spot-visible');
+        s.classList.remove('spot-disabled'); 
+        
+        // 子要素の hint-text から色クラスを削除
+        const hint = s.querySelector('.hint-text');
+        if (hint) hint.classList.remove('selected-yellow');
+    });
 
     const logOverlay = document.getElementById("log-overlay");
     if (logOverlay) logOverlay.style.display = "none";
