@@ -461,3 +461,22 @@ function finishTyping() {
     
     document.getElementById("page-cursor").classList.add("active");
 }
+
+// ヘルプ画面表示切り替え（ログと同じSE統一版）
+function toggleHelp() { 
+    const h = document.getElementById("help-overlay"); 
+    if (!h) return;
+    
+    // ★変更: 開く時も閉じる時も sePi を鳴らす
+    playSE(sePi); 
+
+    if (h.style.display === "flex") {
+        h.style.display = "none";
+    } else {
+        h.style.display = "flex";
+        
+        // 開いた時にスクロール位置をリセット
+        const win = document.getElementById("help-window");
+        if(win) win.scrollTop = 0;
+    }
+}
