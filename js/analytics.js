@@ -69,7 +69,9 @@ function sendGameEvent(eventName, params = {}) {
     // 念のため、イベントパラメータにもフェーズ情報を混ぜる（バックアップ用）
     const finalParams = {
         ...params,
-        phase: ANALYTICS_CONFIG.CURRENT_PHASE
+        phase: ANALYTICS_CONFIG.CURRENT_PHASE, // ← ここにカンマが必要です
+        debug_mode: ANALYTICS_CONFIG.IS_DEBUG
+        
     };
 
     // デバッグ表示
