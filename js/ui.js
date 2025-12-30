@@ -131,50 +131,6 @@ function getLocStatusHtml(idx) {
     return `<span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-shield-halved" style="color:#aaa; margin-right:4px;"></i> ${stars(sec)}</span><span style="display:flex; align-items:center; color:#fff; text-shadow:-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;"><i class="fa-solid fa-scale-balanced" style="color:#d4af37; margin-right:4px;"></i> ${stars(eco)}</span>`;
 }
 
-// ▼▼▼ 新規追加: テキスト進行関数 (TextEngine連携版) ▼▼▼
-function proceedText() {
-    const textBox = document.getElementById("message-text");
-    const cursor = document.getElementById("page-cursor");
-    
-    // 結果が表示済みなら、イベント終了処理へ
-    if (isResultDisplayed) {
-        cursor.classList.remove("active"); 
-        closeEvent();
-        return;
-    }
-
-    // 現在のHTMLを取得（あふれ判定用）
-    const currentHtml = textBox.innerHTML;
-
-    // エンジンから次の塊を取得
-    const result = TextEngine.getNext(currentHtml);
-
-    // 1. テキスト切れ（本文終了）の場合
-    if (result.isEnd) {
-        // 結果（成功/失敗など）を表示する
-        if (isResultHidden) { 
-            closeEvent(); 
-        } else {
-            cursor.classList.remove("active"); 
-            showFinalResult(); 
-            cursor.classList.add("active"); 
-        }
-        return;
-    }
-
-    // 2. リセット（改ページ）指示がある場合
-    if (result.reset) {
-        textBox.innerHTML = "";
-    }
-
-    // 3. テキストを表示（タグ装飾を適用するため formatGameText を通す）
-    const formattedText = formatGameText(result.text);
-    textBox.innerHTML += formattedText;
-
-    // カーソル点滅開始
-    cursor.classList.add("active"); 
-}
-
 // 最終結果（成功/失敗など）の表示
 function showFinalResult() { 
     playSE(sePage); 

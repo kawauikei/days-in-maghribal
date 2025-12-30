@@ -202,11 +202,11 @@ window.onload = async () => {
     syncPersistentUnlocksFromStorage();
     initUI(); displayPastRecords(); renderBoostButtons();
 
-    const clickOverlay = document.getElementById("click-overlay");
+const clickOverlay = document.getElementById("click-overlay");
     if (clickOverlay) {
         clickOverlay.onclick = function() {
-            // イベント進行中のみ反応
-            if (isEventActive) {
+            // ★修正: ステータスも厳密にチェック
+            if (isEventActive || currentStatus === GameStatus.EVENT) {
                 
                 // 処理中（連打）なら無視して終了
                 if (isProcessingTurn) return;
@@ -214,14 +214,14 @@ window.onload = async () => {
                 // 結果画面（イベント終了時）ならロックをかける
                 if (isResultDisplayed) {
                     isProcessingTurn = true;
-                    
-                    // 0.6秒後にロック解除（画面遷移のアニメーション時間を考慮）
-                    setTimeout(() => { 
-                        isProcessingTurn = false; 
-                    }, 600);
+                    // 0.6秒後にロック解除
+                    setTimeout(() => { isProcessingTurn = false; }, 600);
                 }
 
-                proceedText();
+                // 正しい（event.js側の）proceedTextを呼ぶ
+                if (typeof proceedText === 'function') {
+                    proceedText();
+                }
             }
         };
     }

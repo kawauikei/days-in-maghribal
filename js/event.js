@@ -2,15 +2,24 @@
 //  Event Logic (イベント進行・判定)
 // =========================================
 
+// ★定数・変数定義 (連打ガード・遷移時間管理用)
+const SCENE_TRANSITION_MS = 600; // 画面フェードのCSS設定(0.6s)に合わせる
+const TRANSITION_BUFFER = 200;   // 処理落ち等を考慮した安全マージン (計800ms)
+let isClosingEvent = false;      // イベント終了処理中フラグ
+
 // マップスポットクリック時の処理
 function handleSpotClick(el, idx) {
     console.log("--- handleSpotClick Start --- idx:", idx); 
     document.getElementById('monologue-container').classList.remove('visible');
 
-// ★ GameStatus.MAP中のみ反応するようにガードを強化
-if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn > maxTurn) return;
+    // ★修正: 終了処理中(isClosingEvent)もガード条件に追加
+    if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn > maxTurn || isProcessingTurn || isClosingEvent) return;
     
-    isEventActive = true; isResultDisplayed = false; isResultHidden = false;
+    isEventActive = true; 
+    isResultDisplayed = false; 
+    isResultHidden = false;
+    isClosingEvent = false; // フラグ初期化
+    
     playSE(seFootstep); 
     
     let stopBgm = false;
@@ -30,7 +39,6 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
     const statsValues = Object.values(stats);
     const minVal = Math.min(...statsValues);
     const maxVal = Math.max(...statsValues);
-    // ▼ ここで算出している isRecommended を最後まで渡す必要があります
     const isRecommended = (stats[assign.main] === minVal) && (stats[assign.main] < maxVal);
     
     let tierNum, tierKey; 
@@ -84,21 +92,16 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
             
             let mIdx = (h.progress >= 4) ? 2 : (h.progress >= 1 ? 1 : 0);
             
-            // ヒント生成ロジック (event.jsに集約)
+            // ヒント生成ロジック
             let dynamicHint = "";
 
             if (!isAvgOk) {
                 // ■平均値不足の場合
-                // heroines_data.js は純粋なテキストのみになったので、そのまま取得
                 dMsg = h.lockAvgMsgs[mIdx];
-                
-                // ここでヒント文を生成
                 dynamicHint = `||[Hint] <br>各地を巡り、全ステータスの【<span style="color:${statColors.average}">平均値</span>】を上げると物語が進展します。`;
             } else {
                 // ■個別ステータス不足の場合
                 dMsg = h.lockStatMsgs[mIdx];
-                
-                // 不足しているステータスに応じてヒントを分岐生成
                 if (!isMainOk && !isSubOk) {
                     const mainIcon = `<i class="fa-solid ${statConfig[assign.main].icon}" style="color:${statColors[assign.main]}; margin-right:4px;"></i>`;
                     const subIcon = `<i class="fa-solid ${statConfig[assign.sub].icon}" style="color:${statColors[assign.sub]}; margin-right:4px;"></i>`;
@@ -113,8 +116,6 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
                     dynamicHint = `||[Hint] <br>${icon}【<span style="color:${statColors[assign.sub]}">${config.name}</span>】を磨けば、彼女との距離が縮まるはずだ。`;
                 }
             }
-            
-            // 最後に物語とヒントを結合（改ページ付き）
             dMsg = dMsg + dynamicHint;
             
             const buffBonus = isMotivationBuff ? 3 : 0;
@@ -157,7 +158,6 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
             else outcomeType = "great";
         }
 
-        // おすすめ時の失敗回避
         if (isRecommended && outcomeType === "failure") outcomeType = "success";
 
         let pool = [];
@@ -202,8 +202,7 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
         for (let k in bCh) { if (bCh[k] > 0) bCh[k] += 1; } 
     }
 
-    // --- ここから追加仕様（地域ブースト） ---
-    // activeImpacts配列を走査し、「有効(true)」かつ「ターゲットが今の場所(idx)」であるものを探す
+    // 地域ブースト
     const isBoostActive = activeImpacts.some((isActive, i) => isActive && heroineImpacts[i].target === idx);
 
     if (isBoostActive) {
@@ -222,15 +221,11 @@ if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn 
     applyEventView(dMsg, bCh, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoostActive);
 
     // BGM制御
-    // - ヒロインイベント: マップBGM → ヒロインBGMへクロスフェード
-    // - 通常イベント: ヒロインBGMが鳴っていれば止めてマップへ戻す
     if (stopBgm) {
         if (isH && h) {
-            // bgmMap.pause() はしない（クロスフェード側が止める）
             playHeroineBgmByFile(h.file);
         }
     } else {
-        // 何かの理由でヒロインBGMが鳴っている場合は、マップへ戻す
         if (typeof switchToMapBgm === 'function') switchToMapBgm();
         else stopHeroineBgm();
     }
@@ -251,14 +246,12 @@ function updateStatsWithOverflow(changes) {
         let newVal = oldVal + val;
         
         if (newVal > 50) {
-            const actualGain = 50 - oldVal; // 実際に増えた量（例: 48->50なら2）
-            const overflow = newVal - 50;  // 溢れた量（例: 8-2=6）
+            const actualGain = 50 - oldVal; 
+            const overflow = newVal - 50;  
             
             stats[key] = 50;
             updateUI(key);
 
-            // ★ changes[key] を「実際に増えた量」に書き換える！
-            // これでログが [+8 -> +2] という表示の材料になります
             changes[key] = actualGain; 
             
             const bonus = Math.ceil(overflow / 2);
@@ -270,18 +263,14 @@ function updateStatsWithOverflow(changes) {
                 stats[minKey] = Math.min(50, stats[minKey] + bonus);
                 updateUI(minKey);
 
-                // overflowChanges には「おこぼれ」を入れる
                 overflowChanges[minKey] = (overflowChanges[minKey] || 0) + bonus;
-                //console.log(`[Overflow] ${key}から${minKey}に+${bonus}加算`);
             }
         } else {
             stats[key] = newVal;
             updateUI(key);
-            // changes[key] はそのまま（valと同じ）
         }
     }
     checkRankUpdate(); 
-    // デバッグ用に溢れ情報を返す（または広域変数にセットする）
     return overflowChanges;
 }
 
@@ -291,15 +280,13 @@ function getResultHtml(changes) {
         if (v === 0) return ""; 
         
         const config = statConfig[k] || {};
-        const statColor = statColors[k] || '#fff'; // パラメータ固有の色
+        const statColor = statColors[k] || '#fff'; 
         const icon = config.icon || '';
-        const name = config.name || k; // パラメータ名
+        const name = config.name || k; 
         
-        // 記号と色の判別：上昇は赤系（#ff4d4d）、下降は青系（#4d94ff）
         const mark = v > 0 ? '▲' : '▼';
         const markColor = v > 0 ? '#ff4d4d' : '#4d94ff';
         
-        // [アイコン] パラメータ名 [▲or▼] の形式で組み立て
         return `<span style="margin-right:12px; white-space:nowrap;">` +
                `<i class="fa-solid ${icon}" style="color:${statColor}"></i> ` +
                `<span style="color:${statColor}">${name}</span>` +
@@ -309,7 +296,6 @@ function getResultHtml(changes) {
     
     let html = parts.filter(p => p !== "").join('');
     
-    // グローバル変数をそのまま参照して、trueなら炎を足す
     if (isMotivationBuff) {
         html += `<i class="fa-solid fa-fire" style="color:#ffaa00; margin-left:8px; font-size: 1.2em; flex-shrink: 0;"></i>`;
     }
@@ -320,41 +306,19 @@ function getResultHtml(changes) {
 // =========================================
 //  Still (スチル) 演出
 // =========================================
-//
-// ▼ stl_db.json（新フォーマット）例
-// {
-//   "h01": {
-//     "heroineName": "hortensia",
-//     "events": {
-//       "00": { "normal": { "settings": { ... } } }
-//     }
-//   }
-// }
-//
-// ▼ 画像パス規則（デバッグツールに合わせる）
-// images/chara/image/00_normal/h01_hortensia_00.webp
-// images/chara/image/01_special/h01_hortensia_00.webp
-//
-// --- スチル演出用定数 ---
+
 const STILL_BASE_PATH = 'images/chara';
 const STILL_FOLDER = { normal: '00_normal', special: '01_special' };
-
-// ★この行を追加してください
 const STILL_OFFSET_Y_PX = -35; 
 
 // 演出開始時（夢の中のようにぼやけさせる設定）
 const STILL_INTRO_PARAMS = {
-    blur: 20,
-    sepia: 50,
-    saturate: 80,
-    zoom: 1.0,
-    cx: 50, cy: 50,
-    x: 50, y: 50, 
-    vignette: 10,
-    texture: 0
+    blur: 20, sepia: 50, saturate: 80, zoom: 1.0,
+    cx: 50, cy: 50, x: 50, y: 50, 
+    vignette: 10, texture: 0
 };
 
-// --- スチルFX DOM（CSSは style.css に集約） ---
+// --- スチルFX DOM ---
 function ensureStillFxDom(layer) {
     const existing = layer.querySelector('.stillfx');
     if (existing) {
@@ -391,34 +355,64 @@ function ensureStillFxDom(layer) {
     };
 }
 
-function applyStillFx(dom, params) {
-    const p = normalizeStillParams(params || {});
-    const c = dom.container;
-
-    const num = (v, d=0) => (Number.isFinite(v) ? v : d);
-
-    c.style.setProperty('--x', num(p.x,50).toFixed(1) + '%');
-    c.style.setProperty('--y', num(p.y,50).toFixed(1) + '%');
-    c.style.setProperty('--blur', num(p.blur,0) + 'px');
-    c.style.setProperty('--sepia', num(p.sepia,0) + '%');
-    c.style.setProperty('--saturate', num(p.saturate,100) + '%');
-    c.style.setProperty('--texture', (num(p.texture,0) / 100).toFixed(3));
-    c.style.setProperty('--vignette', (num(p.vignette,0) / 100).toFixed(3));
-    c.style.setProperty('--size', num(p.size,15) + '%');
-
-    c.style.setProperty('--zoom', num(p.zoom,1).toFixed(3));
-    c.style.setProperty('--cx', num(p.cx,50).toFixed(1) + '%');
-    c.style.setProperty('--cy', num(p.cy,50).toFixed(1) + '%');
-
-    if (dom.svgScale) dom.svgScale.setAttribute('scale', String(num(p.distort,0)));
+// 1. パラメータの正規化
+function normalizeStillParams(p) {
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+    const src = p || {};
+    return {
+        blur: clamp(Number(src.blur ?? 0), 0, 40),
+        sepia: clamp(Number(src.sepia ?? 0), 0, 100),
+        saturate: clamp(Number(src.saturate ?? 100), 0, 300),
+        zoom: clamp(Number(src.zoom ?? 1.0), 1.0, 3.0),
+        cx: clamp(Number(src.cx ?? 50), 0, 100),
+        cy: clamp(Number(src.cy ?? 50), 0, 100),
+        x: src.x ?? 50, y: src.y ?? 50,
+        distort: src.distort ?? 0,
+        size: src.size ?? 15,
+        vignette: src.vignette ?? 0,
+        texture: src.texture ?? 0
+    };
 }
 
-// intro → target を“すぅっと”変化させるための補間（SVGのdistort(scale)も含めてアニメ）
-function lerp(a, b, t) { return a + (b - a) * t; }
-function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2; }
+// 2. スタイル適用（第3引数でDOMを直接受け取れるようにする）
+function applyStillStyle(layer, params, forceDom = null) {
+    if (!layer) return;
+    const p = normalizeStillParams(params);
+    const dom = forceDom || layer.__stillFxDom; 
+    
+    layer.style.setProperty('--x', p.x + '%');
+    layer.style.setProperty('--y', p.y + '%');
+    layer.style.setProperty('--cx', p.cx + '%');
+    layer.style.setProperty('--cy', p.cy + '%');
+    layer.style.setProperty('--zoom', p.zoom);
+    
+    layer.style.setProperty('--blur', p.blur + 'px');
+    layer.style.setProperty('--sepia', p.sepia + '%');
+    layer.style.setProperty('--saturate', p.saturate + '%');
+    layer.style.setProperty('--vignette', p.vignette / 100);
+    layer.style.setProperty('--texture', p.texture / 100);
 
-/* --- js/event.js : animateStillFx (修正版・イージング分離) --- */
+    const filterStr = `blur(${p.blur}px) sepia(${p.sepia}%) saturate(${p.saturate}%)`;
+    
+    if (dom && dom.imgBg) {
+        dom.imgBg.style.filter = filterStr;
+        if (p.distort > 0) {
+             dom.imgBg.style.filter += ` url(#oil-paint-filter)`;
+             if (dom.svgScale) dom.svgScale.setAttribute('scale', String(p.distort));
+        } else {
+             if (dom.svgScale) dom.svgScale.setAttribute('scale', "0");
+        }
+        dom.imgBg.style.transformOrigin = `${p.cx}% ${p.cy}%`;
+        dom.imgBg.style.transform = `scale(${p.zoom})`;
+    }
+    
+    if (dom && dom.imgFocus) {
+         dom.imgFocus.style.transformOrigin = `${p.cx}% ${p.cy}%`;
+         dom.imgFocus.style.transform = `scale(${p.zoom})`;
+    }
+}
 
+// 3. アニメーション実行関数
 function animateStillFx(dom, startParams, endParams, duration) {
     const start = performance.now();
     const s = normalizeStillParams(startParams);
@@ -428,134 +422,48 @@ function animateStillFx(dom, startParams, endParams, duration) {
         const elapsed = now - start;
         let progress = Math.min(elapsed / duration, 1.0);
 
-        // 時間 t (0.0 -> 1.0)
         const t = progress;
-
-        // ★重要: 2種類のカーブを使い分ける
-
-        // 1. 移動用 (Ease Out Cubic): 最初が速く、ターゲット付近でゆっくり停止
-        // 「カメラワーク」として自然な動き
-        const easeMove = 1 - Math.pow(1 - t, 3);
-
-        // 2. エフェクト解除用 (Ease In Cubic): 最初は変化が遅く、後半に加速
-        // 「最初はぼやけたまま」→「最後にスッとピントが合う」動き
-        // ※ t*t (Quad) だと少し早すぎるので、t*t*t (Cubic) でしっかり粘ります
-        const easeEffect = Math.pow(t, 3); 
+        const easeMove = 1 - Math.pow(1 - t, 3); // 移動用
+        const easeEffect = Math.pow(t, 3);       // エフェクト用
 
         // 現在値の計算
         const current = {
-            // --- エフェクト系 (easeEffect: 後半に晴らす) ---
-            // これにより、移動中はまだぼやけていて、到着してからクリアになります
             blur: s.blur + (e.blur - s.blur) * easeEffect,
             sepia: s.sepia + (e.sepia - s.sepia) * easeEffect,
             saturate: s.saturate + (e.saturate - s.saturate) * easeEffect,
-            vignette: s.vignette + (e.vignette - s.vignette) * easeEffect,
-            texture: s.texture + (e.texture - s.texture) * easeEffect,
-            distort: s.distort + (e.distort - s.distort) * easeEffect,
-
-            // --- 移動・ズーム系 (easeMove: 先に動かす) ---
             zoom: s.zoom + (e.zoom - s.zoom) * easeMove,
             cx: s.cx + (e.cx - s.cx) * easeMove,
             cy: s.cy + (e.cy - s.cy) * easeMove,
             x: s.x + (e.x - s.x) * easeMove,
             y: s.y + (e.y - s.y) * easeMove,
+            distort: s.distort + (e.distort - s.distort) * easeEffect,
+            vignette: s.vignette + (e.vignette - s.vignette) * easeEffect,
+            texture: s.texture + (e.texture - s.texture) * easeEffect,
         };
 
-        // 画面に適用
-        applyStillStyle(dom.container || dom.imgBg.parentElement, current);
+        // 第3引数に 'dom' を明示的に渡す
+        applyStillStyle(dom.container, current, dom);
 
         if (progress < 1.0) {
             requestAnimationFrame(step);
         } else {
-            // 最後に確実にゴール値をセット
-            applyStillStyle(dom.container || dom.imgBg.parentElement, endParams);
+            // 最後も確実に dom を渡してゴール値をセット
+            applyStillStyle(dom.container, endParams, dom);
         }
     }
-
     requestAnimationFrame(step);
 }
 
-
-
-function clamp(n, min, max) {
-    return Math.min(max, Math.max(min, n));
-}
-
-function normalizeStillParams(p) {
-    const src = p || {};
-    return {
-        blur: clamp(Number(src.blur ?? 0), 0, 40),
-        sepia: clamp(Number(src.sepia ?? 0), 0, 100),
-        saturate: clamp(Number(src.saturate ?? 100), 0, 300),
-        zoom: clamp(Number(src.zoom ?? 1.0), 1.0, 3.0),
-        cx: clamp(Number(src.cx ?? 50), 0, 100),
-        cy: clamp(Number(src.cy ?? 50), 0, 100)
-    };
-}
-
-function applyStillStyle(layer, params) {
-    if (!layer) return;
-    const p = normalizeStillParams(params);
-    const dom = layer.__stillFxDom; 
-    
-    // CSS変数のセット
-    layer.style.setProperty('--x', p.x + '%');
-    layer.style.setProperty('--y', p.y + '%');
-    layer.style.setProperty('--cx', p.cx + '%');
-    layer.style.setProperty('--cy', p.cy + '%');
-    layer.style.setProperty('--zoom', p.zoom);
-    
-    // ★ここが修正ポイント
-    // デバッグツール(stl.html)と同じ順序にします:
-    // 1. 歪み(url) → 2. ぼかし(blur) → 3. 色調(sepia/saturate)
-    
-    let filterStr = "";
-
-    // 1. まず歪み (Distort) を先に記述
-    if (p.distort > 0) {
-        filterStr += `url(#oil-paint-filter) `;
-        // SVG側の scale 値も更新
-        if (dom.svgScale) {
-            dom.svgScale.setAttribute('scale', String(p.distort));
-        }
-    }
-
-    // 2. その後に色彩・ぼかし効果を追加
-    filterStr += `blur(${p.blur}px) sepia(${p.sepia}%) saturate(${p.saturate}%)`;
-
-    // 背景画像レイヤーに適用
-    if (dom && dom.imgBg) {
-        dom.imgBg.style.filter = filterStr;
-        
-        // 拡大・移動
-        dom.imgBg.style.transformOrigin = `${p.cx}% ${p.cy}%`;
-        dom.imgBg.style.transform = `scale(${p.zoom})`;
-    }
-    
-    // フォーカスレイヤー
-    if (dom && dom.imgFocus) {
-         dom.imgFocus.style.transformOrigin = `${p.cx}% ${p.cy}%`;
-         dom.imgFocus.style.transform = `scale(${p.zoom})`;
-    }
-}
-
 function getHeroineIdFromHeroine(h) {
-    // h.file: "h01_hortensia"
     if (!h || !h.file) return null;
-    return String(h.file).split('_')[0]; // "h01"
+    return String(h.file).split('_')[0]; 
 }
 
 function getStillEventIdFromHeroine(h) {
-    // ★ 状態を「EVENT」に更新
     currentStatus = GameStatus.EVENT;
-
-    // 仕様:
-    // - ヒロイン本編成功時、h.progress は applyEventView 呼び出し前にインクリメントされるため、
-    //   “いま再生したイベント”は (progress-1) を使う
-    // - それ以外の分岐でも破綻しにくいようにクランプ
     const p = Number(h?.progress ?? 1);
-    const idx = clamp(p - 1, 0, 99);
-    return String(Math.floor(idx)).padStart(2, '0'); // "00"
+    const idx = Math.min(Math.max(p - 1, 0), 99);
+    return String(Math.floor(idx)).padStart(2, '0'); 
 }
 
 function getStillSettingsFromDb(heroineId, eventId, type) {
@@ -563,18 +471,13 @@ function getStillSettingsFromDb(heroineId, eventId, type) {
     const hNode = db?.[heroineId];
     const eNode = hNode?.events?.[eventId];
     const tNode = eNode?.[type];
-    const s = tNode?.settings;
-    return s || null;
+    return tNode?.settings || null;
 }
 
 function getStillImagePath(h, type, eventId) {
     const folder = STILL_FOLDER[type] || STILL_FOLDER.normal;
     return `${STILL_BASE_PATH}/${folder}/${h.file}_${eventId}.webp`;
 }
-
-/* --- js/event.js : showEventStillWithDb (定義ごと上書き) --- */
-
-/* --- js/event.js : showEventStillWithDb (修正版) --- */
 
 function showEventStillWithDb(layer, isH, h, type = 'normal', forceEventId = null) {
     // リセット
@@ -615,8 +518,7 @@ function showEventStillWithDb(layer, isH, h, type = 'normal', forceEventId = nul
     
     layer.classList.add('active');
 
-    // 2) コンテナ自体のフェードイン設定 (中身のアニメーションは干渉させない)
-    // ここはシンプルに「不透明度」だけでOKです
+    // 2) コンテナ自体のフェードイン
     layer.style.transition = 'opacity 600ms ease';
 
     // 3) フェードイン開始
@@ -632,24 +534,15 @@ function showEventStillWithDb(layer, isH, h, type = 'normal', forceEventId = nul
     };
 }
 
-/* --- js/event.js : transitionStillToTarget (修正版) --- */
-
 function transitionStillToTarget(layer, targetParams) {
     const dom = layer.__stillFxDom;
     if (!dom) return;
-
-    // 現在の状態（イントロ設定）から、ターゲット（DB設定）へ
-    // JSのループで数値を動かすことで、視点移動とエフェクト解除を「完全に」同期させます
-    // durationMs: 1500 (1.5秒かけてゆっくり合わせる)
     animateStillFx(dom, STILL_INTRO_PARAMS, targetParams, 1500);
 }
-
-/* --- js/event.js : fadeOutEventStill 関数 (修正版) --- */
 
 function fadeOutEventStill(layer) {
     if (!layer) return;
     
-    // 既存タイマーのキャンセル
     if (layer._fadeTimer) {
         clearTimeout(layer._fadeTimer);
         layer._fadeTimer = null;
@@ -657,18 +550,14 @@ function fadeOutEventStill(layer) {
 
     if (!layer.classList.contains('active')) return;
     
-    // ★追加: フェードアウトの時間をここで「0.6s」に統一・強制する
-    // これにより、ヒロイン演出(350ms)や通常演出(600ms)のバラつきをなくし、
-    // 常に「ゆっくり消える」挙動にします。
+    // フェードアウト(0.6s)
     layer.style.transition = 'opacity 0.6s ease-out';
     
-    // フェードアウト開始
     requestAnimationFrame(() => {
         layer.style.opacity = '0';
     });
     
-    // ★修正: タイマー時間を 380ms -> 600ms に変更
-    // アニメーション(0.6s)が完全に終わってから片付けを行います。
+    // アニメーション完了後に片付け
     layer._fadeTimer = setTimeout(() => {
         layer.classList.remove('active');
         
@@ -681,15 +570,12 @@ function fadeOutEventStill(layer) {
         layer.style.filter = '';
         layer.style.transition = '';
         
-        // 中身も空にする
         layer.innerHTML = "";
-        layer.__stillFxDom = null; // キャッシュもクリア
+        layer.__stillFxDom = null; 
         
         layer._fadeTimer = null;
-    }, 600); // <- ここをアニメーション時間と合わせる
+    }, 600);
 }
-
-/* --- js/event.js : applyEventView 関数 (修正版) --- */
 
 function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoost) {
     currentStatus = GameStatus.EVENT; updateDebugUIState();
@@ -707,7 +593,6 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     let logL = isH ? `(<i class="fa-solid ${h ? h.icon : ''}"></i> ${h ? h.name : ''})` : ""; 
     const locLabel = `<i class="fa-solid ${s.icon}"></i> ${s.name}`; 
     
-    // ログ保存
     const fullTextForLog = Array.isArray(msg) ? msg.join('') : msg;
     const logHtml = (TextEngine && typeof TextEngine.buildLogHtml === 'function')
         ? TextEngine.buildLogHtml(fullTextForLog)
@@ -718,22 +603,18 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     );
     document.getElementById("log-content").innerHTML = currentGameLog.join(''); 
     
-    // 背景演出
     const bgLayer = document.getElementById("background-layer");
     bgLayer.style.transformOrigin = `${spotAssignments[idx].l}% ${spotAssignments[idx].t}%`; 
     bgLayer.style.transform = `scale(${s.zoom || 2.5})`; 
     bgLayer.classList.add("blur-bg"); 
     
-    // ▼▼▼ イベントスチル表示 (修正箇所) ▼▼▼
     const stillLayer = document.getElementById("event-still-layer");
     
-    // 前のイベントのフェードアウト処理が待機中なら強制キャンセル
     if (stillLayer._fadeTimer) {
         clearTimeout(stillLayer._fadeTimer);
         stillLayer._fadeTimer = null;
     }
 
-    // 1. 初期化: クラスとスタイルをリセット
     stillLayer.classList.remove('active', 'type-heroine', 'type-normal', 'type-hint');
     stillLayer.style.backgroundImage = '';
     stillLayer.style.setProperty('--still-offset-y', STILL_OFFSET_Y_PX + 'px');
@@ -741,27 +622,19 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     stillLayer.style.filter = '';
     stillLayer.style.transition = '';
 
-    // 中身を空にする
     stillLayer.innerHTML = "";
-    
-    // ★追加: DOM参照キャッシュも忘れずにクリアする！
-    // これをしないと、2回目以降に「削除済みのDOM」を操作してしまい、画面が真っ暗になります。
     stillLayer.__stillFxDom = null;
 
     let stillInfo = { enabled: false };
 
-    // --- 以降のロジックは変更なし ---
     if (isH && h) {
-        // ヒロインイベント (後日談/世間話対応)
         stillLayer.classList.add('type-heroine');
         stillInfo = showEventStillWithDb(stillLayer, isH, h, 'normal', imgId);
     } 
     else if (imgId) {
-        // 通常イベント (絵画風演出)
         stillLayer.classList.add('type-normal');
         stillLayer.innerHTML = "";
         
-        // 直接スタイルにセット
         stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.webp')`;
         stillLayer.style.removeProperty('--bg-img');
         
@@ -772,7 +645,6 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         });
     } 
     else if (out === 'hint') {
-        // ヒント演出 (枠線色変化あり)
         stillLayer.classList.add('type-hint');
         stillLayer.innerHTML = "";
         
@@ -806,11 +678,9 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         });
     }
     else {
-        // 画像なし
         stillLayer.innerHTML = "";
     }
     
-    // TextEngine 初期化
     const fullText = Array.isArray(msg) ? msg.join('') : msg;
     TextEngine.init(fullText);
 
@@ -843,8 +713,6 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     }, 300);
 }
 
-/* --- js/event.js --- */
-
 function proceedText() {
     const textBox = document.getElementById("message-text");
     const cursor = document.getElementById("page-cursor");
@@ -856,9 +724,12 @@ function proceedText() {
     }
     
     // 2. 結果表示済みなら終了
+    // ★修正: isClosingEvent が true なら、既に closeEvent が走っているので何もしない
     if (isResultDisplayed) {
-        cursor.classList.remove("active"); 
-        closeEvent();
+        if (!isClosingEvent) {
+            cursor.classList.remove("active"); 
+            closeEvent();
+        }
         return;
     }
 
@@ -869,7 +740,8 @@ function proceedText() {
     // 終了判定
     if (result.isEnd) {
         if (isResultHidden) { 
-            closeEvent(); 
+            // 結果非表示の場合も、連打ガード
+            if (!isClosingEvent) closeEvent(); 
         } else {
             cursor.classList.remove("active"); 
             showFinalResult(); 
@@ -883,32 +755,29 @@ function proceedText() {
         textBox.innerHTML = "";
     } 
     
-    // ★削除: ここにあった「endsWith("」") なら <br> を足す」処理は削除します。
-    // (TextEngine側で既に <br> が付いているため)
-
     // 4. タイプライタ演出開始
     const formattedText = formatGameText(result.text);
     startTypeWriter(formattedText);
 }
 
-// イベント終了処理（既存のまま）
 function closeEvent() { 
+    // ★重要: 既に終了処理が走っている場合は、何もしない（連打ガード）
+    if (isClosingEvent) return;
+    isClosingEvent = true;
+
     const bgLayer = document.getElementById("background-layer");
     bgLayer.style.transform = "scale(1)"; 
     bgLayer.classList.remove("blur-bg"); 
-    // スチルはフェードアウトしてから非表示にする
+    
     fadeOutEventStill(document.getElementById("event-still-layer"));
     
     document.getElementById("message-window").classList.remove("active"); 
     document.getElementById("click-overlay").classList.remove("active"); 
     document.getElementById("page-cursor").classList.remove("active"); 
     
-    // マップに戻ったら必ず「ヒロインBGM → マップBGM」へ戻す
-    // （通常イベントでも、何らかの理由でヒロインBGMが鳴りっぱなしになるのを防ぐ）
     if (typeof switchToMapBgm === 'function') {
         switchToMapBgm();
     } else {
-        // フォールバック
         try { if (!bgmMap.paused) bgmMap.volume = currentBgmVol; } catch (_) {}
         try { if (bgmMap.paused) bgmMap.play(); } catch (_) {}
         try { if (typeof stopHeroineBgm === 'function') stopHeroineBgm(); } catch (_) {}
@@ -917,16 +786,25 @@ function closeEvent() {
     if (turn < maxTurn) { 
         turn++; 
         document.getElementById("turn-count").innerText = turn; 
-        isEventActive = false; 
-
-        // ★ ここに追記：状態を「MAP」に戻し、次の行動を許可する
-        currentStatus = GameStatus.MAP;updateDebugUIState();
-
+        
         updateMonologue(); 
         saveSessionData(); 
+
+        // ★修正: 変数で定義した時間待つ
         setTimeout(() => { 
-             document.querySelectorAll('.map-spot').forEach(s => { s.classList.add('spot-visible'); s.querySelector('.hint-text').classList.remove('selected-yellow'); }); 
-        }, 250);
+             document.querySelectorAll('.map-spot').forEach(s => { 
+                 s.classList.add('spot-visible'); 
+                 s.querySelector('.hint-text').classList.remove('selected-yellow'); 
+             }); 
+
+             // 状態復帰
+             isEventActive = false; 
+             currentStatus = GameStatus.MAP;
+             isProcessingTurn = false; 
+             isClosingEvent = false; // ★ここで初めて次のイベント受付を許可
+             updateDebugUIState();
+
+        }, SCENE_TRANSITION_MS + TRANSITION_BUFFER); 
     } 
     else { 
         updateMonologue(); 
@@ -937,118 +815,4 @@ function closeEvent() {
             setTimeout(showEnding, 3000); 
         }, 3000);
     }
-}
-
-/* --- js/event.js : スチル同期アニメーション用関数群 --- */
-
-// 1. パラメータの正規化（undefined対策）
-function normalizeStillParams(p) {
-    return {
-        x: p.x ?? 50, y: p.y ?? 50,
-        distort: p.distort ?? 0,
-        blur: p.blur ?? 0,
-        size: p.size ?? 15,
-        vignette: p.vignette ?? 0,
-        sepia: p.sepia ?? 0,
-        saturate: p.saturate ?? 100,
-        texture: p.texture ?? 0,
-        zoom: p.zoom ?? 1.0,
-        cx: p.cx ?? 50, cy: p.cy ?? 50
-    };
-}
-
-/* --- js/event.js 修正箇所 --- */
-
-// 2. スタイル適用（修正：第3引数でDOMを直接受け取れるようにする）
-function applyStillStyle(layer, params, forceDom = null) {
-    if (!layer) return;
-    const p = normalizeStillParams(params);
-    
-    // 引数で渡されたらそれを使い、なければlayerから探す
-    const dom = forceDom || layer.__stillFxDom; 
-    
-    // CSS変数をセット（これはこれで保険として残す）
-    layer.style.setProperty('--x', p.x + '%');
-    layer.style.setProperty('--y', p.y + '%');
-    layer.style.setProperty('--cx', p.cx + '%');
-    layer.style.setProperty('--cy', p.cy + '%');
-    layer.style.setProperty('--zoom', p.zoom);
-    
-    layer.style.setProperty('--blur', p.blur + 'px');
-    layer.style.setProperty('--sepia', p.sepia + '%');
-    layer.style.setProperty('--saturate', p.saturate + '%');
-    layer.style.setProperty('--vignette', p.vignette / 100);
-    layer.style.setProperty('--texture', p.texture / 100);
-
-    // ★重要: インラインスタイルを確実に更新して、初期状態のstyle固定を上書きする
-    const filterStr = `blur(${p.blur}px) sepia(${p.sepia}%) saturate(${p.saturate}%)`;
-    
-    if (dom && dom.imgBg) {
-        dom.imgBg.style.filter = filterStr;
-        // 歪みエフェクト
-        if (p.distort > 0) {
-             dom.imgBg.style.filter += ` url(#oil-paint-filter)`;
-             if (dom.svgScale) {
-                 dom.svgScale.setAttribute('scale', String(p.distort));
-             }
-        } else {
-             if (dom.svgScale) {
-                 dom.svgScale.setAttribute('scale', "0");
-             }
-        }
-        
-        // ★ここが動かなかった原因の修正点
-        // domが正しく渡っていれば、このインラインスタイル更新が走り、アニメーションする
-        dom.imgBg.style.transformOrigin = `${p.cx}% ${p.cy}%`;
-        dom.imgBg.style.transform = `scale(${p.zoom})`;
-    }
-    
-    if (dom && dom.imgFocus) {
-         dom.imgFocus.style.transformOrigin = `${p.cx}% ${p.cy}%`;
-         dom.imgFocus.style.transform = `scale(${p.zoom})`;
-    }
-}
-
-// 3. アニメーション実行関数（修正：applyStillStyleにdomを渡す）
-function animateStillFx(dom, startParams, endParams, duration) {
-    const start = performance.now();
-    const s = normalizeStillParams(startParams);
-    const e = normalizeStillParams(endParams);
-
-    function step(now) {
-        const elapsed = now - start;
-        let progress = Math.min(elapsed / duration, 1.0);
-
-        const t = progress;
-        const easeMove = 1 - Math.pow(1 - t, 3); // 移動用
-        const easeEffect = Math.pow(t, 3);       // エフェクト用
-
-        // 現在値の計算
-        const current = {
-            blur: s.blur + (e.blur - s.blur) * easeEffect,
-            sepia: s.sepia + (e.sepia - s.sepia) * easeEffect,
-            saturate: s.saturate + (e.saturate - s.saturate) * easeEffect,
-            zoom: s.zoom + (e.zoom - s.zoom) * easeMove,
-            cx: s.cx + (e.cx - s.cx) * easeMove,
-            cy: s.cy + (e.cy - s.cy) * easeMove,
-            x: s.x + (e.x - s.x) * easeMove,
-            y: s.y + (e.y - s.y) * easeMove,
-            distort: s.distort + (e.distort - s.distort) * easeEffect,
-            vignette: s.vignette + (e.vignette - s.vignette) * easeEffect,
-            texture: s.texture + (e.texture - s.texture) * easeEffect,
-        };
-
-        // ★修正: 第3引数に 'dom' を明示的に渡す
-        // これにより applyStillStyle 内で dom.imgBg が参照可能になり、styleが更新される
-        applyStillStyle(dom.container, current, dom);
-
-        if (progress < 1.0) {
-            requestAnimationFrame(step);
-        } else {
-            // 最後も確実に dom を渡してゴール値をセット
-            applyStillStyle(dom.container, endParams, dom);
-        }
-    }
-
-    requestAnimationFrame(step);
 }
