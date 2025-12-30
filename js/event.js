@@ -3,9 +3,9 @@
 // =========================================
 
 // ★定数・変数定義 (連打ガード・遷移時間管理用)
-const SCENE_TRANSITION_MS = 600; // 画面フェードのCSS設定(0.6s)に合わせる
-const TRANSITION_BUFFER = 200;   // 処理落ち等を考慮した安全マージン (計800ms)
-let isClosingEvent = false;      // イベント終了処理中フラグ
+const SCENE_TRANSITION_MS = GameConfig.tempo.fade; 
+const TRANSITION_BUFFER = GameConfig.tempo.transitionBuffer;   
+let isClosingEvent = false;
 
 // マップスポットクリック時の処理
 function handleSpotClick(el, idx) {
@@ -518,8 +518,8 @@ function showEventStillWithDb(layer, isH, h, type = 'normal', forceEventId = nul
     
     layer.classList.add('active');
 
-    // 2) コンテナ自体のフェードイン
-    layer.style.transition = 'opacity 600ms ease';
+    // ★変更: GameConfigの秒数を使用
+    layer.style.transition = `opacity ${GameConfig.tempo.fade}ms ease`;
 
     // 3) フェードイン開始
     requestAnimationFrame(() => {
@@ -537,7 +537,8 @@ function showEventStillWithDb(layer, isH, h, type = 'normal', forceEventId = nul
 function transitionStillToTarget(layer, targetParams) {
     const dom = layer.__stillFxDom;
     if (!dom) return;
-    animateStillFx(dom, STILL_INTRO_PARAMS, targetParams, 1500);
+    // ★変更: 演出時間もGameConfigから取得
+    animateStillFx(dom, STILL_INTRO_PARAMS, targetParams, GameConfig.tempo.stillAnimDuration);
 }
 
 function fadeOutEventStill(layer) {
@@ -550,14 +551,14 @@ function fadeOutEventStill(layer) {
 
     if (!layer.classList.contains('active')) return;
     
-    // フェードアウト(0.6s)
-    layer.style.transition = 'opacity 0.6s ease-out';
+    // ★変更: フェードアウト時間の設定
+    layer.style.transition = `opacity ${GameConfig.tempo.fade}ms ease-out`;
     
     requestAnimationFrame(() => {
         layer.style.opacity = '0';
     });
     
-    // アニメーション完了後に片付け
+    // ★変更: 完了待ち時間の設定
     layer._fadeTimer = setTimeout(() => {
         layer.classList.remove('active');
         
@@ -574,7 +575,7 @@ function fadeOutEventStill(layer) {
         layer.__stillFxDom = null; 
         
         layer._fadeTimer = null;
-    }, 600);
+    }, GameConfig.tempo.fade);
 }
 
 function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoost) {
@@ -638,7 +639,8 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         stillLayer.style.backgroundImage = `url('images/bg/${s.file}_${imgId}.webp')`;
         stillLayer.style.removeProperty('--bg-img');
         
-        stillLayer.style.transition = 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.6s';
+        // ★変更: ここの秒数も GameConfig.tempo.fade を使用
+        stillLayer.style.transition = `opacity ${GameConfig.tempo.fade}ms ease-out, transform ${GameConfig.tempo.fade}ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility ${GameConfig.tempo.fade}ms`;
 
         requestAnimationFrame(() => {
             stillLayer.classList.add("active");
@@ -672,7 +674,7 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
         `;
         
         stillLayer.innerHTML = gridHtml;
-        stillLayer.style.transition = 'opacity 0.6s ease-out, visibility 0.6s';
+        stillLayer.style.transition = `opacity ${GameConfig.tempo.fade}ms ease-out, visibility ${GameConfig.tempo.fade}ms`;
         requestAnimationFrame(() => {
             stillLayer.classList.add("active");
         });
@@ -705,12 +707,13 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
     document.getElementById("message-window").classList.add("active"); 
     document.getElementById("click-overlay").classList.add("active"); 
     
+    // ★変更: 待ち時間を GameConfig.tempo.eventStartDelay に変更
     setTimeout(() => {
         if (stillInfo && stillInfo.enabled) {
             transitionStillToTarget(stillLayer, stillInfo.targetParams);
         }
         proceedText();
-    }, 300);
+    }, GameConfig.tempo.eventStartDelay);
 }
 
 function proceedText() {
@@ -790,7 +793,7 @@ function closeEvent() {
         updateMonologue(); 
         saveSessionData(); 
 
-        // ★修正: 変数で定義した時間待つ
+        // ★変更: 定数は既にGameConfigを参照しているため、コード自体は同じでも待機時間が短縮されます
         setTimeout(() => { 
              document.querySelectorAll('.map-spot').forEach(s => { 
                  s.classList.add('spot-visible'); 

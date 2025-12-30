@@ -39,3 +39,20 @@ const spotAssignments = [
     {l:34, t:80, main:'body',  sub:'fame'},
     {l:22, t:20, main:'health',sub:'money'}
 ];
+
+// ゲーム全体のテンポ管理設定（単位: ms）
+const GameConfig = {
+    tempo: {
+        // フェードイン・アウトの時間（標準: 600 -> 高速化: 300）
+        fade: 300,
+        
+        // イベント開始時の「溜め」時間（標準: 300 -> 高速化: 100）
+        eventStartDelay: 100,
+        
+        // 画面遷移時の安全マッージン（標準: 200 -> 高速化: 100）
+        transitionBuffer: 100,
+        
+        // スチル（一枚絵）のパン・ズーム演出時間（標準: 1500 -> 高速化: 800）
+        stillAnimDuration: 800
+    }
+};
