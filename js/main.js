@@ -720,8 +720,6 @@ function retryGame() {
 /**
  * 各種フラグ・表示をタイトル画面の状態へリセットする
  */
-/* --- js/main.js --- */
-
 function resetRunToTitle() {
     currentStatus = GameStatus.TITLE; 
     
@@ -741,8 +739,11 @@ function resetRunToTitle() {
     lastEventContext = null;
     lastEventResult = null;
     
-    // ★追加: 2周目のために連打ガードフラグをここで確実に解除
+    // ★追加: 連打ガード解除（安全のため）
     if (typeof isClosingEvent !== 'undefined') isClosingEvent = false;
+
+    // ★重要追加: これがないと2周目のエンディングで止まります
+    if (typeof isEndingTransition !== 'undefined') isEndingTransition = false;
 
     // --- ステータス初期化 ---
     stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };

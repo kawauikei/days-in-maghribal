@@ -823,7 +823,7 @@ function closeEvent() {
             // デバッグ機能(1500ms)の実績に近づけ、確実に真っ黒にしてから画面を切り替えます。
             setTimeout(() => {
                 showEnding(); 
-            }, 2000); 
+            }, GameConfig.tempo.endingFadeWait); 
         };
 
         const failSafeTimer = setTimeout(force, GameConfig.tempo.endingFailSafe);
