@@ -348,20 +348,18 @@ function continueGame() {
 
 /* --- js/main.js (updateMonologue部分のみ上書き) --- */
 
-// モノローグ更新（メインループの一部）
-const updateMonologue = (type = 'random', saveToLog = true) => { 
-    // ★修正: 処理の完了を待てるように Promise を返す
-    return new Promise((resolve) => {
-        try {
-        const container = document.getElementById('monologue-container');
-        if (!container) { resolve(); return; }
+/* --- js/main.js --- */
 
+// モノローグ更新（文字送りが終わったらPromiseを解決）
+const updateMonologue = (type = 'random', saveToLog = true) => { 
+    return new Promise((resolve) => {
+        const container = document.getElementById('monologue-container');
         const textEl = container.querySelector('.monologue-text');
-        if (!textEl) { resolve(); return; }
         
         let text = "";
         let pool = [];
 
+        // --- テキスト決定ロジック (変更なし) ---
         if (type === 'resume') { 
             text = "……さて、旅の続きを始めよう。"; 
         } else if (type === 'start') {
@@ -380,7 +378,6 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
             }
             lastEventContext = null;
         } else {
-            // 汎用モノローグの抽選（変更なし）
             const maxStats = statKeys.filter(k => stats[k] >= 50);
             if (maxStats.length > 0 && Math.random() < 0.3) { 
                 pool = monologueData.stat_max; 
@@ -421,23 +418,19 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
         void container.offsetWidth; 
         container.classList.add('visible');
         
-        // ★修正: 文字送り完了後に resolve() を呼ぶ
         if (monologueInterval) clearInterval(monologueInterval);
-
+        
+        // --- 文字送り処理 ---
         let i = 0;
         monologueInterval = setInterval(() => {
             textEl.textContent += text.charAt(i);
             i++;
+            // 文字送り完了時に resolve() を呼ぶ
             if (i >= text.length) {
-            clearInterval(monologueInterval);
-            resolve();
+                clearInterval(monologueInterval);
+                resolve(); 
             }
         }, 50);
-
-        } catch (e) {
-        console.error("updateMonologue failed:", e);
-        resolve(); // ←これが重要（20ターン目で止まらない）
-        }
     });
 };
 
@@ -556,6 +549,8 @@ function processBoostUnlock() {
  * ゲームのエンディング処理を実行する
  * 修正：新規解放があった場合のみアナウンスを表示するロジックに変更
  */
+/* --- js/main.js --- */
+
 function showEnding() {
     if (currentStatus === GameStatus.TITLE || currentStatus === GameStatus.ENDING) return;
     currentStatus = GameStatus.ENDING;
@@ -564,22 +559,20 @@ function showEnding() {
     const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
     const rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
     
-    // 1. ステータス解放処理：新規解放があればキーが返る（なければ null）
+    // --- 解放処理 & ヒロイン決定 (ロジック変更なし) ---
     const newlyUnlockedStatKey = processBoostUnlock(); 
 
-    // 2. ヒロインの特定 (同値の場合は先頭優先)
     let best = heroines.reduce((prev, current) => (prev.affection >= current.affection) ? prev : current);
     if (!best || best.affection === 0) {
         best = heroines[Math.floor(Math.random() * heroines.length)];
     }
     const bestHeroine = best; 
 
-    // 3. エリア解放処理：今回初めて解放されたかどうかを判定
     let isNewAreaUnlocked = false;
     if (bestHeroine && !clearedHeroines.includes(bestHeroine.name)) {
         clearedHeroines.push(bestHeroine.name);
         localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-        isNewAreaUnlocked = true; // ★新規解放フラグON
+        isNewAreaUnlocked = true; 
         console.log(`[Unlock] Best Heroine: ${bestHeroine.name}`);
     }
 
@@ -589,14 +582,26 @@ function showEnding() {
     document.getElementById("ed-screen").classList.remove("hidden-screen");
     document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
 
+    // ★重要: BGMフェードアウト処理を一元化
     try {
         if (typeof stopHeroineBgm === 'function') stopHeroineBgm();
-        fadeOutBgm(bgmMap, 300, true);
-        fadeOutBgm(bgmOp, 300, true);
+        
+        // 1秒かけてBGMを消す
+        if (typeof fadeOutBgm === 'function') {
+            fadeOutBgm(bgmMap, GameConfig.tempo.bgmFadeLong, true);
+            fadeOutBgm(bgmOp, GameConfig.tempo.bgmFadeLong, true);
+        } else {
+            bgmMap.pause();
+            bgmOp.pause();
+        }
     } catch(e) {}
-    bgmEd.currentTime = 0; bgmEd.play();
+
+    // ED曲再生
+    bgmEd.currentTime = 0; 
+    bgmEd.volume = currentBgmVol; 
+    bgmEd.play();
     
-    // 4. 表示テキスト作成
+    // --- 画面構築 (省略なし) ---
     let endingDisplay = "";
     let finalMessage = "";
     if (bestHeroine) {
@@ -616,26 +621,17 @@ function showEnding() {
     }
     document.getElementById("ed-heroine").innerHTML = endingDisplay;
 
-    // 5. 解放アナウンスHTMLの作成（新規解放がある場合のみ生成）
     let unlockHtml = "";
-    
-    // ステータスまたはエリアのどちらかが新規解放された場合のみ中身を作る
     if (newlyUnlockedStatKey || isNewAreaUnlocked) {
-        
-        // --- スタイル定義（前回と同じ安全版） ---
         const ocherColor = "#e6c15c";
         const cyanColor = statColors.average;
-        // マージン調整済みコンテナ
         const containerStyle = `max-width: 650px; margin: 0 auto; border: 1px solid ${cyanColor}; padding: 10px 20px; border-radius: 4px; background: rgba(0, 255, 255, 0.05); display: inline-block; text-align: left; color: #fff;`;
         const itemStyle = `font-size: 0.9em; margin: 5px 0; letter-spacing: 0.05em; display: flex; align-items: center; gap: 10px;`;
         const iconW = `width: 24px; text-align: center;`; 
         const nameWidthStyle = `display: inline-block; width: 160px; text-align: left;`;
         const prefixStyle = `display: flex; align-items: center; gap: 6px; margin-right: 5px;`;
 
-        // 内部コンテンツ（行）の蓄積
         let rowsHtml = "";
-
-        // A. ステータス新規解放
         if (newlyUnlockedStatKey) {
             rowsHtml += `
                 <div style="${itemStyle}">
@@ -648,10 +644,7 @@ function showEnding() {
                     <span>：初期値ブースト可能</span>
                 </div>`;
         }
-
-        // B. エリア新規解放
         if (isNewAreaUnlocked) {
-            // bestHeroine は必ず存在しているはずだが念のためチェック
             const hIdx = heroines.indexOf(bestHeroine);
             if (hIdx !== -1) {
                 const targetScene = scenarios[heroineImpacts[hIdx].target];
@@ -667,8 +660,6 @@ function showEnding() {
                     </div>`;
             }
         }
-
-        // 中身がある場合のみ、ラッパーと枠で囲む
         if (rowsHtml !== "") {
             unlockHtml = `<div style="flex: 0 0 100%; width: 100%; margin: 10px 0; text-align: center; font-family: serif;">
                             <div style="${containerStyle}">${rowsHtml}</div>
@@ -676,7 +667,6 @@ function showEnding() {
         }
     }
 
-    // 6. 画面への流し込み
     const statsContainer = document.getElementById("ed-stats");
     const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 10px 0 15px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
     
@@ -696,13 +686,15 @@ function showEnding() {
     statsContainer.style.flexWrap = "wrap";
     statsContainer.style.justifyContent = "center";
 
-    // 7. Analytics 送信
     if (typeof sendGameEvent === 'function') {
         const partnerId = (bestHeroine && bestHeroine.affection > 0) ? bestHeroine.file.split('_')[0] : "solo";
         sendGameEvent("game_clear", { rank, total_score: total, partner_id: partnerId });
     }
 
-    setTimeout(() => { document.getElementById('fade-overlay')?.classList.remove('active'); }, 500);
+    // ★重要: 暗転解除は最後に行う
+    setTimeout(() => {
+        document.getElementById('fade-overlay')?.classList.remove('active');
+    }, SCENE_TRANSITION_MS);
 }
 
 /**

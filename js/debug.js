@@ -213,34 +213,26 @@ function debugMaxStats() {
  * デバッグ用強制終了
  * ガードをチェックし、問題なければ main.js の showEnding を実行する
  */
+
 function debugFinishGame() {
-    // 1. ガードチェック（MAP中以外ならここで弾く）
     if (!canExecuteDebug()) return;
 
     console.log("%c[Debug] Force Finish sequence started.", "color: orange; font-weight: bold;");
-
-    // 2. 不正フラグを立てる
     markAsCheat('ForceFinish');
 
-    // 3. 演出（画面を暗転させる）
+    // 1. 画面だけ暗転させる
     const fade = document.getElementById('fade-overlay');
     if (fade) fade.classList.add('active');
 
-    // 4. BGMをフェードアウト
-    try {
-        if (typeof fadeOutBgm === 'function') {
-            fadeOutBgm(bgmMap, 1000, true);
-        }
-    } catch (e) { console.warn(e); }
-
-    // 5. 1.5秒後に正規のエンディング関数を呼び出す
+    // 2. 設定値分待ってから showEnding へ
+    // ★変更: GameConfig.tempo.debugEndingWait (1500ms) を使用
     setTimeout(() => {
         if (typeof showEnding === 'function') {
             showEnding();
         } else {
             console.error("Critical: showEnding() not found in main.js");
         }
-    }, 1500);
+    }, GameConfig.tempo.debugEndingWait);
 }
 
 function debugToggleBoosts() { 

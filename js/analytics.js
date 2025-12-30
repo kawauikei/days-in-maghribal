@@ -10,7 +10,7 @@
 const ANALYTICS_CONFIG = {
     // ★ここを書き換えて、統計の「箱」を分ける
     // 例: "Debugger_Vol1", "ClosedBeta", "Release_v1.0"
-    CURRENT_PHASE: "Debugger_2024_Dec",
+    CURRENT_PHASE: "Debugger_2025_12",
 
     // デバッグスイッチ
     // true: コンソールに送信ログを表示 & GA4のDebugViewを有効化

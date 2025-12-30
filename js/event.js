@@ -704,6 +704,8 @@ function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, o
 }
 
 function proceedText() {
+    if (isEndingTransition) return;
+
     const textBox = document.getElementById("message-text");
     const cursor = document.getElementById("page-cursor");
 
@@ -750,16 +752,26 @@ function proceedText() {
     startTypeWriter(formattedText);
 }
 
+/* --- js/event.js --- */
+
+// 遷移フラグ用変数
+let isEndingTransition = false;
 
 function closeEvent() { 
     if (isClosingEvent) return;
+    if (turn >= maxTurn && isEndingTransition) return;
+
     isClosingEvent = true; 
 
+    // --- STEP 1: イベント画像とUIの消去 ---
     const bgLayer = document.getElementById("background-layer");
-    bgLayer.style.transform = "scale(1)"; 
-    bgLayer.classList.remove("blur-bg"); 
+    if (bgLayer) {
+        bgLayer.style.transform = "scale(1)"; 
+        bgLayer.classList.remove("blur-bg"); 
+    }
     
-    fadeOutEventStill(document.getElementById("event-still-layer"));
+    const stillLayer = document.getElementById("event-still-layer");
+    if (stillLayer) fadeOutEventStill(stillLayer);
     
     document.getElementById("message-window").classList.remove("active"); 
     document.getElementById("click-overlay").classList.remove("active"); 
@@ -777,9 +789,7 @@ function closeEvent() {
         // --- 通常ターンの処理 ---
         turn++; 
         document.getElementById("turn-count").innerText = turn; 
-        
-        updateMonologue(); // Promise待機不要
-        
+        updateMonologue(); 
         saveSessionData(); 
         setTimeout(() => { 
              document.querySelectorAll('.map-spot').forEach(s => { 
@@ -794,26 +804,38 @@ function closeEvent() {
         }, SCENE_TRANSITION_MS + TRANSITION_BUFFER); 
     } 
     else { 
+        // --- エンディング分岐 ---
+        isEndingTransition = true;
+        isEventActive = false; 
         saveSessionData();
 
+        // ■ 暗転～遷移処理
         let ended = false;
         const force = () => {
             if (ended) return;
             ended = true;
+
+            // 1. 暗転開始
             document.getElementById('fade-overlay')?.classList.add('active');
-            try { bgmMap.pause(); } catch(e) {}
-            setTimeout(() => showEnding(), SCENE_TRANSITION_MS);
+            
+            // ★修正: 待ち時間を「1000ms」に延長！
+            // 設定値(300ms)では短すぎて、暗転しきる前に次の画面処理が走り「いきなり表示」に見えてしまうため。
+            // デバッグ機能(1500ms)の実績に近づけ、確実に真っ黒にしてから画面を切り替えます。
+            setTimeout(() => {
+                showEnding(); 
+            }, 2000); 
         };
 
-        // フェイルセーフ（例：6秒）
-        const failSafeTimer = setTimeout(force, 6000);
+        const failSafeTimer = setTimeout(force, GameConfig.tempo.endingFailSafe);
 
         updateMonologue().then(() => {
             clearTimeout(failSafeTimer);
 
+            // 読み終わるための余韻
             const readingBuffer = GameConfig.tempo.stillAnimDuration + GameConfig.tempo.transitionBuffer;
+            
             setTimeout(() => {
-            force();
+                force(); // ここで暗転開始
             }, readingBuffer);
         }).catch((e) => {
             console.error("ending sequence failed:", e);
