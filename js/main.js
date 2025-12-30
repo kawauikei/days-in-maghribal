@@ -2,6 +2,14 @@
 //  Main Logic (変数定義・初期化・進行管理)
 // =========================================
 
+const GameStatus = {
+    TITLE: 'title',
+    PLAYING: 'playing',
+    ENDING: 'ending'
+};
+
+let currentStatus = GameStatus.TITLE; // 初期値
+
 // --- グローバル変数定義 ---
 const impactConfig = {
     "オルテンシア":   { targetIdx: 2,  sec: 1,  eco: 1,  name: "王家の配給" }, // 辺境の村
@@ -448,6 +456,7 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
 
 // オープニング開始
 function startOP() { 
+    currentStatus = GameStatus.PLAYING; // プレイ中に変更
     seOp.currentTime = 0; seOp.play(); 
     resizeGameContainer(); 
     currentGameLog = []; 
@@ -515,6 +524,11 @@ function processBoostUnlock() {
 /* --- js/main.js --- */
 
 function showEnding() {
+    // 【最重要】playing以外の状態でこの関数が走るのを物理的に防ぐ
+    if (currentStatus !== 'playing') {
+        return; 
+    }
+    currentStatus = GameStatus.ENDING; // エンディング中に変更
     processBoostUnlock(); // 既存: ステータスブーストの解放処理
 
     // ▼▼▼ 追加: 親密度No.1ヒロインの地域解放処理 ▼▼▼
@@ -598,9 +612,11 @@ function retryGame() {
     }, 800);
     syncPersistentUnlocksFromStorage();
     renderBoostButtons();
+    currentStatus = GameStatus.TITLE;
 }
 
 function resetRunToTitle() {
+    currentStatus = GameStatus.TITLE; // タイトルに戻す
     // --- 進行/フラグ類を初期化 ---
     turn = 1;
     isEventActive = false;
