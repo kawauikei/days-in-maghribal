@@ -63,12 +63,12 @@
         <h4>Debug Menu</h4>
 
         <div style="margin-bottom:5px; font-size:12px; color:#aaa;">DATA CONTROL</div>
-        <button onclick="debugResetAllData()" style="background:#cc3333; color:white; width:100%; margin-bottom:5px;">
+        <button onclick="debugResetAllData()" class="debug-always" style="background:#cc3333; color:white; width:100%; margin-bottom:5px;">
             <i class="fa-solid fa-trash"></i> Reset All Data
         </button>
         
         <div style="display:flex; gap:5px; margin-bottom:15px;">
-            <button onclick="debugToggleBoosts()" style="flex:1; background:#111; border: 1px solid #76ff03; color: #76ff03; font-weight:bold;">
+            <button onclick="debugToggleBoosts()" class="debug-always"style="flex:1; background:#111; border: 1px solid #76ff03; color: #76ff03; font-weight:bold;">
                 <i class="fa-solid fa-unlock"></i> Unlock Boosts
             </button>
             <button onclick="debugMaxStats()" style="flex:1; background:#111; border: 1px solid #00e5ff; color: #00e5ff; font-weight:bold;">
@@ -95,7 +95,7 @@
         <div id="debug-heroine-sliders" style="margin-bottom:15px;"></div>
         
         <div style="margin-bottom:5px; font-size:12px; color:#aaa;">GAMEPLAY</div>
-        <button onclick="showEnding()" style="width:100%; margin-bottom:5px;">
+        <button onclick="debugFinishGame()" style="width:100%; margin-bottom:5px;">
             <i class="fa-solid fa-flag-checkered"></i> Finish
         </button>
         <button id="force-heroine-btn" onclick="toggleForceHeroine()" style="width:100%;">

@@ -2,9 +2,12 @@
 //  Main Logic (変数定義・初期化・進行管理)
 // =========================================
 
+// ★ GameStatusを5段階に拡張 (ロジック追加)
 const GameStatus = {
     TITLE: 'title',
-    PLAYING: 'playing',
+    OP: 'opening',
+    MAP: 'map',
+    EVENT: 'event',
     ENDING: 'ending'
 };
 
@@ -63,8 +66,6 @@ let currentGameLog = [];
 let unlockedBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeBoosts = { health: false, body: false, mind: false, magic: false, fame: false, money: false };
 let activeImpacts = Array(12).fill(false);
-// gameAssets: ゲーム中に参照する各種データ/アセット
-// - stl_db: 事前生成したスチル設定DB (data/heroines/stl_db.json)
 const gameAssets = { events: {}, heroines: {}, bgm_heroine: {}, stl_db: {} };
 
 // --- 初期化処理 ---
@@ -76,29 +77,22 @@ window.onload = async () => {
     // 読み込むアセットのリスト作成
     const assetsToLoad = []; 
     
-    // 1. JSONデータのロード予約
     scenarios.forEach(s => {
         for (let i = 1; i <= 3; i++) {
             assetsToLoad.push({ type: 'event', file: `${s.file}_${i}` });
         }
     });
     heroines.forEach(h => assetsToLoad.push({ type: 'heroine', file: h.file }));
-
-    // ★追加: ヒロインごとのBGMロード予約 (bgm/h01_hortensia.mp3 など)
     heroines.forEach(h => assetsToLoad.push({ type: 'bgm_heroine', file: h.file, path: `bgm/${h.file}.mp3` }));
     
-    // 2. ★追加: 背景画像のロード予約
     scenarios.forEach(s => {
         for (let i = 1; i <= 3; i++) {
-            // ファイル名規則 (例: images/bg/e01_royal_city_01.webp)
             const numStr = String(i).padStart(2, '0');
             const path = `images/bg/${s.file}_${numStr}.webp`;
             assetsToLoad.push({ type: 'image', path: path });
         }
     });
 
-    // 3. ★追加: ヒロイン立ち絵のロード予約
-    // heroinesデータの .file (例: "h01_hortensia") を利用して _01.webp ～ _07.webp を読み込む
     heroines.forEach(h => {
         for (let i = 0; i <= 6; i++) {
             const numStr = String(i).padStart(2, '0');
@@ -109,34 +103,28 @@ window.onload = async () => {
     
     let loadedCount = 0;
     
-    // ★重要: ここから下の「読み込み実行処理」を画像対応版に書き換えます
     const loadPromises = assetsToLoad.map(async (asset) => {
         try {
-            // 【画像の場合】
             if (asset.type === 'image') {
-                await new Promise((resolve, reject) => {
+                await new Promise((resolve) => {
                     const img = new Image();
                     img.src = asset.path;
                     img.onload = resolve;
                     img.onerror = () => {
                         console.warn(`Failed to load image: ${asset.path}`);
-                        resolve(); // エラーでも止まらないようにする
+                        resolve();
                     };
                 });
             } 
-            // 【イベントデータの場合】
             else if (asset.type === 'event') { 
                 const res = await fetch(`data/events/${asset.file}.json`);
                 const data = await res.json();
                 gameAssets.events[asset.file] = data; 
             }
-            // 【ヒロインデータの場合】
             else if (asset.type === 'heroine') {
                 const res = await fetch(`data/heroines/${asset.file}.json`);
                 gameAssets.heroines[asset.file] = await res.json();
             }
-
-            // 【ヒロインBGMの場合】
             else if (asset.type === 'bgm_heroine') {
                 await new Promise((resolve) => {
                     const audio = new Audio(asset.path);
@@ -156,8 +144,6 @@ window.onload = async () => {
             loadedCount++; 
             const percent = (loadedCount / assetsToLoad.length) * 100; 
             barFill.style.width = percent + "%"; 
-            
-            // ログ表示（ファイル名だけ表示）
             const dispName = asset.path ? asset.path.split('/').pop() : asset.file;
             statusEl.innerText = `Loading: ${dispName} (${Math.round(percent)}%)`;
             
@@ -167,7 +153,6 @@ window.onload = async () => {
     });
 
     await Promise.all(loadPromises);
-    
     // --- データロード（モノローグ等） ---
     try {
         const monoRes = await fetch('data/events/monologues.json');
@@ -176,19 +161,19 @@ window.onload = async () => {
         heroineReactions = monoJson.heroines;
         const specRes = await fetch('data/events/special.json');
         specialData = await specRes.json();
-	        // スチル設定DB（存在しない場合もあるので、失敗しても止めない）
-	        try {
-	            const stlRes = await fetch('data/heroines/stl_db.json');
-	            if (stlRes.ok) {
-	                gameAssets.stl_db = await stlRes.json();
-	            } else {
-	                gameAssets.stl_db = {};
-	                console.warn('stl_db.json not found (ok for now).');
-	            }
-	        } catch (e) {
-	            gameAssets.stl_db = {};
-	            console.warn('Failed to load stl_db.json (ok for now).', e);
-	        }
+        // スチル設定DB（存在しない場合もあるので、失敗しても止めない）
+        try {
+            const stlRes = await fetch('data/heroines/stl_db.json');
+            if (stlRes.ok) {
+                gameAssets.stl_db = await stlRes.json();
+            } else {
+                gameAssets.stl_db = {};
+                console.warn('stl_db.json not found (ok for now).');
+            }
+        } catch (e) {
+            gameAssets.stl_db = {};
+            console.warn('Failed to load stl_db.json (ok for now).', e);
+        }
     } catch (e) { console.error("Data load failed", e); }
 
     // --- インパクト・設定データの復元 ---
@@ -217,17 +202,16 @@ window.onload = async () => {
     syncPersistentUnlocksFromStorage();
     initUI(); displayPastRecords(); renderBoostButtons();
 
-
     const clickOverlay = document.getElementById("click-overlay");
-if (clickOverlay) {
+    if (clickOverlay) {
         clickOverlay.onclick = function() {
             // イベント進行中のみ反応
             if (isEventActive) {
                 
-                // ★追加：処理中（連打）なら無視して終了
+                // 処理中（連打）なら無視して終了
                 if (isProcessingTurn) return;
 
-                // ★追加：結果画面（イベント終了時）ならロックをかける
+                // 結果画面（イベント終了時）ならロックをかける
                 if (isResultDisplayed) {
                     isProcessingTurn = true;
                     
@@ -258,6 +242,8 @@ if (clickOverlay) {
             loader.style.display = "none";
         }, 500);
     }, 800);
+    currentStatus = GameStatus.TITLE;
+    updateDebugUIState();
 };
 
 // --- セーブ・ロード・進行 ---
@@ -326,6 +312,10 @@ function continueGame() {
         statKeys.forEach(k => updateUI(k));
         document.getElementById("turn-count").innerText = turn;
         document.getElementById("log-content").innerHTML = currentGameLog.join('');
+        
+        // ★状態を「MAP」に更新
+        currentStatus = GameStatus.MAP; updateDebugUIState();
+        
         updateMapState();
 
         bgmOp.pause();
@@ -348,53 +338,36 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
     let text = "";
     let pool = [];
 
-    // --- コンソールデバッグ開始 ---
-    console.group("--- Monologue Debug ---");
-    console.log("Type:", type);
-    console.log("Last Event Context:", lastEventContext);
-
     if (type === 'resume') { 
         text = "……さて、旅の続きを始めよう。"; 
     } else if (type === 'start') {
         pool = monologueData.start;
     } else if (lastEventContext) { 
         const { name, progress } = lastEventContext;
-        console.log(`Heroine Event detected: ${name}, Context Progress Value: ${progress}`);
-        
-        // --- 修正箇所：progressの値に基づいて参照インデックスを決定 ---
-        // progress: 6 は「後日談(events[5])」を見た直後 → モノローグも index 5 を出す
-        // progress: 7 は「世間話(events[6])」を見た直後 → モノローグも index 6 を出す
         
         let targetIndex = 0;
         if (progress === 7) {
             targetIndex = 6; // 世間話用モノローグ
-            console.log("System: Small Talk result detected. Using index 6.");
         } else if (progress === 6) {
             targetIndex = 5; // 後日談用モノローグ
-            console.log("System: After Story result detected. Using index 5.");
         } else {
             targetIndex = Math.min(progress - 1, 4); // 通常イベント(1-5回目)
-            console.log(`System: Normal Event detected. Using index ${targetIndex}.`);
         }
 
         if (heroineReactions[name] && heroineReactions[name][targetIndex]) {
             text = heroineReactions[name][targetIndex];
         } else {
-            console.warn(`Result: heroineReactions['${name}'][${targetIndex}] not found.`);
             pool = monologueData.success;
         }
         lastEventContext = null;
     } else {
-        // --- 汎用モノローグの抽選 ---
-        console.log("System: Selecting random general monologue.");
+        // 汎用モノローグの抽選
         const maxStats = statKeys.filter(k => stats[k] >= 50);
         if (maxStats.length > 0 && Math.random() < 0.3) { 
-            console.log("Selected: Max Stat Pool");
             pool = monologueData.stat_max; 
         } 
         else if (lastEventResult && Math.random() < 0.7) {
             const resKey = (lastEventResult === 'great_success' || lastEventResult === 'great') ? 'great' : lastEventResult;
-            console.log(`Selected: Result Pool (${resKey})`);
             pool = monologueData[resKey] || monologueData.failure;
             lastEventResult = null;
         }
@@ -405,10 +378,8 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
                 const originalIdx = heroines.indexOf(target);
                 if (originalIdx !== -1) {
                     text = `噂によると、${scenarios[originalIdx].name}の方に${target.title}がいるらしい。`;
-                    console.log("Selected: Rumor text");
                 }
             } else {
-                console.log("Selected: Hint Pool");
                 pool = monologueData.hint_weak;
             }
         }
@@ -416,20 +387,15 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
             if (turn < 5) pool = monologueData.progress_low;
             else if (turn < 15) pool = monologueData.progress_mid;
             else pool = monologueData.progress_high;
-            console.log("Selected: Turn Progress Pool");
         }
     }
 
     if (!text) {
         if (!pool || pool.length === 0) {
-            console.error("Critical: No pool found, using backup progress_mid.");
             pool = monologueData.progress_mid;
         }
         text = pool[Math.floor(Math.random() * pool.length)];
     }
-    console.log("Final Text:", text);
-    console.groupEnd();
-    // --- コンソールデバッグ終了 ---
 
     if (saveToLog) {
         currentGameLog.push(`<div class="log-entry monologue-log">（独り言）${text}</div>`);
@@ -453,17 +419,20 @@ const updateMonologue = (type = 'random', saveToLog = true) => {
         if (i >= text.length) clearInterval(monologueInterval);
     }, 50);
 };
-
-// オープニング開始
+/**
+ * ゲーム本編を開始する（タイトルボタンから呼び出し）
+ */
 function startOP() { 
-    currentStatus = GameStatus.PLAYING; // プレイ中に変更
+    // ★状態を「OP」に更新
+    currentStatus = GameStatus.OP; updateDebugUIState();
+    
     seOp.currentTime = 0; seOp.play(); 
     resizeGameContainer(); 
     currentGameLog = []; 
     document.getElementById("log-content").innerHTML = ""; 
     
     statKeys.forEach(k => { 
-        // activeBoosts[k] が true なら 3+15=18、false なら 3
+        // 初期値計算 (Boost適用なら18、そうでなければ3)
         stats[k] = activeBoosts[k] ? 18 : 3; 
         updateUI(k); 
     });
@@ -474,15 +443,20 @@ function startOP() {
     setTimeout(() => { 
         document.getElementById("op-screen").classList.remove("hidden-screen"); 
 
-        // ▼【変更】opLines の分岐を削除し、常に通常OPテキストを使用
-        const opLines = ["陽が沈む西の地、マグリバル。", "ここには名声、富、知識、そして力が眠っている。", "残された時間は、そう長くはない。", "どの道を歩み、何者となるか。", "全ては汝の選択に委ねられている。"];
+        const opLines = [
+            "陽が沈む西の地、マグリバル。", 
+            "ここには名声、富、知識、そして力が眠っている。", 
+            "残された時間は、そう長くはない。", 
+            "どの道を歩み、何者となるか。", 
+            "全ては汝の選択に委ねられている。"
+        ];
         
         updateMapState(); 
         
-        // ... (以降のアニメーション処理はそのまま) ...
         let idx = 0; 
         const opDiv = document.getElementById("op-text"); 
         opDiv.innerHTML = "";
+        
         const showLine = () => { 
             opDiv.style.opacity = 0; 
             setTimeout(() => { 
@@ -490,16 +464,27 @@ function startOP() {
                 opDiv.style.opacity = 1; 
             }, 400); 
         }; 
+        
         showLine(); 
+        
+        // オープニング進行（クリックイベント）
         window.nextOP = () => { 
             idx++; 
-            if (idx < opLines.length) showLine(); 
-            else { 
+            if (idx < opLines.length) {
+                showLine(); 
+            } else { 
                 document.getElementById("op-screen").classList.add("hidden-screen"); 
                 document.getElementById("top-ui-container").style.display = "flex"; 
                 document.getElementById("background-layer").classList.add("visible"); 
-                bgmOp.pause(); bgmMap.currentTime = 0; playBgmFadeIn(bgmMap);
+                
+                bgmOp.pause(); 
+                bgmMap.currentTime = 0; 
+                playBgmFadeIn(bgmMap);
+                
                 setTimeout(() => { 
+                    // ★状態を「MAP」に更新
+                    currentStatus = GameStatus.MAP;updateDebugUIState();
+                    
                     document.querySelectorAll('.map-spot').forEach(s => s.classList.add('spot-visible')); 
                     updateMonologue('start');
                     isGameStarted = true; 
@@ -509,7 +494,9 @@ function startOP() {
     }, 500); 
 }
 
-// ブースト解放処理（ヘルパー）
+/**
+ * 永続的なブースト要素の解放
+ */
 function processBoostUnlock() { 
     const sortedKeys = [...statKeys].sort((a, b) => stats[b] - stats[a]); 
     for (let key of sortedKeys) { 
@@ -521,46 +508,55 @@ function processBoostUnlock() {
     } 
 }
 
-/* --- js/main.js --- */
-
+/**
+ * ゲームのエンディング処理を実行する
+ * Analytics送信と、全てのBGMのクリーンアップを含む
+ */
 function showEnding() {
-    // 【最重要】playing以外の状態でこの関数が走るのを物理的に防ぐ
-    if (currentStatus !== 'playing') {
+    // 【最重要】タイトル画面または既にエンディング中の場合は実行しない
+    if (currentStatus === GameStatus.TITLE || currentStatus === GameStatus.ENDING) {
         return; 
     }
-    currentStatus = GameStatus.ENDING; // エンディング中に変更
-    processBoostUnlock(); // 既存: ステータスブーストの解放処理
 
-    // ▼▼▼ 追加: 親密度No.1ヒロインの地域解放処理 ▼▼▼
-    // 親密度(affection)が最も高いヒロインを特定
-    // (同点の場合は配列の順序が早い方が選ばれますが、仕様として許容します)
+    // ステータスを即座に「ENDING」に変更して重複実行をガード
+    currentStatus = GameStatus.ENDING; updateDebugUIState();
+
+    processBoostUnlock(); 
+
+    // 親密度No.1ヒロインの特定 (Analyticsと地域解放に使用)
     const bestHeroine = heroines.reduce((prev, current) => 
         (prev.affection > current.affection) ? prev : current
     );
 
-    // まだ解放されていない場合、リストに追加して保存
+    // 未解放のヒロインであれば地域解放リストに追加
     if (bestHeroine && !clearedHeroines.includes(bestHeroine.name)) {
         clearedHeroines.push(bestHeroine.name);
         localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
-        
-        console.log(`[Unlock] Best Heroine: ${bestHeroine.name} (Affection: ${bestHeroine.affection})`);
+        console.log(`[Unlock] Best Heroine: ${bestHeroine.name}`);
     }
-    // ▲▲▲ 追加ここまで ▲▲▲
 
     saveCurrentGameLog();
     localStorage.removeItem('maghribal_resume_data');
 
     document.getElementById("ed-screen").classList.remove("hidden-screen");
-    bgmMap.pause(); bgmEd.currentTime = 0; bgmEd.play();
+
+    // ★BGMの完全停止・フェードアウト
+    try {
+        if (typeof stopHeroineBgm === 'function') stopHeroineBgm();
+        fadeOutBgm(bgmMap, 300, true);
+        fadeOutBgm(bgmOp, 300, true);
+    } catch(e) {
+        console.warn("BGM stop failed", e);
+    }
+
+    bgmEd.currentTime = 0; 
+    bgmEd.play();
     
+    // スコア計算とランク判定
     const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
     let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
     document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
-
-    // 画面表示用のベストパートナー選定（ここもaffection基準に統一します）
-    // 元コード: let best = heroines.reduce((a, b) => a.progress > b.progress ? a : b);
-    let best = bestHeroine; // さっき計算したものを使う
-
+    let best = bestHeroine; 
     let endingDisplay = "";
     let finalMessage = "";
 
@@ -572,6 +568,7 @@ function showEnding() {
         endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
         finalMessage = best.finMsg[best.progress] || best.finMsg[best.finMsg.length - 1];
     } else {
+        // ソロ称号の決定
         const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
         endingDisplay = `称号: ${soloTitles[maxK]}`;
         const randomH = heroines[Math.floor(Math.random() * heroines.length)];
@@ -598,25 +595,58 @@ function showEnding() {
     statsContainer.style.display = "flex";
     statsContainer.style.flexWrap = "wrap";
     statsContainer.style.justifyContent = "center";
+
+    // --- Analytics 送信 ---
+    if (typeof sendGameEvent === 'function') {
+        const partnerId = (best && best.progress > 0) ? best.file.split('_')[0] : "solo";
+        const activeParamBoostCount = Object.values(activeBoosts).filter(Boolean).length;
+        const activeAreaBoostCount = activeImpacts.filter(Boolean).length;
+
+        sendGameEvent("game_clear", {
+            is_cheat: window.isCheatUsed || false,
+            rank: rank,
+            total_score: total,
+            partner_id: partnerId,
+            boost_param_active: activeParamBoostCount,
+            boost_area_active: activeAreaBoostCount,
+            st_health: Math.floor(stats.health),
+            st_body:   Math.floor(stats.body),
+            st_mind:   Math.floor(stats.mind),
+            st_magic:  Math.floor(stats.magic),
+            st_fame:   Math.floor(stats.fame),
+            st_money:  Math.floor(stats.money)
+        });
+    }
+
     setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
 }
 
+/**
+ * ゲームをリトライし、タイトル画面へ戻る
+ */
 function retryGame() {
     playSE(seFootstep);
     const fade = document.getElementById('fade-overlay');
     fade.classList.add('active');
 
+    // ★リトライ時にチートフラグをリセット
+    window.isCheatUsed = false;
+
     setTimeout(() => {
-    resetRunToTitle();        // ★追加
-    fade.classList.remove('active');
+        resetRunToTitle();
+        fade.classList.remove('active');
     }, 800);
+    
     syncPersistentUnlocksFromStorage();
     renderBoostButtons();
-    currentStatus = GameStatus.TITLE;
 }
 
+/**
+ * 各種フラグ・表示をタイトル画面の状態へリセットする
+ */
 function resetRunToTitle() {
-    currentStatus = GameStatus.TITLE; // タイトルに戻す
+    currentStatus = GameStatus.TITLE; // 状態をリセット
+    
     // --- 進行/フラグ類を初期化 ---
     turn = 1;
     isEventActive = false;
@@ -633,26 +663,25 @@ function resetRunToTitle() {
     lastEventContext = null;
     lastEventResult = null;
 
-    // --- ステータス初期化（タイトル表示用。開始時は startOP が上書きする）---
+    // --- ステータス初期化 ---
     stats = { health: 5, body: 5, mind: 5, magic: 5, fame: 5, money: 5 };
     statKeys.forEach(k => updateUI(k));
     const turnEl = document.getElementById("turn-count");
     if (turnEl) turnEl.innerText = turn;
 
-    // --- ヒロイン進捗をリセット（周回の“今回プレイ分”だけ）---
+    // --- ヒロイン進捗をリセット ---
     heroines.forEach(h => { h.progress = 0; h.affection = 0; });
 
-    // --- ログ（今回プレイ分）をクリア。過去記録は localStorage 側なので残る ---
+    // --- ログクリア ---
     currentGameLog = [];
     const log = document.getElementById("log-content");
     if (log) log.innerHTML = "";
 
-    // --- セッション再開データは消す（showEnding と同じ挙動）---
     localStorage.removeItem('maghribal_resume_data');
     const contBtn = document.getElementById('continue-btn');
     if (contBtn) contBtn.style.display = 'none';
 
-    // --- 画面をタイトル状態へ戻す ---
+    // --- 画面遷移 ---
     document.getElementById("ed-screen")?.classList.add("hidden-screen");
     document.getElementById("op-screen")?.classList.add("hidden-screen");
     document.getElementById("title-screen")?.classList.remove("hidden-screen");
@@ -663,22 +692,27 @@ function resetRunToTitle() {
     document.getElementById("background-layer")?.classList.remove("visible");
     document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
 
-    // --- オーバーレイ類を閉じる（開きっぱなし防止）---
     const logOverlay = document.getElementById("log-overlay");
     if (logOverlay) logOverlay.style.display = "none";
     const resDiv = document.getElementById("result-display");
     if (resDiv) { resDiv.style.opacity = "0"; resDiv.innerHTML = ""; }
 
-    // --- 音をタイトルへ ---
-    try { bgmEd.pause(); bgmEd.currentTime = 0; } catch {}
-    try { bgmMap.pause(); bgmMap.currentTime = 0; } catch {}
-    try { bgmOp.currentTime = 0; bgmOp.play(); } catch {}
+    // --- 音声リセット ---
+    try { 
+        if (typeof stopHeroineBgm === 'function') stopHeroineBgm();
+        bgmEd.pause(); bgmEd.currentTime = 0;
+        bgmMap.pause(); bgmMap.currentTime = 0;
+        bgmOp.currentTime = 0; bgmOp.play(); 
+    } catch(e) {}
 
-    // --- マップ表示などの再計算（必要なら）---
-    try { updateMapState(); } catch {}
-    }
-    function syncPersistentUnlocksFromStorage() {
-        try {
+    try { updateMapState(); } catch(e) {}
+}
+
+/**
+ * localStorageから永続的な解放状況を同期する
+ */
+function syncPersistentUnlocksFromStorage() {
+    try {
         const savedB = localStorage.getItem('maghribal_boosts');
         if (savedB) unlockedBoosts = JSON.parse(savedB);
 
@@ -690,7 +724,7 @@ function resetRunToTitle() {
 
         const savedC = localStorage.getItem('maghribal_cleared_heroines');
         if (savedC) clearedHeroines = JSON.parse(savedC);
-        } catch (e) {
+    } catch (e) {
         console.warn("Failed to sync persistent unlocks:", e);
     }
 }

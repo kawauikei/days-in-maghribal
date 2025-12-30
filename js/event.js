@@ -7,8 +7,8 @@ function handleSpotClick(el, idx) {
     console.log("--- handleSpotClick Start --- idx:", idx); 
     document.getElementById('monologue-container').classList.remove('visible');
 
-    // ▼ ゲーム終了判定などの基本チェック
-    if (!isGameStarted || isEventActive || turn > maxTurn) return; 
+// ★ GameStatus.MAP中のみ反応するようにガードを強化
+if (currentStatus !== GameStatus.MAP || !isGameStarted || isEventActive || turn > maxTurn) return;
     
     isEventActive = true; isResultDisplayed = false; isResultHidden = false;
     playSE(seFootstep); 
@@ -546,6 +546,9 @@ function getHeroineIdFromHeroine(h) {
 }
 
 function getStillEventIdFromHeroine(h) {
+    // ★ 状態を「EVENT」に更新
+    currentStatus = GameStatus.EVENT;
+
     // 仕様:
     // - ヒロイン本編成功時、h.progress は applyEventView 呼び出し前にインクリメントされるため、
     //   “いま再生したイベント”は (progress-1) を使う
@@ -689,6 +692,7 @@ function fadeOutEventStill(layer) {
 /* --- js/event.js : applyEventView 関数 (修正版) --- */
 
 function applyEventView(msg, changes, isH, h, s, out, idx, imgId, statsBefore, overflowChanges, originalChanges, isRecommended, isBoost) {
+    currentStatus = GameStatus.EVENT; updateDebugUIState();
     if (typeof logEventResult === 'function') {
         logEventResult(turn, out, isH, changes, statsBefore, statKeys, isMotivationBuff, overflowChanges, originalChanges, h, isRecommended, isBoost);
     }
@@ -914,6 +918,10 @@ function closeEvent() {
         turn++; 
         document.getElementById("turn-count").innerText = turn; 
         isEventActive = false; 
+
+        // ★ ここに追記：状態を「MAP」に戻し、次の行動を許可する
+        currentStatus = GameStatus.MAP;updateDebugUIState();
+
         updateMonologue(); 
         saveSessionData(); 
         setTimeout(() => { 

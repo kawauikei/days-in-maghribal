@@ -19,14 +19,19 @@ function markAsCheat(reason) {
 
 /**
  * 厳密なガード関数
- * main.jsで定義したステータスが「playing」の時だけデバッグ実行を許可する
+ * 「マップ画面（MAP）」の状態のみ、バランスに影響するデバッグ操作を許可する
  */
 function canExecuteDebug() {
-    // GameStatus.PLAYING ( 'playing' ) 以外はすべて弾く
-    if (typeof currentStatus === 'undefined' || currentStatus !== 'playing') {
-        console.log(`[Debug] Blocked: Current status is "${currentStatus}". Execution is only allowed during "playing".`);
+    // 現在のステータスを確認
+    const status = typeof currentStatus !== 'undefined' ? currentStatus : 'unknown';
+
+    // ★ MAP以外なら、まずコンソールに理由を出す
+    if (status !== GameStatus.MAP) {
+        console.warn(`[Debug] Blocked: Current status is "${status}". Debugging is only allowed during "map" state.`);
         return false;
     }
+
+    // MAP中なら実行許可
     return true;
 }
 
@@ -48,15 +53,37 @@ function toggleDebugPanel() {
 }
 
 /**
- * ターン数を強制変更
+ * ターン数を強制変更し、コンソールに履歴を残す
  */
 function debugModTurn(amount) { 
+    // 1. ガードチェック
     if (!canExecuteDebug()) return; 
+
+    // 2. 変更前の値を保持
+    const oldTurn = turn;
+
+    // 3. チート刻印
     markAsCheat('ModTurn'); 
+
+    // 4. 計算（1〜20の範囲に収める）
     turn = Math.max(1, Math.min(maxTurn, turn + amount)); 
+
+    // 5. コンソールログ出力
+    console.log(
+        `%c[Debug Turn] %c${oldTurn} %c-> %c${turn} %c(Amount: ${amount > 0 ? '+' : ''}${amount})`,
+        "color: #00ffff; font-weight: bold;", // [Debug Turn]
+        "color: #ff4d4d;",                   // 旧ターン
+        "color: #ccc;",                      // ->
+        "color: #76ff03; font-weight: bold;", // 新ターン
+        "color: #aaa; font-style: italic;"    // 増分
+    );
+
+    // 6. UIとマップ状態の更新
+    const turnEl = document.getElementById("turn-count");
+    if (turnEl) turnEl.innerText = turn;
+    
     updateMapState(); 
 }
-
 /**
  * イベントテスターのマップセレクト初期化
  */
@@ -143,6 +170,7 @@ function launchDebugTestEvent() {
     
     isEventActive = true; 
     isResultDisplayed = false; 
+    // event.js の修正済み applyEventView を呼び出し
     applyEventView(ev.text, ev.changes||{}, false, null, s, ev.outcome, mIdx, ev.image); 
 }
 
@@ -155,7 +183,14 @@ function renderHeroineSliders() {
     c.innerHTML = ""; 
     heroines.forEach((h, i) => { 
         const d = document.createElement("div"); 
-        d.innerHTML = `<div style="font-size:12px; margin-bottom:5px;">${h.title} ${h.name} Lv.<span id="h-lv-${i}">${h.progress}</span></div><input type="range" min="0" max="5" value="${h.progress}" style="width:100%" oninput="if(!canExecuteDebug()) return; markAsCheat('HeroineSlider'); heroines[${i}].progress=parseInt(this.value); heroines[${i}].affection=parseInt(this.value); document.getElementById('h-lv-${i}').innerText=this.value">`; 
+        d.innerHTML = `<div style="font-size:12px; margin-bottom:5px;">${h.title} ${h.name} Lv.<span id="h-lv-${i}">${h.progress}</span></div>` +
+                      `<input type="range" min="0" max="5" value="${h.progress}" style="width:100%" ` +
+                      `oninput="if(!canExecuteDebug()) return; ` +
+                      `const oldVal=heroines[${i}].progress; const newVal=parseInt(this.value); ` +
+                      `markAsCheat('HeroineSlider'); ` +
+                      `heroines[${i}].progress=newVal; heroines[${i}].affection=newVal; ` +
+                      `document.getElementById('h-lv-${i}').innerText=newVal; ` +
+                      `console.log('%c[Debug Affection] %c${h.name}: %c' + oldVal + ' -> ' + newVal, 'color: #ff0066; font-weight: bold;', 'color: #ccc;', 'color: #76ff03; font-weight: bold;');">`; 
         c.appendChild(d); 
     }); 
 }
@@ -174,18 +209,42 @@ function debugMaxStats() {
     checkRankUpdate(); 
 }
 
-function debugFinishGame() { 
-    // ガードとログ出力をセットで行う
-    if (!canExecuteDebug()) return; 
+/**
+ * デバッグ用強制終了
+ * ガードをチェックし、問題なければ main.js の showEnding を実行する
+ */
+function debugFinishGame() {
+    // 1. ガードチェック（MAP中以外ならここで弾く）
+    if (!canExecuteDebug()) return;
 
-    markAsCheat('ForceFinish'); 
-    document.getElementById('fade-overlay').classList.add('active'); 
-    bgmMap.pause(); 
-    setTimeout(showEnding, 1500);
+    console.log("%c[Debug] Force Finish sequence started.", "color: orange; font-weight: bold;");
+
+    // 2. 不正フラグを立てる
+    markAsCheat('ForceFinish');
+
+    // 3. 演出（画面を暗転させる）
+    const fade = document.getElementById('fade-overlay');
+    if (fade) fade.classList.add('active');
+
+    // 4. BGMをフェードアウト
+    try {
+        if (typeof fadeOutBgm === 'function') {
+            fadeOutBgm(bgmMap, 1000, true);
+        }
+    } catch (e) { console.warn(e); }
+
+    // 5. 1.5秒後に正規のエンディング関数を呼び出す
+    setTimeout(() => {
+        if (typeof showEnding === 'function') {
+            showEnding();
+        } else {
+            console.error("Critical: showEnding() not found in main.js");
+        }
+    }, 1500);
 }
 
 function debugToggleBoosts() { 
-    // Boost解放はチート扱いせず、タイトルでも許可
+    // Boost解放は周回要素のため TITLE でも許可
     const isL = statKeys.some(k => !unlockedBoosts[k]); 
     statKeys.forEach(k => { unlockedBoosts[k] = isL; }); 
     if (isL) { clearedHeroines = heroines.map(h => h.name); } else { clearedHeroines = []; }
@@ -194,16 +253,35 @@ function debugToggleBoosts() {
     renderBoostButtons(); 
 }
 
+/**
+ * ヒロインイベントの強制発生フラグを切り替える
+ */
 function toggleForceHeroine() { 
     if (!canExecuteDebug()) return;
+
     markAsCheat('ForceHeroine'); 
     isForcedHeroine = !isForcedHeroine; 
-    document.getElementById("force-heroine-btn").innerText = isForcedHeroine ? "♥ Force Heroine: ON" : "♥ Force Heroine: OFF"; 
-    document.getElementById("force-heroine-btn").classList.toggle("active", isForcedHeroine); 
+
+    // コンソールログ出力
+    console.log(
+        `%c[Debug Mode] %cForce Heroine Event: %c${isForcedHeroine ? 'ON (100%)' : 'OFF (Normal)'}`,
+        "color: #ff0066; font-weight: bold;", // [Debug Mode]
+        "color: #ccc;",                      // 説明文
+        isForcedHeroine ? "color: #76ff03; font-weight: bold;" : "color: #ff4d4d; font-weight: bold;" // ON/OFF
+    );
+
+    const btn = document.getElementById("force-heroine-btn");
+    if (btn) {
+        btn.innerHTML = isForcedHeroine ? 
+            `<i class="fa-solid fa-heart"></i> Force: ON` : 
+            `<i class="fa-solid fa-heart"></i> Force: OFF`; 
+        btn.classList.toggle("active", isForcedHeroine);
+    }
 }
 
 /**
- * イベント結果をコンソールに出力する
+ * イベント結果をコンソールにグラフィカルに出力する（Analytics用）
+ * 消滅していたロジックを完全復旧
  */
 function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, overflowChanges, originalChanges, h, isRecommended, isBoost) {
     const keys = statKeys || ['health', 'body', 'mind', 'magic', 'fame', 'money'];
@@ -261,8 +339,41 @@ function logEventResult(turn, out, isH, changes, statsBefore, statKeys, isBuff, 
         console.log(`%c TOTAL: ${total} / AVG: ${(total/6).toFixed(1)} `, "background: #eee; color: #333;");
 
     } catch (e) {
-        console.error("デバッグログ出力中にエラーが発生しました:", e);
+        console.error("デバッグログ出力エラー:", e);
     } finally {
         console.groupEnd();
     }
+}
+
+/**
+ * 現在の状態に合わせて、各デバッグ項目の有効/無効を個別に判定する
+ */
+function updateDebugUIState() {
+    const panel = document.getElementById("debug-panel");
+    if (!panel) return;
+
+    const status = (typeof currentStatus !== 'undefined') ? currentStatus : 'title';
+
+    // 全ての操作要素を取得
+    const items = panel.querySelectorAll('button, input[type="range"], select, #debug-heroine-sliders');
+
+    items.forEach(el => {
+        // A. 常に使えるもの（音量）
+        if (el.id === 'bgm-slider' || el.id === 'se-slider') return;
+
+        // B. タイトル/エンド画面でも使えるもの（データ操作系）
+        // HTML側で class="debug-always" を持たせるか、特定のIDで判定
+        if (el.classList.contains('debug-always')) return;
+
+        // C. それ以外は MAP 中のみ許可
+        const isForbidden = (status !== 'map');
+
+        if (isForbidden) {
+            el.classList.add('debug-disabled');
+            if (['BUTTON', 'INPUT', 'SELECT'].includes(el.tagName)) el.disabled = true;
+        } else {
+            el.classList.remove('debug-disabled');
+            if (['BUTTON', 'INPUT', 'SELECT'].includes(el.tagName)) el.disabled = false;
+        }
+    });
 }

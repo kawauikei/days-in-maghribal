@@ -677,3 +677,13 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; background: 
      /* display: inline-block; */
 
 }
+
+/* デバッグ操作が無効な要素にのみ適用 */
+.debug-disabled {
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+    text-decoration: line-through; /* 機能停止の視覚表示 */
+    filter: grayscale(1);
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+}
