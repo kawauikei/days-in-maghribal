@@ -686,6 +686,8 @@ function retryGame() {
 /**
  * 各種フラグ・表示をタイトル画面の状態へリセットする
  */
+/* --- js/main.js --- */
+
 function resetRunToTitle() {
     currentStatus = GameStatus.TITLE; // 状態をリセット
     
@@ -730,6 +732,20 @@ function resetRunToTitle() {
 
     const topUI = document.getElementById("top-ui-container");
     if (topUI) topUI.style.display = "none";
+
+    // ★修正: モノローグの残留処理（クラスも削除して完全初期化）---
+    const monoContainer = document.getElementById("monologue-container");
+    if (monoContainer) {
+        monoContainer.style.opacity = ""; // スタイル属性のリセット
+        monoContainer.className = "";     // ★追加: 付着したクラスを全て剥ぎ取る
+    }
+
+    const monoText = document.querySelector(".monologue-text");
+    if (monoText) monoText.innerHTML = ""; // テキスト削除
+
+    // --- ヘルプ画面が開いたままなら閉じる ---
+    const helpOverlay = document.getElementById("help-overlay");
+    if (helpOverlay) helpOverlay.style.display = "none";
 
     document.getElementById("background-layer")?.classList.remove("visible");
     document.querySelectorAll('.map-spot').forEach(s => s.classList.remove('spot-visible'));
