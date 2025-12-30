@@ -496,6 +496,7 @@ function startOP() {
 
 /**
  * 永続的なブースト要素の解放
+ * @returns {string|null} 解放されたステータスのキー
  */
 function processBoostUnlock() { 
     const sortedKeys = [...statKeys].sort((a, b) => stats[b] - stats[a]); 
@@ -503,35 +504,40 @@ function processBoostUnlock() {
         if (!unlockedBoosts[key]) { 
             unlockedBoosts[key] = true; 
             localStorage.setItem('maghribal_boosts', JSON.stringify(unlockedBoosts)); 
-            break; 
+            return key; // ★実際に解放したキーを返す
         } 
     } 
+    return null; // すべて解放済みの場合はnull
 }
 
 /**
  * ゲームのエンディング処理を実行する
- * Analytics送信と、全てのBGMのクリーンアップを含む
+ * 修正：新規解放があった場合のみアナウンスを表示するロジックに変更
  */
 function showEnding() {
-    // 【最重要】タイトル画面または既にエンディング中の場合は実行しない
-    if (currentStatus === GameStatus.TITLE || currentStatus === GameStatus.ENDING) {
-        return; 
+    if (currentStatus === GameStatus.TITLE || currentStatus === GameStatus.ENDING) return;
+    currentStatus = GameStatus.ENDING;
+    updateDebugUIState();
+
+    const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
+    const rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
+    
+    // 1. ステータス解放処理：新規解放があればキーが返る（なければ null）
+    const newlyUnlockedStatKey = processBoostUnlock(); 
+
+    // 2. ヒロインの特定 (同値の場合は先頭優先)
+    let best = heroines.reduce((prev, current) => (prev.affection >= current.affection) ? prev : current);
+    if (!best || best.affection === 0) {
+        best = heroines[Math.floor(Math.random() * heroines.length)];
     }
+    const bestHeroine = best; 
 
-    // ステータスを即座に「ENDING」に変更して重複実行をガード
-    currentStatus = GameStatus.ENDING; updateDebugUIState();
-
-    processBoostUnlock(); 
-
-    // 親密度No.1ヒロインの特定 (Analyticsと地域解放に使用)
-    const bestHeroine = heroines.reduce((prev, current) => 
-        (prev.affection > current.affection) ? prev : current
-    );
-
-    // 未解放のヒロインであれば地域解放リストに追加
+    // 3. エリア解放処理：今回初めて解放されたかどうかを判定
+    let isNewAreaUnlocked = false;
     if (bestHeroine && !clearedHeroines.includes(bestHeroine.name)) {
         clearedHeroines.push(bestHeroine.name);
         localStorage.setItem('maghribal_cleared_heroines', JSON.stringify(clearedHeroines));
+        isNewAreaUnlocked = true; // ★新規解放フラグON
         console.log(`[Unlock] Best Heroine: ${bestHeroine.name}`);
     }
 
@@ -539,46 +545,98 @@ function showEnding() {
     localStorage.removeItem('maghribal_resume_data');
 
     document.getElementById("ed-screen").classList.remove("hidden-screen");
+    document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
 
-    // ★BGMの完全停止・フェードアウト
     try {
         if (typeof stopHeroineBgm === 'function') stopHeroineBgm();
         fadeOutBgm(bgmMap, 300, true);
         fadeOutBgm(bgmOp, 300, true);
-    } catch(e) {
-        console.warn("BGM stop failed", e);
-    }
-
-    bgmEd.currentTime = 0; 
-    bgmEd.play();
+    } catch(e) {}
+    bgmEd.currentTime = 0; bgmEd.play();
     
-    // スコア計算とランク判定
-    const total = Object.values(stats).reduce((sum, v) => sum + v, 0);
-    let rank = total >= 150 ? "LEGEND" : (total >= 100 ? "GOLD" : (total >= 50 ? "SILVER" : "BRONZE"));
-    document.getElementById("ed-rank").innerText = `Rank: ${rank}`;
-    let best = bestHeroine; 
+    // 4. 表示テキスト作成
     let endingDisplay = "";
     let finalMessage = "";
+    if (bestHeroine) {
+        const hIcon = `<i class="fa-solid ${bestHeroine.icon}" style="margin:0 10px;"></i>`;
+        const msgIdx = bestHeroine.affection > 0 ? (bestHeroine.progress || 0) : 0;
+        finalMessage = bestHeroine.finMsg[msgIdx] || bestHeroine.finMsg[0];
+        
+        if (bestHeroine.affection > 0) {
+            let affinityIcon = (bestHeroine.progress >= 5) ? `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>` : 
+                               (bestHeroine.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
+                                                           `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
+            endingDisplay = `Partner: ${hIcon} ${bestHeroine.name}${affinityIcon}`;
+        } else {
+            const maxK = statKeys.reduce((a, b) => stats[a] >= stats[b] ? a : b, statKeys[0]);
+            endingDisplay = `称号: ${soloTitles[maxK]}`;
+        }
+    }
+    document.getElementById("ed-heroine").innerHTML = endingDisplay;
 
-    if (best && best.progress > 0) {
-        const hIcon = `<i class="fa-solid ${best.icon}" style="margin:0 10px;"></i>`;
-        let affinityIcon = (best.progress >= 5) ? `<span class="affinity-icon bouquet-icon"><i class="fa-solid fa-mound"></i></span>` : 
-                            (best.progress >= 3) ? `<span class="affinity-icon affinity-seedling" style="margin-left:8px;"><i class="fa-solid fa-seedling"></i></span>` : 
-                                                    `<span class="affinity-icon affinity-leaf" style="margin-left:8px;"><i class="fa-solid fa-leaf"></i></span>`;
-        endingDisplay = `Partner: ${hIcon} ${best.name}${affinityIcon}`;
-        finalMessage = best.finMsg[best.progress] || best.finMsg[best.finMsg.length - 1];
-    } else {
-        // ソロ称号の決定
-        const maxK = [...statKeys].sort((a, b) => stats[b] - stats[a])[0];
-        endingDisplay = `称号: ${soloTitles[maxK]}`;
-        const randomH = heroines[Math.floor(Math.random() * heroines.length)];
-        finalMessage = randomH.finMsg[0];
+    // 5. 解放アナウンスHTMLの作成（新規解放がある場合のみ生成）
+    let unlockHtml = "";
+    
+    // ステータスまたはエリアのどちらかが新規解放された場合のみ中身を作る
+    if (newlyUnlockedStatKey || isNewAreaUnlocked) {
+        
+        // --- スタイル定義（前回と同じ安全版） ---
+        const ocherColor = "#e6c15c";
+        const cyanColor = statColors.average;
+        // マージン調整済みコンテナ
+        const containerStyle = `max-width: 650px; margin: 0 auto; border: 1px solid ${cyanColor}; padding: 10px 20px; border-radius: 4px; background: rgba(0, 255, 255, 0.05); display: inline-block; text-align: left; color: #fff;`;
+        const itemStyle = `font-size: 0.9em; margin: 5px 0; letter-spacing: 0.05em; display: flex; align-items: center; gap: 10px;`;
+        const iconW = `width: 24px; text-align: center;`; 
+        const nameWidthStyle = `display: inline-block; width: 160px; text-align: left;`;
+        const prefixStyle = `display: flex; align-items: center; gap: 6px; margin-right: 5px;`;
+
+        // 内部コンテンツ（行）の蓄積
+        let rowsHtml = "";
+
+        // A. ステータス新規解放
+        if (newlyUnlockedStatKey) {
+            rowsHtml += `
+                <div style="${itemStyle}">
+                    <span style="${prefixStyle}">
+                        <i class="fa-solid fa-lock-open" style="${iconW} color: ${ocherColor};"></i>
+                        <span style="color: ${cyanColor};">【解放】</span>
+                    </span>
+                    <i class="fa-solid ${statConfig[newlyUnlockedStatKey].icon}" style="${iconW} color:${statColors[newlyUnlockedStatKey]};"></i>
+                    <span style="${nameWidthStyle}">${statConfig[newlyUnlockedStatKey].name} +15</span>
+                    <span>：初期値ブースト可能</span>
+                </div>`;
+        }
+
+        // B. エリア新規解放
+        if (isNewAreaUnlocked) {
+            // bestHeroine は必ず存在しているはずだが念のためチェック
+            const hIdx = heroines.indexOf(bestHeroine);
+            if (hIdx !== -1) {
+                const targetScene = scenarios[heroineImpacts[hIdx].target];
+                rowsHtml += `
+                    <div style="${itemStyle}">
+                        <span style="${prefixStyle}">
+                            <i class="fa-solid fa-lock-open" style="${iconW} color: ${ocherColor};"></i>
+                            <span style="color: ${cyanColor};">【解放】</span>
+                        </span>
+                        <i class="fa-solid ${targetScene.icon}" style="${iconW}"></i>
+                        <span style="${nameWidthStyle}">${heroineImpacts[hIdx].btnLabel}</span>
+                        <span>：対象エリアブースト可能</span>
+                    </div>`;
+            }
+        }
+
+        // 中身がある場合のみ、ラッパーと枠で囲む
+        if (rowsHtml !== "") {
+            unlockHtml = `<div style="flex: 0 0 100%; width: 100%; margin: 10px 0; text-align: center; font-family: serif;">
+                            <div style="${containerStyle}">${rowsHtml}</div>
+                          </div>`;
+        }
     }
 
-    document.getElementById("ed-heroine").innerHTML = endingDisplay;
-    
+    // 6. 画面への流し込み
     const statsContainer = document.getElementById("ed-stats");
-    const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 20px 0 40px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
+    const msgHTML = `<div style="flex: 0 0 100%; width: 100%; text-align: center; margin: 10px 0 15px; font-style: italic; color: #eee; font-size: 1.1em;">${finalMessage}</div>`;
     
     let statHTML = "";
     statKeys.forEach(k => {
@@ -591,34 +649,18 @@ function showEnding() {
         statHTML += `<div class="ed-stat-box" style="${borderStyle}"><i class="fa-solid ${statConfig[k].icon}" style="${iconStyle}"></i><div style="font-size:9px; color:#ccc;">${statConfig[k].name}</div><span class="ed-stat-val">${val}</span>${maxLabel}</div>`;
     });
 
-    statsContainer.innerHTML = msgHTML + statHTML;
+    statsContainer.innerHTML = msgHTML + unlockHtml + statHTML;
     statsContainer.style.display = "flex";
     statsContainer.style.flexWrap = "wrap";
     statsContainer.style.justifyContent = "center";
 
-    // --- Analytics 送信 ---
+    // 7. Analytics 送信
     if (typeof sendGameEvent === 'function') {
-        const partnerId = (best && best.progress > 0) ? best.file.split('_')[0] : "solo";
-        const activeParamBoostCount = Object.values(activeBoosts).filter(Boolean).length;
-        const activeAreaBoostCount = activeImpacts.filter(Boolean).length;
-
-        sendGameEvent("game_clear", {
-            is_cheat: window.isCheatUsed || false,
-            rank: rank,
-            total_score: total,
-            partner_id: partnerId,
-            boost_param_active: activeParamBoostCount,
-            boost_area_active: activeAreaBoostCount,
-            st_health: Math.floor(stats.health),
-            st_body:   Math.floor(stats.body),
-            st_mind:   Math.floor(stats.mind),
-            st_magic:  Math.floor(stats.magic),
-            st_fame:   Math.floor(stats.fame),
-            st_money:  Math.floor(stats.money)
-        });
+        const partnerId = (bestHeroine && bestHeroine.affection > 0) ? bestHeroine.file.split('_')[0] : "solo";
+        sendGameEvent("game_clear", { rank, total_score: total, partner_id: partnerId });
     }
 
-    setTimeout(() => { document.getElementById('fade-overlay').classList.remove('active'); }, 500);
+    setTimeout(() => { document.getElementById('fade-overlay')?.classList.remove('active'); }, 500);
 }
 
 /**
